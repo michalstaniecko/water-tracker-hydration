@@ -9,6 +9,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen name={"index"} />
+      <Tabs.Screen name={"history"} />
       <Tabs.Screen name={"setup"} />
     </Tabs>
   );

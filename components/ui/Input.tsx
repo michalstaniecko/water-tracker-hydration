@@ -15,7 +15,7 @@ export default function Input({
   secureTextEntry?: boolean;
   keyboardType?: KeyboardTypeOptions;
 }) {
-  const [value, setValue] = useState(initValue);
+  const [value, setValue] = useState(initValue.toString());
   function changeHandler(text: string) {
     setValue(text);
     onChangeText?.(text);
