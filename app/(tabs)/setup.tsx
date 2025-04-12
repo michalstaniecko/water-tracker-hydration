@@ -25,7 +25,7 @@ export default function Setup() {
             keyboardType={"numeric"}
             value={setupStore.minimumWater as unknown as string}
             onChangeText={(text) => {
-              setupStore.setGlassCapacity(parseInt(text));
+              setupStore.setMinimumWater(parseInt(text));
             }}
             placeholder={"0"}
           />

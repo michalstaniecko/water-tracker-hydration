@@ -7,6 +7,7 @@ type WaterStore = {
   addWater: (amount: number) => void;
   removeWater: (amount: number) => void;
   resetWater: () => void;
+  setWater: (amount: number) => void;
 };
 
 export const useWaterStore = create<WaterStore>((set) => ({
@@ -26,7 +27,7 @@ export const useWaterStore = create<WaterStore>((set) => ({
       console.error("Error fetching water data:", error);
     }
   },
-  addWater: async (amount) => {
+  addWater: async (amount: number) => {
     const today = new Date().toLocaleDateString();
     try {
       const data = await AsyncStorage.getItem(today);
@@ -43,7 +44,7 @@ export const useWaterStore = create<WaterStore>((set) => ({
       console.error("Error adding water data:", error);
     }
   },
-  removeWater: (amount) => {
+  removeWater: (amount: number) => {
     const today = new Date().toLocaleDateString();
     AsyncStorage.getItem(today).then((data) => {
       if (data !== null) {
@@ -52,6 +53,11 @@ export const useWaterStore = create<WaterStore>((set) => ({
         set({ water: newWater });
       }
     });
+  },
+  setWater: (amount: number) => {
+    const today = new Date().toLocaleDateString();
+    AsyncStorage.setItem(today, amount.toString());
+    set({ water: amount });
   },
   resetWater: () => {
     const today = new Date().toLocaleDateString();

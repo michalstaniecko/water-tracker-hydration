@@ -1,8 +1,13 @@
 import { create } from "zustand";
 
+export enum SetupOptions {
+  GLASS_CAPACITY = "glassCapacity",
+  MINIMUM_WATER = "minimumWater",
+}
+
 type SetupState = {
-  glassCapacity: number;
-  minimumWater: number;
+  [SetupOptions.GLASS_CAPACITY]: number;
+  [SetupOptions.MINIMUM_WATER]: number;
 };
 
 type SetupActions = {
@@ -18,7 +23,13 @@ const initialState: SetupState = {
 
 export const useSetupStore = create<SetupState & SetupActions>((set) => ({
   ...initialState,
-  setGlassCapacity: (capacity) => set({ glassCapacity: capacity }),
-  setMinimumWater: (water) => set({ minimumWater: water }),
+  setGlassCapacity: (capacity: number) => set({ glassCapacity: capacity }),
+  setMinimumWater: (water: number) => set({ minimumWater: water }),
+  setOption: (option: SetupOptions, value: number | string) => {
+    set((state) => ({
+      ...state,
+      [option]: value,
+    }));
+  },
   reset: () => set(initialState),
 }));
