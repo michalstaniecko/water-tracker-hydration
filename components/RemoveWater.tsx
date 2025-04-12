@@ -18,7 +18,7 @@ export default function RemoveWater() {
   };
 
   return (
-    <Pressable onPress={removeWater}>
+    <Pressable onPress={removeWater} className={"active:opacity-50"}>
       <Text className={`${variantStyles[getVariant()]}`}>Remove glass</Text>
     </Pressable>
   );
