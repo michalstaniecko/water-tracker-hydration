@@ -3,17 +3,20 @@ import { useSetupStore } from "@/stores/setup";
 import { useWater } from "@/hooks/useWater";
 import AddWater from "@/components/AddWater";
 import RemoveWater from "@/components/RemoveWater";
+import { getToday } from "@/utils/date";
 
 export default function Index() {
-  const { water, addWater, removeWater, leftToDrink } = useWater();
+  const { water, leftToDrink } = useWater();
   const { glassCapacity, minimumWater } = useSetupStore();
+
+  const today = getToday();
 
   return (
     <ScrollView
       contentContainerClassName={"flex-1 items-center justify-center"}
     >
       <View className={"gap-2 flex-1 items-center justify-center"}>
-        <Text>Today: {new Date().toLocaleDateString()}</Text>
+        <Text>Today: {today}</Text>
         <Text>Daily water requirement: {minimumWater}ml</Text>
         {leftToDrink > 0 && <Text>Left to drink: {leftToDrink}ml</Text>}
         {leftToDrink <= 0 && (

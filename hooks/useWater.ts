@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useWaterStore } from "@/stores/water";
-import { useSetupStore, SetupOptions } from "@/stores/setup";
+import { useSetupStore } from "@/stores/setup";
 
 export function useWater() {
   const [leftToDrink, setLeftToDrink] = useState(0);
@@ -8,35 +8,38 @@ export function useWater() {
   const setupStore = useSetupStore();
 
   const computeLeftToDrink = () => {
-    const left = setupStore.minimumWater - waterStore.water;
-    setLeftToDrink(left < 0 ? 0 : left);
+    const todayWater = waterStore.getTodayWater();
+    const left = setupStore.minimumWater - Number(todayWater);
+    return left < 0 ? 0 : left;
   };
 
   const addWater = () => {
-    waterStore.addWater(setupStore.glassCapacity);
+    const currentWater = waterStore.getTodayWater();
+    const newCurrentWater =
+      Number(currentWater) + Number(setupStore.glassCapacity);
+    waterStore.setTodayWater(newCurrentWater.toString());
   };
 
   const removeWater = () => {
-    if (waterStore.water - setupStore[SetupOptions.GLASS_CAPACITY] <= 0) {
-      waterStore.setWater(0);
+    const currentWater = waterStore.getTodayWater();
+    const newCurrentWater =
+      Number(currentWater) - Number(setupStore.glassCapacity);
+    if (newCurrentWater <= 0) {
+      waterStore.setTodayWater("0");
       return;
     }
-    waterStore.removeWater(setupStore.glassCapacity);
+    waterStore.setTodayWater(newCurrentWater.toString());
   };
 
   useEffect(() => {
-    waterStore.fetchData();
-  }, []);
-
-  useEffect(() => {
     computeLeftToDrink();
-  }, [waterStore.water, setupStore.minimumWater]);
+  }, [waterStore.getTodayWater, setupStore.minimumWater]);
 
   return {
-    water: waterStore.water,
+    water: waterStore.getTodayWater(),
     addWater,
     removeWater,
-    leftToDrink,
+    leftToDrink: computeLeftToDrink(),
     minimumWater: setupStore.minimumWater,
   };
 }

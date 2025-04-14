@@ -1,15 +1,19 @@
 {
   "expo": {
-    "name": "hydration-project",
-    "slug": "hydration-project",
+    "name": "water-tracker-hydration",
+    "slug": "water-tracker-hydration",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "hydration.ihumbak.website",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "website.ihumbak.hydration",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -36,6 +40,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "0066bda3-a1c1-485d-9eac-097b86ad92a3"
+      }
     }
   }
 }

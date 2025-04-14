@@ -1,67 +1,94 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getToday } from "@/utils/date";
 
-type WaterStore = {
-  water: number;
-  fetchData: () => Promise<void>;
-  addWater: (amount: number) => void;
-  removeWater: (amount: number) => void;
-  resetWater: () => void;
-  setWater: (amount: number) => void;
+type Water = {
+  amount: string;
 };
 
-export const useWaterStore = create<WaterStore>((set) => ({
-  water: 0,
-  fetchData: async () => {
-    const today = new Date().toLocaleDateString();
+type WaterStore = {
+  history: {
+    [date: string]: {
+      water: string;
+    };
+  } | null;
+  fetchOrInitData: () => Promise<void>;
+  resetWater: () => void;
+  resetTodayWater: () => void;
+  setWater: (date: string, amount: string) => void;
+  setTodayWater: (amount: string) => void;
+  getWater: (date: string) => string;
+  getTodayWater: () => string;
+  hasHistory: () => boolean;
+};
+
+const storageKey = "waterData";
+
+export const useWaterStore = create<WaterStore>((set, get) => ({
+  history: null,
+  fetchOrInitData: async () => {
     try {
-      const data = await AsyncStorage.getItem(today);
+      const data = await AsyncStorage.getItem(storageKey);
       if (data !== null) {
-        set({ water: data as unknown as number });
+        const parsedData = JSON.parse(data);
+        set({ history: parsedData });
       } else {
-        const initialData = 0;
-        await AsyncStorage.setItem(today, initialData.toString());
-        set({ water: initialData });
+        const today = getToday();
+        const history = {
+          [today]: {
+            water: "0",
+          },
+        };
+        await AsyncStorage.setItem(storageKey, JSON.stringify(history));
+        set({ history });
       }
     } catch (error) {
-      console.error("Error fetching water data:", error);
+      console.error("Error initializing water data:", error);
     }
   },
-  addWater: async (amount: number) => {
-    const today = new Date().toLocaleDateString();
+  setWater: (date: string, amount: string) => {
     try {
-      const data = await AsyncStorage.getItem(today);
-      if (data !== null) {
-        const newWater = parseInt(data) + amount;
-        await AsyncStorage.setItem(today, newWater.toString());
-        set({ water: newWater });
-      } else {
-        const initialData = amount;
-        await AsyncStorage.setItem(today, initialData.toString());
-        set({ water: initialData });
-      }
+      const history = get().history || {};
+      history[date] = { water: amount };
+      set({ history });
+      AsyncStorage.setItem(storageKey, JSON.stringify(history));
     } catch (error) {
-      console.error("Error adding water data:", error);
+      console.error("Error setting water data:", error);
     }
   },
-  removeWater: (amount: number) => {
-    const today = new Date().toLocaleDateString();
-    AsyncStorage.getItem(today).then((data) => {
-      if (data !== null) {
-        const newWater = parseInt(data) - amount;
-        AsyncStorage.setItem(today, newWater.toString());
-        set({ water: newWater });
-      }
-    });
+  setTodayWater: (amount: string) => {
+    const today = getToday();
+    get().setWater(today, amount);
   },
-  setWater: (amount: number) => {
-    const today = new Date().toLocaleDateString();
-    AsyncStorage.setItem(today, amount.toString());
-    set({ water: amount });
+  updateStorage: async () => {
+    try {
+      await AsyncStorage.setItem(storageKey, JSON.stringify(get().history));
+    } catch (error) {
+      console.error("Error updating water data:", error);
+    }
   },
   resetWater: () => {
-    const today = new Date().toLocaleDateString();
-    AsyncStorage.setItem(today, "0");
-    set({ water: 0 });
+    set({ history: null });
+  },
+  resetTodayWater: () => {
+    const today = getToday();
+    try {
+    } catch (error) {
+      console.error("Error resetting water data:", error);
+    }
+    get().setTodayWater("0");
+  },
+  getWater: (date) => {
+    return get().history?.[date]?.water || "0";
+  },
+  getTodayWater: () => {
+    return get().getWater(getToday());
+  },
+  hasHistory: () => {
+    const history = get().history;
+    if (history && Object.keys(history).length > 0) {
+      return true;
+    }
+    return false;
   },
 }));
