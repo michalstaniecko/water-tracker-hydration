@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import React from "react";
+import { getToday } from "@/utils/date";
 
 export default function TabLayout() {
   return (
@@ -8,9 +9,25 @@ export default function TabLayout() {
         tabBarHideOnKeyboard: true,
       }}
     >
-      <Tabs.Screen name={"index"} />
-      <Tabs.Screen name={"history"} />
-      <Tabs.Screen name={"setup"} />
+      <Tabs.Screen
+        name={"index"}
+        options={{
+          title: `Today: ${getToday()}`,
+          tabBarLabel: "Today",
+        }}
+      />
+      <Tabs.Screen
+        name={"history"}
+        options={{
+          title: "History",
+        }}
+      />
+      <Tabs.Screen
+        name={"setup"}
+        options={{
+          title: "Setup",
+        }}
+      />
     </Tabs>
   );
 }

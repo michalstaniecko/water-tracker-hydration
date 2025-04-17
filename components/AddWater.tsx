@@ -7,7 +7,7 @@ export default function AddWater() {
     <Pressable onPress={addWater} className={"active:opacity-50"}>
       <Text
         className={
-          "bg-blue-500 border border-blue-500 text-white px-3 py-2 rounded"
+          "bg-blue-500 border border-blue-500 text-white px-3 py-3 rounded text-center font-semibold"
         }
       >
         Add glass

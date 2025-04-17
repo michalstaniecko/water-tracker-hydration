@@ -4,14 +4,17 @@ import { useWater } from "@/hooks/useWater";
 export default function RemoveWater() {
   const { removeWater, water } = useWater();
 
+  const defaultClasses =
+    "border-blue-500 border text-blue-500 px-3 py-3 rounded text-center font-semibold";
+
   const variantStyles = {
-    default: "border-blue-500 border text-blue-500 px-3 py-2 rounded",
+    default: "",
     disabled:
-      "border-blue-500 border text-blue-500 px-3 py-2 rounded opacity-30",
+      "border-blue-500 border text-blue-500 px-3 py-3 rounded text-center font-semibold opacity-30",
   };
 
   const getVariant = () => {
-    if (water > 0) {
+    if (Number(water) > 0) {
       return "default";
     }
     return "disabled";
@@ -19,7 +22,9 @@ export default function RemoveWater() {
 
   return (
     <Pressable onPress={removeWater} className={"active:opacity-50"}>
-      <Text className={`${variantStyles[getVariant()]}`}>Remove glass</Text>
+      <Text className={`${defaultClasses} ${variantStyles[getVariant()]}`}>
+        Remove glass
+      </Text>
     </Pressable>
   );
 }
