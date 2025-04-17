@@ -14,7 +14,7 @@ export default function Setup() {
             keyboardType={"numeric"}
             value={setupStore.glassCapacity as unknown as string}
             onChangeText={(text) => {
-              setupStore.setGlassCapacity(parseInt(text));
+              setupStore.setGlassCapacity(text);
             }}
             placeholder={"0"}
           />
@@ -25,7 +25,7 @@ export default function Setup() {
             keyboardType={"numeric"}
             value={setupStore.minimumWater as unknown as string}
             onChangeText={(text) => {
-              setupStore.setMinimumWater(parseInt(text));
+              setupStore.setMinimumWater(text);
             }}
             placeholder={"0"}
           />

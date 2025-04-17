@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useWaterStore } from "@/stores/water";
 import { useSetupStore } from "@/stores/setup";
 
 export function useWater() {
-  const [leftToDrink, setLeftToDrink] = useState(0);
   const waterStore = useWaterStore();
   const setupStore = useSetupStore();
 
   const computeLeftToDrink = () => {
     const todayWater = waterStore.getTodayWater();
-    const left = setupStore.minimumWater - Number(todayWater);
+    const left = Number(setupStore.minimumWater) - Number(todayWater);
     return left < 0 ? 0 : left;
   };
 

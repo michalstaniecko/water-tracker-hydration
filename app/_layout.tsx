@@ -6,6 +6,7 @@ import "react-native-reanimated";
 import "../global.css";
 import { useWaterStore } from "@/stores/water";
 import { AppState } from "react-native";
+import { useSetupStore } from "@/stores/setup";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -13,6 +14,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const appState = useRef(AppState.currentState);
   const { fetchOrInitData } = useWaterStore();
+  const { fetchOrInitData: fetchOrInitSetup } = useSetupStore();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -27,6 +29,7 @@ export default function RootLayout() {
       }
       appState.current = nextAppState;
     });
+    fetchOrInitSetup();
     fetchOrInitData();
     return () => {
       subscription.remove();
