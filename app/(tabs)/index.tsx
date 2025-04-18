@@ -5,9 +5,12 @@ import AddWater from "@/components/AddWater";
 import RemoveWater from "@/components/RemoveWater";
 import { Card } from "@/components/ui/Card";
 import CardWaterAmount from "@/components/CardWaterAmount";
+import Animated, { FadeOut, FadeIn } from "react-native-reanimated";
+
+const duration = 50;
 
 export default function Index() {
-  const { water, leftToDrink } = useWater();
+  const { leftToDrink } = useWater();
   const { minimumWater } = useSetupStore();
 
   return (
@@ -21,18 +24,28 @@ export default function Index() {
             />
             <View className={""}>
               {leftToDrink > 0 && (
-                <Card
-                  title={`${leftToDrink}ml`}
-                  description={"Left to drink"}
-                  backgroundColor={"bg-blue-100"}
-                />
+                <Animated.View
+                  exiting={FadeOut.duration(duration)}
+                  entering={FadeIn.delay(duration)}
+                >
+                  <Card
+                    title={`${leftToDrink}ml`}
+                    description={"Left to drink"}
+                    backgroundColor={"bg-blue-100"}
+                  />
+                </Animated.View>
               )}
               {leftToDrink <= 0 && (
-                <Card
-                  title={`You drank enough water today!`}
-                  backgroundColor={"bg-blue-900"}
-                  titleColor={"text-white"}
-                />
+                <Animated.View
+                  exiting={FadeOut.duration(duration)}
+                  entering={FadeIn.delay(duration)}
+                >
+                  <Card
+                    title={`You drank enough water today!`}
+                    backgroundColor={"bg-blue-900"}
+                    titleColor={"text-white"}
+                  />
+                </Animated.View>
               )}
             </View>
           </View>
