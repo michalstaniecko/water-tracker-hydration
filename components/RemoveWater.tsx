@@ -1,8 +1,10 @@
 import { Pressable, Text } from "react-native";
 import { useWater } from "@/hooks/useWater";
+import { useSetupStore } from "@/stores/setup";
 
 export default function RemoveWater() {
   const { removeWater, water } = useWater();
+  const { glassCapacity } = useSetupStore();
 
   const defaultClasses =
     "border-blue-500 border text-blue-500 px-3 py-3 rounded text-center font-semibold";
@@ -21,9 +23,12 @@ export default function RemoveWater() {
   };
 
   return (
-    <Pressable onPress={removeWater} className={"active:opacity-50"}>
+    <Pressable
+      onPress={removeWater}
+      className={`${getVariant() !== "disabled" ? "active:opacity-50" : ""}`}
+    >
       <Text className={`${defaultClasses} ${variantStyles[getVariant()]}`}>
-        Remove glass
+        Remove {glassCapacity}ml
       </Text>
     </Pressable>
   );

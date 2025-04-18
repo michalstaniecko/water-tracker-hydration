@@ -5,6 +5,7 @@ type Props = {
   description?: string;
   backgroundColor?: string;
   titleColor?: string;
+  className?: string;
 };
 
 export function Card({
@@ -12,6 +13,7 @@ export function Card({
   description,
   backgroundColor: customBackgroundColor,
   titleColor: customTitleColor,
+  className,
 }: Props) {
   const backgroundColor = customBackgroundColor || "bg-blue-50";
   const titleColor = customTitleColor || "text-gray-900";
@@ -22,7 +24,7 @@ export function Card({
 
   return (
     <View
-      className={`p-4 rounded-lg shadow-sm w-full gap-2 ${backgroundColor}`}
+      className={`p-4 rounded-lg shadow-sm w-full gap-2 ${backgroundColor} ${className}`}
     >
       {title && (
         <Text className={`text-lg font-semibold ${titleColor}`}>{title}</Text>

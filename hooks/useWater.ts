@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useWaterStore } from "@/stores/water";
 import { useSetupStore } from "@/stores/setup";
+import { roundBy } from "@/utils/numbers";
 
 export function useWater() {
   const waterStore = useWaterStore();
@@ -10,6 +11,13 @@ export function useWater() {
     const todayWater = waterStore.getTodayWater();
     const left = Number(setupStore.minimumWater) - Number(todayWater);
     return left < 0 ? 0 : left;
+  };
+
+  const percentOfDailyWater = () => {
+    const todayWater = waterStore.getTodayWater();
+    const percent =
+      (Number(todayWater) / Number(setupStore.minimumWater)) * 100;
+    return percent > 100 ? 100 : roundBy(percent, 5);
   };
 
   const addWater = () => {
@@ -40,5 +48,6 @@ export function useWater() {
     removeWater,
     leftToDrink: computeLeftToDrink(),
     minimumWater: setupStore.minimumWater,
+    percentOfDailyWater: percentOfDailyWater(),
   };
 }
