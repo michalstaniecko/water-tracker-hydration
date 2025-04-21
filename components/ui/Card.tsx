@@ -6,6 +6,7 @@ type Props = {
   backgroundColor?: string;
   titleColor?: string;
   className?: string;
+  children?: React.ReactNode;
 };
 
 export function Card({
@@ -14,22 +15,32 @@ export function Card({
   backgroundColor: customBackgroundColor,
   titleColor: customTitleColor,
   className,
+  children,
 }: Props) {
   const backgroundColor = customBackgroundColor || "bg-blue-50";
   const titleColor = customTitleColor || "text-gray-900";
 
-  if (!title && !description) {
+  if (!title && !description && !children) {
     return null;
   }
 
   return (
     <View
-      className={`p-4 rounded-lg shadow-sm w-full gap-2 ${backgroundColor} ${className}`}
+      className={`relative p-4 rounded-lg w-full gap-2 shadow-sm ${backgroundColor} ${className}`}
     >
-      {title && (
-        <Text className={`text-lg font-semibold ${titleColor}`}>{title}</Text>
+      {!children && (
+        <>
+          {title && (
+            <Text className={`text-lg font-semibold ${titleColor}`}>
+              {title}
+            </Text>
+          )}
+          {description && (
+            <Text className={"text-gray-700"}>{description}</Text>
+          )}
+        </>
       )}
-      {description && <Text className={"text-gray-700"}>{description}</Text>}
+      {children}
     </View>
   );
 }

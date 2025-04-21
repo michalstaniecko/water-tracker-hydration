@@ -17,7 +17,7 @@ export function useWater() {
     const todayWater = waterStore.getTodayWater();
     const percent =
       (Number(todayWater) / Number(setupStore.minimumWater)) * 100;
-    return percent > 100 ? 100 : roundBy(percent, 5);
+    return percent > 100 ? 100 : percent;
   };
 
   const addWater = () => {
