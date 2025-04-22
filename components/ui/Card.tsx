@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, ViewStyle } from "react-native";
 
 type Props = {
   title?: string;
@@ -7,6 +7,7 @@ type Props = {
   titleColor?: string;
   className?: string;
   children?: React.ReactNode;
+  style?: ViewStyle;
 };
 
 export function Card({
@@ -16,6 +17,7 @@ export function Card({
   titleColor: customTitleColor,
   className,
   children,
+  style,
 }: Props) {
   const backgroundColor = customBackgroundColor || "bg-blue-50";
   const titleColor = customTitleColor || "text-gray-900";
@@ -27,6 +29,7 @@ export function Card({
   return (
     <View
       className={`relative p-4 rounded-lg w-full gap-2 shadow-sm ${backgroundColor} ${className}`}
+      style={style}
     >
       {!children && (
         <>

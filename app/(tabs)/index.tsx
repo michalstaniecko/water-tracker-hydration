@@ -1,4 +1,4 @@
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, Text } from "react-native";
 import { useSetupStore } from "@/stores/setup";
 import { useWater } from "@/hooks/useWater";
 import AddWater from "@/components/AddWater";
@@ -6,6 +6,7 @@ import RemoveWater from "@/components/RemoveWater";
 import { Card } from "@/components/ui/Card";
 import CardWaterAmount from "@/components/CardWaterAmount";
 import Animated, { FadeOut, FadeIn } from "react-native-reanimated";
+import CardDayProgress from "@/components/CardDayProgress";
 
 const duration = 50;
 
@@ -22,6 +23,8 @@ export default function Index() {
               title={`${minimumWater}ml`}
               description={"Daily requirement"}
             />
+          </View>
+          <View className={"flex-1"}>
             <View className={""}>
               {leftToDrink > 0 && (
                 <Animated.View
@@ -49,9 +52,10 @@ export default function Index() {
               )}
             </View>
           </View>
-          <View className={"flex-1"}>
-            <CardWaterAmount />
-          </View>
+        </View>
+        <View className={"flex-row gap-3"}>
+          <CardDayProgress />
+          <CardWaterAmount />
         </View>
         <View className={"flex-row gap-3"}>
           <View className={"flex-1"}>

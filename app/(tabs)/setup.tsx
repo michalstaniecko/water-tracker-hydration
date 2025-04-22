@@ -1,14 +1,19 @@
-import { Keyboard, Text, TouchableWithoutFeedback, View } from "react-native";
+import {
+  Keyboard,
+  ScrollView,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import Input from "@/components/ui/Input";
-import { useSetupStore } from "@/stores/setup";
+import { SetupOptions, useSetupStore } from "@/stores/setup";
 
 export default function Setup() {
   const setupStore = useSetupStore();
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View className={"gap-2 flex-1 p-1"}>
-        <Text>Setup</Text>
-        <View>
+      <ScrollView contentContainerClassName={"gap-3 flex-1 p-5"}>
+        <View className={"gap-1"}>
           <Text>Glass capacity, in ml.:</Text>
           <Input
             keyboardType={"numeric"}
@@ -19,7 +24,7 @@ export default function Setup() {
             placeholder={"0"}
           />
         </View>
-        <View>
+        <View className={"gap-1"}>
           <Text>Daily water requirement, in ml.:</Text>
           <Input
             keyboardType={"numeric"}
@@ -30,7 +35,40 @@ export default function Setup() {
             placeholder={"0"}
           />
         </View>
-      </View>
+
+        <View className={"gap-1"}>
+          <Text>Start, and end of the day:</Text>
+          <View className={"flex-row gap-2 items-center"}>
+            <Input
+              className={"flex-1"}
+              keyboardType={"numeric"}
+              value={
+                setupStore[SetupOptions.DAY].startHour as unknown as string
+              }
+              onChangeText={(text) => {
+                setupStore.setOption(SetupOptions.DAY, {
+                  startHour: parseInt(text),
+                  endHour: setupStore[SetupOptions.DAY].endHour,
+                });
+              }}
+              placeholder={"0"}
+            />
+            <Text>-</Text>
+            <Input
+              className={"flex-1"}
+              keyboardType={"numeric"}
+              value={setupStore[SetupOptions.DAY].endHour as unknown as string}
+              onChangeText={(text) => {
+                setupStore.setOption(SetupOptions.DAY, {
+                  startHour: setupStore[SetupOptions.DAY].startHour,
+                  endHour: parseInt(text),
+                });
+              }}
+              placeholder={"0"}
+            />
+          </View>
+        </View>
+      </ScrollView>
     </TouchableWithoutFeedback>
   );
 }

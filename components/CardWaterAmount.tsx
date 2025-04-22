@@ -7,7 +7,7 @@ export default function CardWaterAmount() {
 
   return (
     <>
-      <Card className={"flex-1 p-0"} backgroundColor={"bg-white"}>
+      <Card className={"p-0 flex-[2] h-[200]"} backgroundColor={"bg-white"}>
         <View className={"relative z-10"}>
           <Text className={`text-lg font-semibold text-gray-900`}>
             {`${water}ml`}
