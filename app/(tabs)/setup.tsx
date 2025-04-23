@@ -42,14 +42,20 @@ export default function Setup() {
             <Input
               className={"flex-1"}
               keyboardType={"numeric"}
-              value={
-                setupStore[SetupOptions.DAY].startHour as unknown as string
-              }
+              value={`${setupStore[SetupOptions.DAY].startHour}`}
               onChangeText={(text) => {
                 setupStore.setOption(SetupOptions.DAY, {
-                  startHour: parseInt(text),
+                  startHour: text ? parseInt(text) : "",
                   endHour: setupStore[SetupOptions.DAY].endHour,
                 });
+              }}
+              onBlur={(value) => {
+                if (!value) {
+                  setupStore.setOption(SetupOptions.DAY, {
+                    startHour: 0,
+                    endHour: setupStore[SetupOptions.DAY].endHour,
+                  });
+                }
               }}
               placeholder={"0"}
             />
@@ -61,8 +67,16 @@ export default function Setup() {
               onChangeText={(text) => {
                 setupStore.setOption(SetupOptions.DAY, {
                   startHour: setupStore[SetupOptions.DAY].startHour,
-                  endHour: parseInt(text),
+                  endHour: text ? parseInt(text) : "",
                 });
+              }}
+              onBlur={(value) => {
+                if (!value) {
+                  setupStore.setOption(SetupOptions.DAY, {
+                    startHour: setupStore[SetupOptions.DAY].startHour,
+                    endHour: 24,
+                  });
+                }
               }}
               placeholder={"0"}
             />

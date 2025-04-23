@@ -83,12 +83,16 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
     const fullDay = endHour - startHour;
     const now = dayjs();
     const currentHour = now.hour();
-    if (currentHour < startHour) {
+    if (currentHour <= startHour) {
       return 0;
     }
-    if (currentHour > endHour) {
+    if (currentHour >= endHour) {
       return 100;
     }
-    return Math.round(((currentHour - startHour) / fullDay) * 100);
+    const progress = Math.round(((currentHour - startHour) / fullDay) * 100);
+    if (!progress) {
+      return 0;
+    }
+    return progress;
   },
 }));

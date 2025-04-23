@@ -1,6 +1,6 @@
 import { TextInput, KeyboardTypeOptions } from "react-native";
 import { Keyboard } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   value: string;
@@ -9,6 +9,7 @@ type Props = {
   secureTextEntry?: boolean;
   keyboardType?: KeyboardTypeOptions;
   className?: string;
+  onBlur?: (text: string) => void;
 };
 
 export default function Input({
@@ -18,12 +19,20 @@ export default function Input({
   secureTextEntry,
   keyboardType = "default",
   className,
+  onBlur,
 }: Props) {
-  const [value, setValue] = useState(initValue.toString());
+  const [value, setValue] = useState(`${initValue}`);
   function changeHandler(text: string) {
     setValue(text);
     onChangeText?.(text);
   }
+  function blurHandler() {
+    onBlur?.(value);
+  }
+
+  useEffect(() => {
+    setValue(`${initValue}`);
+  }, [initValue]);
   return (
     <TextInput
       style={{
@@ -39,6 +48,7 @@ export default function Input({
       onSubmitEditing={Keyboard.dismiss}
       secureTextEntry={secureTextEntry}
       keyboardType={keyboardType}
+      onBlur={blurHandler}
     />
   );
 }

@@ -1,9 +1,12 @@
 import { Card } from "@/components/ui/Card";
 import { useWater } from "@/hooks/useWater";
 import { Text, View } from "react-native";
+import { useEffect } from "react";
 
 export default function CardWaterAmount() {
   const { water, percentOfDailyWater } = useWater();
+
+  useEffect(() => {}, [percentOfDailyWater]);
 
   return (
     <>
