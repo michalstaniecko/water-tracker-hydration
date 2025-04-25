@@ -36,7 +36,6 @@ export default function CardDayProgress() {
             End: {setupStore[SetupOptions.DAY].endHour}:00
           </Text>
           <Text className={"text-gray-700"}>Day progress</Text>
-          <Text>{setupStore.getDayProgress()}</Text>
         </View>
         <View
           className={
