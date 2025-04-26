@@ -6,12 +6,14 @@ type Water = {
   amount: string;
 };
 
+export type HistoryRows = {
+  [date: string]: {
+    water: string;
+  };
+} | null;
+
 type WaterStore = {
-  history: {
-    [date: string]: {
-      water: string;
-    };
-  } | null;
+  history: HistoryRows;
   fetchOrInitData: () => Promise<void>;
   resetWater: () => void;
   resetTodayWater: () => void;
