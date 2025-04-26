@@ -13,12 +13,13 @@
     },
     "production": {
       "autoIncrement": true,
+    }
+  },
+  "submit": {
+    "production": {
       "android": {
         "releaseStatus": "draft"
       }
     }
-  },
-  "submit": {
-    "production": {}
   }
 }
