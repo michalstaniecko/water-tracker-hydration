@@ -22,6 +22,10 @@ type WaterStore = {
   getWater: (date: string) => string;
   getTodayWater: () => string;
   hasHistory: () => boolean;
+  getSortedHistory: () => {
+    water: string;
+    date: string;
+  }[];
 };
 
 const storageKey = "waterData";
@@ -92,5 +96,15 @@ export const useWaterStore = create<WaterStore>((set, get) => ({
       return true;
     }
     return false;
+  },
+  getSortedHistory: () => {
+    const history = get().history;
+    if (!history) return [];
+    return Object.keys(history)
+      .reverse()
+      .map((date) => ({
+        water: history[date].water,
+        date: date,
+      }));
   },
 }));
