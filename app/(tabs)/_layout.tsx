@@ -1,26 +1,11 @@
 import { Tabs } from "expo-router";
-import React, { useRef } from "react";
+import React from "react";
 import { getToday } from "@/utils/date";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import {
-  BannerAd,
-  BannerAdSize,
-  TestIds,
-  useForeground,
-} from "react-native-google-mobile-ads";
 import { Platform } from "react-native";
-
-const adUnitId = __DEV__
-  ? TestIds.ADAPTIVE_BANNER
-  : "ca-app-pub-7007354971618918/3882663398";
+import { Banner } from "@/components/ads/Banner";
 
 export default function TabLayout() {
-  const bannerRef = useRef<BannerAd>(null);
-
-  useForeground(() => {
-    Platform.OS === "ios" && bannerRef.current?.load();
-  });
-
   return (
     <>
       <Tabs
@@ -31,13 +16,7 @@ export default function TabLayout() {
           return (
             <>
               {children}
-              {Platform.OS === "android" && (
-                <BannerAd
-                  ref={bannerRef}
-                  unitId={adUnitId}
-                  size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-                />
-              )}
+              {Platform.OS === "android" && <Banner />}
             </>
           );
         }}
