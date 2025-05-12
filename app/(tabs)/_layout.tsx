@@ -16,7 +16,7 @@ export default function TabLayout() {
           return (
             <>
               {children}
-              {Platform.OS === "android" && <Banner />}
+              <Banner />
             </>
           );
         }}
