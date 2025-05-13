@@ -17,7 +17,6 @@ export default function Index() {
 
   return (
     <ScrollView contentContainerClassName={"flex-1 p-5"}>
-      <Banner />
       <View className={"gap-3"}>
         <View className={"flex-row gap-3"}>
           <View className={"flex-1 gap-3"}>
