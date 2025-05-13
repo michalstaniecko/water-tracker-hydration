@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import CardWaterAmount from "@/components/CardWaterAmount";
 import Animated, { FadeOut, FadeIn } from "react-native-reanimated";
 import CardDayProgress from "@/components/CardDayProgress";
+import { Banner } from "@/components/ads/Banner";
 
 const duration = 50;
 
@@ -16,6 +17,7 @@ export default function Index() {
 
   return (
     <ScrollView contentContainerClassName={"flex-1 p-5"}>
+      <Banner />
       <View className={"gap-3"}>
         <View className={"flex-row gap-3"}>
           <View className={"flex-1 gap-3"}>
