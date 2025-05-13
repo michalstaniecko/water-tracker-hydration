@@ -29,7 +29,10 @@ export const Banner = () => {
     <>
       <BannerAd
         ref={bannerRef}
-        unitId={TestIds.ADAPTIVE_BANNER}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+        unitId={adUnitId}
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
       />
     </>
