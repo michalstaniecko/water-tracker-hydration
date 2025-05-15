@@ -1,7 +1,6 @@
 import {
   Keyboard,
   ScrollView,
-  Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -12,10 +11,10 @@ export default function Setup() {
   const setupStore = useSetupStore();
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView contentContainerClassName={"gap-3 flex-1 p-5"}>
+      <ScrollView contentContainerClassName={"gap-5 flex-1 p-5"}>
         <View className={"gap-1"}>
-          <Text>Glass capacity, in ml.:</Text>
           <Input
+            label={"Glass capacity, in ml."}
             keyboardType={"numeric"}
             value={setupStore.glassCapacity as unknown as string}
             onChangeText={(text) => {
@@ -25,8 +24,8 @@ export default function Setup() {
           />
         </View>
         <View className={"gap-1"}>
-          <Text>Daily water requirement, in ml.:</Text>
           <Input
+            label={"Daily water requirement, in ml.:"}
             keyboardType={"numeric"}
             value={setupStore.minimumWater as unknown as string}
             onChangeText={(text) => {
@@ -36,50 +35,54 @@ export default function Setup() {
           />
         </View>
 
-        <View className={"gap-1"}>
-          <Text>Start, and end of the day:</Text>
-          <View className={"flex-row gap-2 items-center"}>
-            <Input
-              className={"flex-1"}
-              keyboardType={"numeric"}
-              value={`${setupStore[SetupOptions.DAY].startHour}`}
-              onChangeText={(text) => {
-                setupStore.setOption(SetupOptions.DAY, {
-                  startHour: text ? parseInt(text) : "",
-                  endHour: setupStore[SetupOptions.DAY].endHour,
-                });
-              }}
-              onBlur={(value) => {
-                if (!value) {
+        <View>
+          <View className={"flex-row gap-3"}>
+            <View className={"flex-grow"}>
+              <Input
+                label={"Start of the day"}
+                keyboardType={"numeric"}
+                value={`${setupStore[SetupOptions.DAY].startHour}`}
+                onChangeText={(text) => {
                   setupStore.setOption(SetupOptions.DAY, {
-                    startHour: 0,
+                    startHour: text ? parseInt(text) : "",
                     endHour: setupStore[SetupOptions.DAY].endHour,
                   });
+                }}
+                onBlur={(value) => {
+                  if (!value) {
+                    setupStore.setOption(SetupOptions.DAY, {
+                      startHour: 0,
+                      endHour: setupStore[SetupOptions.DAY].endHour,
+                    });
+                  }
+                }}
+                placeholder={"0"}
+              />
+            </View>
+            <View className={"flex-grow"}>
+              <Input
+                label={"End of the day"}
+                keyboardType={"numeric"}
+                value={
+                  setupStore[SetupOptions.DAY].endHour as unknown as string
                 }
-              }}
-              placeholder={"0"}
-            />
-            <Text>-</Text>
-            <Input
-              className={"flex-1"}
-              keyboardType={"numeric"}
-              value={setupStore[SetupOptions.DAY].endHour as unknown as string}
-              onChangeText={(text) => {
-                setupStore.setOption(SetupOptions.DAY, {
-                  startHour: setupStore[SetupOptions.DAY].startHour,
-                  endHour: text ? parseInt(text) : "",
-                });
-              }}
-              onBlur={(value) => {
-                if (!value) {
+                onChangeText={(text) => {
                   setupStore.setOption(SetupOptions.DAY, {
                     startHour: setupStore[SetupOptions.DAY].startHour,
-                    endHour: 24,
+                    endHour: text ? parseInt(text) : "",
                   });
-                }
-              }}
-              placeholder={"0"}
-            />
+                }}
+                onBlur={(value) => {
+                  if (!value) {
+                    setupStore.setOption(SetupOptions.DAY, {
+                      startHour: setupStore[SetupOptions.DAY].startHour,
+                      endHour: 24,
+                    });
+                  }
+                }}
+                placeholder={"0"}
+              />
+            </View>
           </View>
         </View>
       </ScrollView>
