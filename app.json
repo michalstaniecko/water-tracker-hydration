@@ -15,12 +15,15 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "icon": {
-        "light": "./assets/images/ios-light.png"
+        "dark": "./assets/images/ios-dark.png",
+        "light": "./assets/images/ios-light.png",
+        "tinted": "./assets/images/ios-tinted.png"
       }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
+        "monochromeImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "website.ihumbak.hydration"
