@@ -67,7 +67,7 @@ export default function Input({
       )}
       <TextInput
         ref={ref}
-        className={`h-[32] border-b-2 font-medium focus:border-blue-700 ${className}`}
+        className={`h-[32] py-0 border-b-2 font-medium focus:border-blue-700 ${className}`}
         value={value}
         placeholder={placeholder}
         secureTextEntry={secureTextEntry}
