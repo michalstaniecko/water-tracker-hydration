@@ -13,5 +13,5 @@ export function convertDateFormat(
   if (dayjs(date, to, true).isValid()) {
     return date;
   }
-  return dayjs(date, from).format(to);
+  return dayjs(date, from, true).format(to);
 }

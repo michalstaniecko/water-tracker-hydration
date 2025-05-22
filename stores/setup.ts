@@ -39,7 +39,7 @@ const initialState: SetupState = {
     startHour: 8,
     endHour: 23,
   },
-  dateFormat: "DD/MM/YYYY",
+  dateFormat: DEFAULT_DATE_FORMAT,
 };
 
 export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
