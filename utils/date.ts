@@ -10,7 +10,7 @@ export function convertDateFormat(
   from: string | string[],
   to: string,
 ) {
-  if (dayjs(date, to).isValid()) {
+  if (dayjs(date, to, true).isValid()) {
     return date;
   }
   return dayjs(date, from).format(to);

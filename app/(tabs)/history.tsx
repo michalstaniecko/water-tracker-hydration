@@ -5,9 +5,9 @@ import { DEFAULT_DATE_FORMAT } from "@/config/date";
 import { useSetupStore } from "@/stores/setup";
 
 const possibleDateFormatsFrom = [
+  "MM/DD/YYYY",
   "DD/M/YYYY",
   "M/D/YYYY",
-  "MM/DD/YYYY",
   DEFAULT_DATE_FORMAT,
 ];
 
