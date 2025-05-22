@@ -2,10 +2,11 @@ import { Tabs } from "expo-router";
 import React from "react";
 import { getToday } from "@/utils/date";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Platform } from "react-native";
 import { Banner } from "@/components/ads/Banner";
+import { useSetupStore } from "@/stores/setup";
 
 export default function TabLayout() {
+  const { dateFormat } = useSetupStore();
   return (
     <>
       <Tabs
@@ -24,7 +25,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name={"index"}
           options={{
-            title: `Today: ${getToday()}`,
+            title: `Today: ${getToday(dateFormat)}`,
             tabBarLabel: "Today",
             tabBarIcon: ({ color }) => (
               <FontAwesome size={28} name={"home"} color={color} />

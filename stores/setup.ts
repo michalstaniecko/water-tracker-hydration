@@ -1,11 +1,13 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import dayjs from "dayjs";
+import { DEFAULT_DATE_FORMAT } from "@/config/date";
 
 export enum SetupOptions {
   GLASS_CAPACITY = "glassCapacity",
   MINIMUM_WATER = "minimumWater",
   DAY = "day",
+  DATE_FORMAT = "dateFormat",
 }
 
 type SetupState = {
@@ -15,6 +17,7 @@ type SetupState = {
     startHour: number;
     endHour: number;
   };
+  [SetupOptions.DATE_FORMAT]: string;
 };
 
 type SetupActions = {
@@ -36,6 +39,7 @@ const initialState: SetupState = {
     startHour: 8,
     endHour: 23,
   },
+  dateFormat: DEFAULT_DATE_FORMAT,
 };
 
 export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
@@ -58,6 +62,7 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
     glassCapacity: get().glassCapacity,
     minimumWater: get().minimumWater,
     day: get().day,
+    dateFormat: get()[SetupOptions.DATE_FORMAT],
   }),
   setGlassCapacity: (capacity: string) => {
     get().setOption(SetupOptions.GLASS_CAPACITY, capacity);
