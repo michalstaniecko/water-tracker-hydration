@@ -7,16 +7,19 @@ import { Card } from "@/components/ui/Card";
 import CardWaterAmount from "@/components/CardWaterAmount";
 import Animated, { FadeOut, FadeIn } from "react-native-reanimated";
 import CardDayProgress from "@/components/CardDayProgress";
-import { Banner } from "@/components/ads/Banner";
+import { useTranslation } from "react-i18next";
 
 const duration = 50;
 
 export default function Index() {
   const { leftToDrink } = useWater();
   const { minimumWater } = useSetupStore();
+  const { t } = useTranslation();
 
   return (
     <ScrollView contentContainerClassName={"flex-1 p-5"}>
+      {/* TODO: only for testing */}
+      <Text>{t("welcome")}</Text>
       <View className={"gap-3"}>
         <View className={"flex-row gap-3"}>
           <View className={"flex-1 gap-3"}>

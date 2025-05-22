@@ -7,6 +7,8 @@ import "../global.css";
 import { useWaterStore } from "@/stores/water";
 import { AppState } from "react-native";
 import { useSetupStore } from "@/stores/setup";
+import i18n from "@/plugins/i18n";
+import { getLocales } from "expo-localization";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -18,6 +20,11 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+
+  useEffect(() => {
+    const { languageCode } = getLocales()[0];
+    i18n.changeLanguage(languageCode as string | undefined);
+  }, []);
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
