@@ -1,0 +1,13 @@
+{
+  "welcome": "Welcome to our app!",
+  "dailyRequirement": "Dzienne zapotrzebowanie",
+  "leftToDrink": "Pozostało do wypicia",
+  "youDrankEnoughWaterToday": "Wypiłeś odpowiednią ilość wody na dzisiaj!",
+  "currentTime": "Aktualny czas",
+  "dayProgress": "Progres dnia",
+  "dayStart": "Rozpoczęcie dnia",
+  "dayEnd": "Zakończenie dnia",
+  "todayWaterAmount": "Dzisiejsze spożycie wody",
+  "addWaterButton": "Dodaj {{capacity}}ml",
+  "removeWaterButton": "Usuń {{capacity}}ml"
+}

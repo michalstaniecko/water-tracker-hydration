@@ -1,8 +1,10 @@
 import { Pressable, Text } from "react-native";
 import { useWater } from "@/hooks/useWater";
 import { useSetupStore } from "@/stores/setup";
+import { useTranslation } from "react-i18next";
 
 export default function RemoveWater() {
+  const { t } = useTranslation();
   const { removeWater, water } = useWater();
   const { glassCapacity } = useSetupStore();
 
@@ -28,7 +30,7 @@ export default function RemoveWater() {
       className={`${getVariant() !== "disabled" ? "active:opacity-50" : ""}`}
     >
       <Text className={`${defaultClasses} ${variantStyles[getVariant()]}`}>
-        Remove {glassCapacity}ml
+        {t(`removeWaterButton`, { capacity: glassCapacity })}
       </Text>
     </Pressable>
   );

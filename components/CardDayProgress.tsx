@@ -8,10 +8,13 @@ import Animated, {
   useDerivedValue,
   useSharedValue,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function CardDayProgress() {
   const setupStore = useSetupStore();
   const [time, setTime] = useState(dayjs().format("HH:mm"));
+  const { t } = useTranslation();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -25,17 +28,26 @@ export default function CardDayProgress() {
   return (
     <>
       <Card className={"p-0 flex-1 h-[200]"} backgroundColor={"bg-white"}>
-        <View className={"relative z-10"}>
-          <Text className={`text-lg font-semibold text-gray-900`}>
-            Time: {`${time}`}
-          </Text>
-          <Text className={"font-semibold text-gray-600"}>
-            Start:{setupStore[SetupOptions.DAY].startHour}:00
-          </Text>
-          <Text className={"font-semibold text-gray-600"}>
-            End: {setupStore[SetupOptions.DAY].endHour}:00
-          </Text>
-          <Text className={"text-gray-700"}>Day progress</Text>
+        <View className={"relative z-10 h-full"}>
+          <View className={"flex-row items-center justify-between mb-2"}>
+            <FontAwesome name={"clock-o"} size={16} />
+            <Text className={`text-lg font-semibold text-gray-900`}>
+              {`${time}`}
+            </Text>
+          </View>
+          <View className={"flex-row items-center justify-between"}>
+            <FontAwesome name={"sun-o"} />
+            <Text className={"font-semibold text-gray-600"}>
+              {setupStore[SetupOptions.DAY].startHour}:00
+            </Text>
+          </View>
+          <View className={"flex-row items-center justify-between"}>
+            <FontAwesome name={"moon-o"} />
+            <Text className={"font-semibold text-gray-600"}>
+              {setupStore[SetupOptions.DAY].endHour}:00
+            </Text>
+          </View>
+          <Text className={"mt-auto"}>{t("dayProgress")}</Text>
         </View>
         <View
           className={

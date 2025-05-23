@@ -18,26 +18,25 @@ export default function Index() {
 
   return (
     <ScrollView contentContainerClassName={"flex-1 p-5"}>
-      {/* TODO: only for testing */}
-      <Text>{t("welcome")}</Text>
       <View className={"gap-3"}>
         <View className={"flex-row gap-3"}>
           <View className={"flex-1 gap-3"}>
             <Card
               title={`${minimumWater}ml`}
-              description={"Daily requirement"}
+              description={t("dailyRequirement")}
             />
           </View>
           <View className={"flex-1"}>
-            <View className={""}>
+            <View className={"flex-1"}>
               {leftToDrink > 0 && (
                 <Animated.View
                   exiting={FadeOut.duration(duration)}
                   entering={FadeIn.delay(duration)}
                 >
                   <Card
+                    className={"h-full"}
                     title={`${leftToDrink}ml`}
-                    description={"Left to drink"}
+                    description={t("leftToDrink")}
                     backgroundColor={"bg-blue-100"}
                   />
                 </Animated.View>
@@ -48,7 +47,8 @@ export default function Index() {
                   entering={FadeIn.delay(duration)}
                 >
                   <Card
-                    title={`You drank enough water today!`}
+                    className={"h-full"}
+                    title={t("youDrankEnoughWaterToday")}
                     backgroundColor={"bg-blue-900"}
                     titleColor={"text-white"}
                   />
