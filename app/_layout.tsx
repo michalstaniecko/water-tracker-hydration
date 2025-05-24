@@ -15,16 +15,18 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const appState = useRef(AppState.currentState);
-  const { fetchOrInitData } = useWaterStore();
-  const { fetchOrInitData: fetchOrInitSetup } = useSetupStore();
+  const { fetchOrInitData: fetchOrInitWaterData } = useWaterStore();
+  const { fetchOrInitData: fetchOrInitSetup, languageCode } = useSetupStore();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   useEffect(() => {
-    const { languageCode } = getLocales()[0];
-    i18n.changeLanguage(languageCode as string | undefined);
-  }, []);
+    const { languageCode: deviceLanguageCode } = getLocales()[0];
+    i18n.changeLanguage(
+      languageCode ? languageCode : (deviceLanguageCode as string | undefined),
+    );
+  }, [languageCode]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
@@ -32,12 +34,12 @@ export default function RootLayout() {
         appState.current.match(/inactive|background/) &&
         nextAppState === "active"
       ) {
-        fetchOrInitData();
+        fetchOrInitWaterData();
       }
       appState.current = nextAppState;
     });
     fetchOrInitSetup();
-    fetchOrInitData();
+    fetchOrInitWaterData();
     return () => {
       subscription.remove();
     };

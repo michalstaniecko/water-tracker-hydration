@@ -7,10 +7,16 @@ import {
 import Input from "@/components/ui/Input";
 import { SetupOptions, useSetupStore } from "@/stores/setup";
 import { useTranslation } from "react-i18next";
+import Picker from "@/components/ui/Picker";
 
 export default function Setup() {
   const { t } = useTranslation("setup");
   const setupStore = useSetupStore();
+
+  const handleChangeLanguage = (languageCode: string) => {
+    setupStore.setOption(SetupOptions.LANGUAGE_CODE, languageCode);
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView contentContainerClassName={"gap-5 flex-1 p-5"}>
@@ -82,6 +88,16 @@ export default function Setup() {
               placeholder={"0"}
             />
           </View>
+        </View>
+        <View>
+          <Picker
+            options={[
+              { label: "English", value: "en" },
+              { label: "Polish", value: "pl" },
+            ]}
+            onChange={handleChangeLanguage}
+            value={setupStore[SetupOptions.LANGUAGE_CODE]}
+          />
         </View>
       </ScrollView>
     </TouchableWithoutFeedback>
