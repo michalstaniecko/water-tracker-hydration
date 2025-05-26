@@ -9,5 +9,6 @@
   "dayEnd": "Zakończenie dnia",
   "todayWaterAmount": "Dzisiejsze spożycie wody",
   "addWaterButton": "Dodaj {{capacity}}ml",
-  "removeWaterButton": "Usuń {{capacity}}ml"
+  "removeWaterButton": "Usuń {{capacity}}ml",
+  "close": "Zamknij"
 }

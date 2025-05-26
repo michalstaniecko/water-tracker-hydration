@@ -6,17 +6,21 @@ import tabsEn from "@/i18n/en/tabs.json";
 import tabsPl from "@/i18n/pl/tabs.json";
 import setupEn from "@/i18n/en/setup.json";
 import setupPl from "@/i18n/pl/setup.json";
+import languagesEn from "@/i18n/en/languages.json";
+import languagesPl from "@/i18n/pl/languages.json";
 
 const resources = {
   en: {
     translation: translationEn,
     tabs: tabsEn,
     setup: setupEn,
+    languages: languagesEn,
   },
   pl: {
     translation: translationPl,
     tabs: tabsPl,
     setup: setupPl,
+    languages: languagesPl,
   },
 };
 

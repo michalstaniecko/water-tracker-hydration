@@ -7,11 +7,17 @@ import {
 import Input from "@/components/ui/Input";
 import { SetupOptions, useSetupStore } from "@/stores/setup";
 import { useTranslation } from "react-i18next";
-import Picker from "@/components/ui/Picker";
+import { ModalPicker } from "@/components/ui/ModalPicker";
+import { languages } from "@/config/languages";
 
 export default function Setup() {
   const { t } = useTranslation("setup");
   const setupStore = useSetupStore();
+
+  const mappedLanguages = languages.map((lang) => ({
+    label: t(`${lang.label}`, { ns: "languages" }),
+    value: lang.code,
+  }));
 
   const handleChangeLanguage = (languageCode: string) => {
     setupStore.setOption(SetupOptions.LANGUAGE_CODE, languageCode);
@@ -90,12 +96,10 @@ export default function Setup() {
           </View>
         </View>
         <View>
-          <Picker
-            options={[
-              { label: "English", value: "en" },
-              { label: "Polish", value: "pl" },
-            ]}
-            onChange={handleChangeLanguage}
+          <ModalPicker
+            label={t("selectLanguage")}
+            options={mappedLanguages}
+            onSelect={handleChangeLanguage}
             value={setupStore[SetupOptions.LANGUAGE_CODE]}
           />
         </View>

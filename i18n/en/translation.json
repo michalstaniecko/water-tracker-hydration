@@ -10,4 +10,5 @@
   "todayWaterAmount": "Today water amount",
   "addWaterButton": "Add {{capacity}}ml",
   "removeWaterButton": "Remove {{capacity}}ml",
+  "close": "Close"
 }
