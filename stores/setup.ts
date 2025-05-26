@@ -2,12 +2,14 @@ import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import dayjs from "dayjs";
 import { DEFAULT_DATE_FORMAT } from "@/config/date";
+import * as Localization from "expo-localization";
 
 export enum SetupOptions {
   GLASS_CAPACITY = "glassCapacity",
   MINIMUM_WATER = "minimumWater",
   DAY = "day",
   DATE_FORMAT = "dateFormat",
+  LANGUAGE_CODE = "languageCode",
 }
 
 type SetupState = {
@@ -18,11 +20,13 @@ type SetupState = {
     endHour: number;
   };
   [SetupOptions.DATE_FORMAT]: string;
+  [SetupOptions.LANGUAGE_CODE]?: string;
 };
 
 type SetupActions = {
   setGlassCapacity: (capacity: string) => void;
   setMinimumWater: (water: string) => void;
+  setLanguageCode: (languageCode: string) => void;
   getOptions: () => SetupState;
   setOption: (option: SetupOptions, value: number | string | {}) => void;
   reset: () => void;
@@ -40,6 +44,7 @@ const initialState: SetupState = {
     endHour: 23,
   },
   dateFormat: DEFAULT_DATE_FORMAT,
+  languageCode: Localization.getLocales()[0].languageCode || "en",
 };
 
 export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
@@ -54,6 +59,7 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
         await AsyncStorage.setItem(storageKey, JSON.stringify(initialState));
         set(initialState);
       }
+      return;
     } catch (error) {
       console.error("Error initializing setup data:", error);
     }
@@ -63,6 +69,7 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
     minimumWater: get().minimumWater,
     day: get().day,
     dateFormat: get()[SetupOptions.DATE_FORMAT],
+    languageCode: get()[SetupOptions.LANGUAGE_CODE],
   }),
   setGlassCapacity: (capacity: string) => {
     get().setOption(SetupOptions.GLASS_CAPACITY, capacity);
@@ -81,6 +88,9 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
     } catch (error) {
       console.error("Error setting option:", error);
     }
+  },
+  setLanguageCode: (languageCode: string) => {
+    get().setOption(SetupOptions.LANGUAGE_CODE, languageCode);
   },
   reset: () => set(initialState),
   getDayProgress: () => {

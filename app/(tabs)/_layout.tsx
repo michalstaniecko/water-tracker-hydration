@@ -4,8 +4,10 @@ import { getToday } from "@/utils/date";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Banner } from "@/components/ads/Banner";
 import { useSetupStore } from "@/stores/setup";
+import { useTranslation } from "react-i18next";
 
 export default function TabLayout() {
+  const { t } = useTranslation("tabs");
   const { dateFormat } = useSetupStore();
   return (
     <>
@@ -25,8 +27,8 @@ export default function TabLayout() {
         <Tabs.Screen
           name={"index"}
           options={{
-            title: `Today: ${getToday(dateFormat)}`,
-            tabBarLabel: "Today",
+            title: `${t("today")}: ${getToday(dateFormat)}`,
+            tabBarLabel: t("today"),
             tabBarIcon: ({ color }) => (
               <FontAwesome size={28} name={"home"} color={color} />
             ),
@@ -35,7 +37,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name={"history"}
           options={{
-            title: "History",
+            title: t("history"),
             tabBarIcon: ({ color }) => (
               <FontAwesome size={24} name={"calendar"} color={color} />
             ),
@@ -44,7 +46,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name={"setup"}
           options={{
-            title: "Setup",
+            title: t("setup"),
             tabBarIcon: ({ color }) => (
               <FontAwesome size={28} name={"cog"} color={color} />
             ),
