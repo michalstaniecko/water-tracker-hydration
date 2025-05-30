@@ -1,8 +1,8 @@
 {
   "glassCapacityInMl": "Glass capacity, in ml.",
   "dailyWaterRequirementInMl": "Your daily water requirement, in ml.",
-  "startOfTheDay": "Start of the day",
-  "endOfTheDay": "End of the day",
+  "startOfTheDay": "What time do you usually start your day?",
+  "endOfTheDay": "What time do you usually end your day?",
   "selectLanguage": "Select language",
   "close": "Close"
 }
