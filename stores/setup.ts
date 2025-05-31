@@ -15,9 +15,9 @@ export enum SetupOptions {
 type SetupState = {
   [SetupOptions.GLASS_CAPACITY]: string;
   [SetupOptions.MINIMUM_WATER]: string;
-  [SetupOptions.DAY]: {
-    startHour: number;
-    endHour: number;
+  day: {
+    startHour: string;
+    endHour: string;
   };
   [SetupOptions.DATE_FORMAT]: string;
   [SetupOptions.LANGUAGE_CODE]?: string;
@@ -40,8 +40,8 @@ const initialState: SetupState = {
   glassCapacity: "250",
   minimumWater: "2000",
   day: {
-    startHour: 8,
-    endHour: 23,
+    startHour: "08:00",
+    endHour: "23:00",
   },
   dateFormat: DEFAULT_DATE_FORMAT,
   languageCode: Localization.getLocales()[0].languageCode || "en",
@@ -95,16 +95,25 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
   reset: () => set(initialState),
   getDayProgress: () => {
     const { startHour, endHour } = get().day;
-    const fullDay = endHour - startHour;
+    const endHourDate = dayjs(endHour, ["HH:mm", "H"], true);
+    const endHourInMinutes = endHourDate.hour() * 60 + endHourDate.minute();
+    const startHourDate = dayjs(startHour, ["HH:mm", "H"], true);
+    const startHourInMinutes =
+      startHourDate.hour() * 60 + startHourDate.minute();
+    const fullDayInMinutes = endHourDate.diff(startHourDate, "minutes");
     const now = dayjs();
     const currentHour = now.hour();
-    if (currentHour <= startHour) {
+    const currentMinute = now.minute();
+    const currentTimeInMinutes = currentHour * 60 + currentMinute;
+    if (currentTimeInMinutes <= startHourInMinutes) {
       return 0;
     }
-    if (currentHour >= endHour) {
+    if (currentTimeInMinutes >= endHourInMinutes) {
       return 100;
     }
-    const progress = Math.round(((currentHour - startHour) / fullDay) * 100);
+    const progress = Math.round(
+      ((currentTimeInMinutes - startHourInMinutes) / fullDayInMinutes) * 100,
+    );
     if (!progress) {
       return 0;
     }
