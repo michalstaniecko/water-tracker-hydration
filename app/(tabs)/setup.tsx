@@ -27,7 +27,7 @@ export default function Setup() {
   const handleStartTimeChange = (time: string) => {
     setupStore.setOption(SetupOptions.DAY, {
       startHour: time,
-      endHour: setupStore[SetupOptions.DAY].endHour,
+      endHour: setupStore.day.endHour,
     });
   };
 
@@ -67,7 +67,7 @@ export default function Setup() {
         <View className={"flex-row justify-between text-blue-"}>
           <View className={"w-[48%]"}>
             <InputTime
-              value={setupStore[SetupOptions.DAY].startHour}
+              value={setupStore.day.startHour}
               label={t("startOfTheDay")}
               onChange={handleStartTimeChange}
               confirmText={t("confirm", { ns: "translation" })}
@@ -76,7 +76,7 @@ export default function Setup() {
           </View>
           <View className={"w-[48%]"}>
             <InputTime
-              value={setupStore[SetupOptions.DAY].endHour}
+              value={setupStore.day.endHour}
               label={t("endOfTheDay")}
               onChange={handleEndTimeChange}
               confirmText={t("confirm", { ns: "translation" })}

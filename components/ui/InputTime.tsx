@@ -48,14 +48,12 @@ export default function InputTime({
     [format, onChange],
   );
 
-  const dateToDisplay = useCallback(convertDateToFormat, []);
-
   return (
     <View>
       <Pressable onPress={() => setOpen(true)}>
         <Label>{label}</Label>
         <Text className={"leading-[32px] py-0 border-b-2 font-normal"}>
-          {dateToDisplay(selectedTime, format)}
+          {convertDateToFormat(selectedTime, format)}
         </Text>
       </Pressable>
       <DatePicker
