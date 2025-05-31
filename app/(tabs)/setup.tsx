@@ -9,6 +9,7 @@ import { SetupOptions, useSetupStore } from "@/stores/setup";
 import { useTranslation } from "react-i18next";
 import { ModalPicker } from "@/components/ui/ModalPicker";
 import { languages } from "@/config/languages";
+import InputTime from "@/components/ui/InputTime";
 
 export default function Setup() {
   const { t } = useTranslation("setup");
@@ -21,6 +22,20 @@ export default function Setup() {
 
   const handleChangeLanguage = (languageCode: string) => {
     setupStore.setOption(SetupOptions.LANGUAGE_CODE, languageCode);
+  };
+
+  const handleStartTimeChange = (time: string) => {
+    setupStore.setOption(SetupOptions.DAY, {
+      startHour: time,
+      endHour: setupStore[SetupOptions.DAY].endHour,
+    });
+  };
+
+  const handleEndTimeChange = (time: string) => {
+    setupStore.setOption(SetupOptions.DAY, {
+      startHour: setupStore.day.startHour,
+      endHour: time,
+    });
   };
 
   return (
@@ -49,49 +64,23 @@ export default function Setup() {
           />
         </View>
 
-        <View className={"flex-row justify-between"}>
+        <View className={"flex-row justify-between text-blue-"}>
           <View className={"w-[48%]"}>
-            <Input
+            <InputTime
+              value={setupStore[SetupOptions.DAY].startHour}
               label={t("startOfTheDay")}
-              keyboardType={"numeric"}
-              value={`${setupStore[SetupOptions.DAY].startHour}`}
-              onChangeText={(text) => {
-                setupStore.setOption(SetupOptions.DAY, {
-                  startHour: text ? parseInt(text) : "",
-                  endHour: setupStore[SetupOptions.DAY].endHour,
-                });
-              }}
-              onBlur={(value) => {
-                if (!value) {
-                  setupStore.setOption(SetupOptions.DAY, {
-                    startHour: 0,
-                    endHour: setupStore[SetupOptions.DAY].endHour,
-                  });
-                }
-              }}
-              placeholder={"0"}
+              onChange={handleStartTimeChange}
+              confirmText={t("confirm", { ns: "translation" })}
+              cancelText={t("cancel", { ns: "translation" })}
             />
           </View>
           <View className={"w-[48%]"}>
-            <Input
+            <InputTime
+              value={setupStore[SetupOptions.DAY].endHour}
               label={t("endOfTheDay")}
-              keyboardType={"numeric"}
-              value={setupStore[SetupOptions.DAY].endHour as unknown as string}
-              onChangeText={(text) => {
-                setupStore.setOption(SetupOptions.DAY, {
-                  startHour: setupStore[SetupOptions.DAY].startHour,
-                  endHour: text ? parseInt(text) : "",
-                });
-              }}
-              onBlur={(value) => {
-                if (!value) {
-                  setupStore.setOption(SetupOptions.DAY, {
-                    startHour: setupStore[SetupOptions.DAY].startHour,
-                    endHour: 24,
-                  });
-                }
-              }}
-              placeholder={"0"}
+              onChange={handleEndTimeChange}
+              confirmText={t("confirm", { ns: "translation" })}
+              cancelText={t("cancel", { ns: "translation" })}
             />
           </View>
         </View>

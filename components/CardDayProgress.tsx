@@ -38,13 +38,13 @@ export default function CardDayProgress() {
           <View className={"flex-row items-center justify-between"}>
             <FontAwesome name={"sun-o"} />
             <Text className={"font-semibold text-gray-600"}>
-              {setupStore[SetupOptions.DAY].startHour}:00
+              {setupStore[SetupOptions.DAY].startHour}
             </Text>
           </View>
           <View className={"flex-row items-center justify-between"}>
             <FontAwesome name={"moon-o"} />
             <Text className={"font-semibold text-gray-600"}>
-              {setupStore[SetupOptions.DAY].endHour}:00
+              {setupStore[SetupOptions.DAY].endHour}
             </Text>
           </View>
           <Text className={"mt-auto"}>{t("dayProgress")}</Text>

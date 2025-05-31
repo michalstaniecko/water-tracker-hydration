@@ -15,3 +15,10 @@ export function convertDateFormat(
   }
   return dayjs(date, from, true).format(to);
 }
+
+export function convertDateToFormat(
+  date: string | Date,
+  format = DEFAULT_DATE_FORMAT,
+) {
+  return dayjs(date).format(format);
+}
