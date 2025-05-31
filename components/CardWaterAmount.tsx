@@ -2,8 +2,10 @@ import { Card } from "@/components/ui/Card";
 import { useWater } from "@/hooks/useWater";
 import { Text, View } from "react-native";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function CardWaterAmount() {
+  const { t } = useTranslation();
   const { water, percentOfDailyWater } = useWater();
 
   useEffect(() => {}, [percentOfDailyWater]);
@@ -11,11 +13,13 @@ export default function CardWaterAmount() {
   return (
     <>
       <Card className={"p-0 flex-[2] h-[200]"} backgroundColor={"bg-white"}>
-        <View className={"relative z-10"}>
+        <View className={"relative z-10 h-full"}>
           <Text className={`text-lg font-semibold text-gray-900`}>
             {`${water}ml`}
           </Text>
-          <Text className={"text-gray-700"}>Water amount</Text>
+          <Text className={"text-gray-700 mt-auto"}>
+            {t("todayWaterAmount")}
+          </Text>
         </View>
         <View
           className={

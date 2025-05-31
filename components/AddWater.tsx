@@ -1,8 +1,10 @@
 import { Pressable, Text } from "react-native";
 import { useWater } from "@/hooks/useWater";
 import { useSetupStore } from "@/stores/setup";
+import { useTranslation } from "react-i18next";
 
 export default function AddWater() {
+  const { t } = useTranslation();
   const { addWater } = useWater();
   const { glassCapacity } = useSetupStore();
   return (
@@ -12,7 +14,7 @@ export default function AddWater() {
           "bg-blue-500 border border-blue-500 text-white px-3 py-3 rounded text-center font-semibold"
         }
       >
-        Add {glassCapacity}ml
+        {t(`addWaterButton`, { capacity: glassCapacity })}
       </Text>
     </Pressable>
   );

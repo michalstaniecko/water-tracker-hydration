@@ -1,12 +1,7 @@
-import {
-  TextInput,
-  Text,
-  KeyboardTypeOptions,
-  View,
-  Pressable,
-} from "react-native";
+import { TextInput, KeyboardTypeOptions, View } from "react-native";
 import { Keyboard } from "react-native";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Label } from "@/components/ui/Label";
 
 type Props = {
   value: string;
@@ -60,14 +55,10 @@ export default function Input({
   }, [initValue]);
   return (
     <View>
-      {label && (
-        <Text className={`text-sm font-medium ${isFocused && "text-blue-700"}`}>
-          {label}
-        </Text>
-      )}
+      {label && <Label>{label}</Label>}
       <TextInput
         ref={ref}
-        className={`h-[32] py-0 border-b-2 font-medium focus:border-blue-700 ${className}`}
+        className={`h-[32] py-0 border-b-2 font-normal focus:border-blue-700 ${className}`}
         value={value}
         placeholder={placeholder}
         secureTextEntry={secureTextEntry}

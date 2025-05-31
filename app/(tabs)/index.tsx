@@ -7,13 +7,14 @@ import { Card } from "@/components/ui/Card";
 import CardWaterAmount from "@/components/CardWaterAmount";
 import Animated, { FadeOut, FadeIn } from "react-native-reanimated";
 import CardDayProgress from "@/components/CardDayProgress";
-import { Banner } from "@/components/ads/Banner";
+import { useTranslation } from "react-i18next";
 
 const duration = 50;
 
 export default function Index() {
   const { leftToDrink } = useWater();
   const { minimumWater } = useSetupStore();
+  const { t } = useTranslation();
 
   return (
     <ScrollView contentContainerClassName={"flex-1 p-5"}>
@@ -22,19 +23,20 @@ export default function Index() {
           <View className={"flex-1 gap-3"}>
             <Card
               title={`${minimumWater}ml`}
-              description={"Daily requirement"}
+              description={t("dailyRequirement")}
             />
           </View>
           <View className={"flex-1"}>
-            <View className={""}>
+            <View className={"flex-1"}>
               {leftToDrink > 0 && (
                 <Animated.View
                   exiting={FadeOut.duration(duration)}
                   entering={FadeIn.delay(duration)}
                 >
                   <Card
+                    className={"h-full"}
                     title={`${leftToDrink}ml`}
-                    description={"Left to drink"}
+                    description={t("leftToDrink")}
                     backgroundColor={"bg-blue-100"}
                   />
                 </Animated.View>
@@ -45,7 +47,8 @@ export default function Index() {
                   entering={FadeIn.delay(duration)}
                 >
                   <Card
-                    title={`You drank enough water today!`}
+                    className={"h-full"}
+                    title={t("youDrankEnoughWaterToday")}
                     backgroundColor={"bg-blue-900"}
                     titleColor={"text-white"}
                   />
