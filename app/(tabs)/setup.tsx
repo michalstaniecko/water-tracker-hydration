@@ -64,7 +64,7 @@ export default function Setup() {
           />
         </View>
 
-        <View className={"flex-row justify-between text-blue-"}>
+        <View className={"flex-row justify-between"}>
           <View className={"w-[48%]"}>
             <InputTime
               value={setupStore.day.startHour}
