@@ -10,10 +10,12 @@ import { useTranslation } from "react-i18next";
 import { ModalPicker } from "@/components/ui/ModalPicker";
 import { languages } from "@/config/languages";
 import InputTime from "@/components/ui/InputTime";
+import { useOnboardingStore, Status } from "@/stores/onboarding";
 
 export default function Setup() {
   const { t } = useTranslation("setup");
   const setupStore = useSetupStore();
+  const onboarding = useOnboardingStore();
 
   const mappedLanguages = languages.map((lang) => ({
     label: t(`${lang.label}`, { ns: "languages" }),
@@ -36,6 +38,10 @@ export default function Setup() {
       startHour: setupStore.day.startHour,
       endHour: time,
     });
+  };
+
+  const handleChangeOnboarding = (value: string) => {
+    onboarding.setStatus(value as Status);
   };
 
   return (
@@ -90,6 +96,23 @@ export default function Setup() {
             options={mappedLanguages}
             onSelect={handleChangeLanguage}
             value={setupStore[SetupOptions.LANGUAGE_CODE]}
+          />
+        </View>
+        <View>
+          <ModalPicker
+            label={t("enableOnboarding")}
+            options={[
+              {
+                label: t("on"),
+                value: "in-progress",
+              },
+              {
+                label: t("off"),
+                value: "completed",
+              },
+            ]}
+            onSelect={handleChangeOnboarding}
+            value={onboarding.status}
           />
         </View>
       </ScrollView>

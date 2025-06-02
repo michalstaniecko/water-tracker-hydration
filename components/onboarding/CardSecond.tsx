@@ -21,10 +21,22 @@ export default function CardSecond() {
           You can update your daily water intake goal in the settings.
         </Text>
         <View className={"flex-row justify-between"}>
-          <Pressable className={"d-flex flex-row items-center gap-2  p-2"}>
+          <Pressable
+            onPress={onboardingStore.setCompleted}
+            className={"d-flex flex-row items-center gap-2  p-2 mr-auto"}
+          >
             <FontAwesome color={"#fff"} name={"times"} />
             <Text className={"text-white uppercase font-semibold text-sm"}>
               Dismiss
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => onboardingStore.setPreviousTipId()}
+            className={"d-flex flex-row items-center gap-2  p-2"}
+          >
+            <FontAwesome color={"#fff"} name={"arrow-circle-left"} />
+            <Text className={"text-white uppercase font-semibold text-sm"}>
+              Previous tip
             </Text>
           </Pressable>
           <Pressable className={"d-flex flex-row items-center gap-2  p-2"}>

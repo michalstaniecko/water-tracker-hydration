@@ -6,7 +6,6 @@ import Animated, {
   FadeIn,
   FadeOut,
   FadingTransition,
-  LinearTransition,
 } from "react-native-reanimated";
 
 const tipId = 0;
@@ -32,7 +31,10 @@ export default function CardWelcome() {
           It's your first time here, so let's get you started.
         </Text>
         <View className={"flex-row justify-between"}>
-          <Pressable className={"d-flex flex-row items-center gap-2  p-2"}>
+          <Pressable
+            onPress={onboardingStore.setCompleted}
+            className={"d-flex flex-row items-center gap-2  p-2"}
+          >
             <FontAwesome color={"#fff"} name={"times"} />
             <Text className={"text-white uppercase font-semibold text-sm"}>
               Dismiss

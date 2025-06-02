@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Pressable } from "react-native";
+import { ScrollView, View } from "react-native";
 import { useSetupStore } from "@/stores/setup";
 import { useWater } from "@/hooks/useWater";
 import AddWater from "@/components/AddWater";
@@ -8,15 +8,12 @@ import CardWaterAmount from "@/components/CardWaterAmount";
 import Animated, {
   FadeOut,
   FadeIn,
-  Layout,
-  LinearTransition,
   FadingTransition,
   LayoutAnimationConfig,
 } from "react-native-reanimated";
 import CardDayProgress from "@/components/CardDayProgress";
 import { useTranslation } from "react-i18next";
 import CardWelcome from "@/components/onboarding/CardWelcome";
-import { useOnboardingStore } from "@/stores/onboarding";
 import CardSecond from "@/components/onboarding/CardSecond";
 
 const duration = 50;
@@ -24,17 +21,11 @@ const duration = 50;
 export default function Index() {
   const { leftToDrink } = useWater();
   const { minimumWater } = useSetupStore();
-  const onboardingStore = useOnboardingStore();
   const { t } = useTranslation();
 
   return (
     <ScrollView contentContainerClassName={"flex-1 p-5"}>
       <View className={"gap-3"}>
-        <View>
-          <Text>
-            Onboarding: {onboardingStore.getIsShown() ? "tak" : "nie"}
-          </Text>
-        </View>
         <CardWelcome />
         <Animated.View layout={FadingTransition} className={"flex-row gap-3"}>
           <View className={"flex-1 gap-3"}>
@@ -78,10 +69,10 @@ export default function Index() {
         </Animated.View>
 
         <CardSecond />
-        <View className={"flex-row gap-3"}>
+        <Animated.View layout={FadingTransition} className={"flex-row gap-3"}>
           <CardDayProgress />
           <CardWaterAmount />
-        </View>
+        </Animated.View>
         <View className={"flex-row gap-3"}>
           <View className={"flex-1"}>
             <RemoveWater />

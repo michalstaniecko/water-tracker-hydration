@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type Status = "completed" | "in-progress";
+export type Status = "completed" | "in-progress";
 
 type OnboardingStateProps = {
   status: Status;
@@ -12,6 +12,8 @@ type OnBoardingActionsProps = {
   setStatus: (status: Status) => void;
   setCurrentTipId?: (tipId: number) => void;
   setNextTipId: () => void;
+  setPreviousTipId: () => void;
+  setCompleted: () => void;
 
   getIsShown: () => boolean;
   getIsShownTip: (tipId: number) => boolean;
@@ -39,6 +41,18 @@ export const useOnboardingStore = create<OnboardingStoreProps>((set, get) => ({
   setNextTipId: () => {
     const nextTipId = (get().currentTipId || 0) + 1;
     set({ currentTipId: nextTipId });
+  },
+
+  setPreviousTipId: () => {
+    const previousTipId = (get().currentTipId || 0) - 1;
+    if (previousTipId >= 0) {
+      set({ currentTipId: previousTipId });
+    }
+  },
+
+  setCompleted: () => {
+    set({ status: "completed" });
+    AsyncStorage.setItem(storageKey, JSON.stringify("completed"));
   },
 
   fetchOrInitData: async () => {
