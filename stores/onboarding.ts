@@ -30,7 +30,7 @@ export const useOnboardingStore = create<OnboardingStoreProps>((set, get) => ({
   currentTipId: 0,
 
   setStatus: (status: Status) => {
-    set({ status });
+    set({ status, currentTipId: 0 });
     AsyncStorage.setItem(storageKey, JSON.stringify(status));
   },
 
@@ -51,7 +51,7 @@ export const useOnboardingStore = create<OnboardingStoreProps>((set, get) => ({
   },
 
   setCompleted: () => {
-    set({ status: "completed" });
+    set({ status: "completed", currentTipId: 0 });
     AsyncStorage.setItem(storageKey, JSON.stringify("completed"));
   },
 

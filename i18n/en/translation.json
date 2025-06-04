@@ -12,5 +12,9 @@
   "removeWaterButton": "Remove {{capacity}}ml",
   "close": "Close",
   "confirm": "Confirm",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "dismiss": "Dismiss",
+  "previousTip": "Previous tip",
+  "nextTip": "Next tip",
+  "finish": "Finish"
 }

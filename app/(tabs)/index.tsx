@@ -10,11 +10,17 @@ import Animated, {
   FadeIn,
   FadingTransition,
   LayoutAnimationConfig,
+  LinearTransition,
+  JumpingTransition,
+  EntryExitTransition,
+  SequencedTransition,
+  CurvedTransition,
 } from "react-native-reanimated";
 import CardDayProgress from "@/components/CardDayProgress";
 import { useTranslation } from "react-i18next";
 import CardWelcome from "@/components/onboarding/CardWelcome";
 import CardSecond from "@/components/onboarding/CardSecond";
+import CardThird from "@/components/onboarding/CardThird";
 
 const duration = 50;
 
@@ -27,7 +33,7 @@ export default function Index() {
     <ScrollView contentContainerClassName={"flex-1 p-5"}>
       <View className={"gap-3"}>
         <CardWelcome />
-        <Animated.View layout={FadingTransition} className={"flex-row gap-3"}>
+        <Animated.View layout={CurvedTransition} className={"flex-row gap-3"}>
           <View className={"flex-1 gap-3"}>
             <Card
               title={`${minimumWater}ml`}
@@ -69,18 +75,19 @@ export default function Index() {
         </Animated.View>
 
         <CardSecond />
-        <Animated.View layout={FadingTransition} className={"flex-row gap-3"}>
+        <Animated.View layout={CurvedTransition} className={"flex-row gap-3"}>
           <CardDayProgress />
           <CardWaterAmount />
         </Animated.View>
-        <View className={"flex-row gap-3"}>
+        <CardThird />
+        <Animated.View layout={CurvedTransition} className={"flex-row gap-3"}>
           <View className={"flex-1"}>
             <RemoveWater />
           </View>
           <View className={"flex-1"}>
             <AddWater />
           </View>
-        </View>
+        </Animated.View>
       </View>
     </ScrollView>
   );

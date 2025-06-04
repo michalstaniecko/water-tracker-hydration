@@ -8,6 +8,7 @@ import setupEn from "@/i18n/en/setup.json";
 import setupPl from "@/i18n/pl/setup.json";
 import languagesEn from "@/i18n/en/languages.json";
 import languagesPl from "@/i18n/pl/languages.json";
+import onboardingEn from "@/i18n/en/onboarding.json";
 
 const resources = {
   en: {
@@ -15,6 +16,7 @@ const resources = {
     tabs: tabsEn,
     setup: setupEn,
     languages: languagesEn,
+    onboarding: onboardingEn,
   },
   pl: {
     translation: translationPl,
