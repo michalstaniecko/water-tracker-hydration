@@ -8,12 +8,7 @@ import CardWaterAmount from "@/components/CardWaterAmount";
 import Animated, {
   FadeOut,
   FadeIn,
-  FadingTransition,
   LayoutAnimationConfig,
-  LinearTransition,
-  JumpingTransition,
-  EntryExitTransition,
-  SequencedTransition,
   CurvedTransition,
 } from "react-native-reanimated";
 import CardDayProgress from "@/components/CardDayProgress";
@@ -30,7 +25,7 @@ export default function Index() {
   const { t } = useTranslation();
 
   return (
-    <ScrollView contentContainerClassName={"flex-1 p-5"}>
+    <ScrollView contentContainerClassName={"p-5"}>
       <View className={"gap-3"}>
         <CardWelcome />
         <Animated.View layout={CurvedTransition} className={"flex-row gap-3"}>
