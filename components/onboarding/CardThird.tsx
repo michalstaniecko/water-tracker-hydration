@@ -23,12 +23,10 @@ export default function CardThird() {
     >
       <Card backgroundColor={"bg-blue-900"}>
         <Text className={"text-white text-lg font-semibold"}>
-          Track Daily Water Intake Goal
+          {t("thirdStep.title")}
         </Text>
         <Text className={"text-white text-lg"}>
-          Track your daily hydration – see how much water you’ve already drunk
-          and how much time you have left to reach your daily goal before the
-          day ends!
+          {t("thirdStep.description")}
         </Text>
         <View className={"flex-row justify-between"}>
           <Pressable

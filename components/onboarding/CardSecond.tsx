@@ -28,10 +28,10 @@ export default function CardSecond() {
     >
       <Card backgroundColor={"bg-blue-900"}>
         <Text className={"text-white text-lg font-semibold"}>
-          Daily Water Intake Goal
+          {t("secondStep.title")}
         </Text>
         <Text className={"text-white text-lg"}>
-          You can update your daily water intake goal in the settings.
+          {t("secondStep.description")}
         </Text>
         <View className={"flex-row justify-between"}>
           <Pressable
