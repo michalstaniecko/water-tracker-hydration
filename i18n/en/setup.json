@@ -4,5 +4,8 @@
   "startOfTheDay": "What time do you usually start your day?",
   "endOfTheDay": "What time do you usually end your day?",
   "selectLanguage": "Select language",
-  "close": "Close"
+  "close": "Close",
+  "on": "On",
+  "off": "Off",
+  "enableOnboarding": "Enable onboarding"
 }

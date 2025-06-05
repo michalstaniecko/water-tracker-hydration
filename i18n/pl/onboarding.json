@@ -1,0 +1,14 @@
+{
+  "welcome": {
+    "title": "Witamy w Water Tracker Hydration!",
+    "description": "To Twój pierwszy raz tutaj, więc zacznijmy!"
+  },
+  "secondStep": {
+    "title": "Ustaw swój dzienny cel nawodnienia",
+    "description": "Możesz zmienić swój dzienny cel nawodnienia w ustawieniach."
+  },
+  "thirdStep": {
+    "title": "Monitoruj swoje postępy",
+    "description": "Śledź swoje codzienne nawodnienie – zobacz, ile wody już wypiłeś i ile czasu zostało, aby osiągnąć dzienny cel przed końcem dnia!"
+  }
+}
