@@ -26,7 +26,7 @@ type OnboardingStoreProps = OnboardingStateProps & OnBoardingActionsProps;
 const storageKey = "onboardingCompleted";
 
 export const useOnboardingStore = create<OnboardingStoreProps>((set, get) => ({
-  status: "in-progress",
+  status: "completed",
   currentTipId: 0,
 
   setStatus: (status: Status) => {

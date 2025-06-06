@@ -11,6 +11,7 @@ import i18n from "@/plugins/i18n";
 import { getLocales } from "expo-localization";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { useOnboardingStore } from "@/stores/onboarding";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -19,6 +20,7 @@ export default function RootLayout() {
   const appState = useRef(AppState.currentState);
   const { fetchOrInitData: fetchOrInitWaterData } = useWaterStore();
   const { fetchOrInitData: fetchOrInitSetup, languageCode } = useSetupStore();
+  const { fetchOrInitData: fetchOrInitOnboarding } = useOnboardingStore();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -42,6 +44,7 @@ export default function RootLayout() {
     });
     fetchOrInitSetup();
     fetchOrInitWaterData();
+    fetchOrInitOnboarding();
     return () => {
       subscription.remove();
     };
