@@ -84,7 +84,7 @@ export const ModalPicker = ({
             </View>
 
             <Pressable
-              className={"p-2 bg-blue-500 rounded"}
+              className={"p-3 bg-blue-500 rounded"}
               onPress={() => ref?.current?.close()}
             >
               <Text className={"text-white text-center font-bold text-md"}>
@@ -113,7 +113,7 @@ const Item = ({ option, onSelect, selected }: ItemProps) => {
         >
           <View>
             <Text
-              className={`w-full text-lg py-2 rounded  ${selected && "font-medium"}`}
+              className={`w-full text-lg py-3 rounded  ${selected && "font-semibold"}`}
             >
               {option.label}
             </Text>

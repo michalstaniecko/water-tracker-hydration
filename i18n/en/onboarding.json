@@ -1,0 +1,14 @@
+{
+  "welcome": {
+    "title": "Welcome to your daily water tracker!",
+    "description": "It's your first time here, so let's get you started."
+  },
+  "secondStep": {
+    "title": "Set Your Daily Water Goal",
+    "description": "You can update your daily water intake goal in the settings."
+  },
+  "thirdStep": {
+    "title": "Monitor Your Progress",
+    "description": "Track your daily hydration – see how much water you’ve already drunk and how much time you have left to reach your daily goal before the day ends!"
+  }
+}

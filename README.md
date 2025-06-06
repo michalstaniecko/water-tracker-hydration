@@ -1,50 +1,84 @@
-# Welcome to your Expo app 👋
+# Water Tracker Hydration
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Water Tracker Hydration is a React Native application built with Expo that helps users track their daily water intake and maintain proper hydration. The app runs smoothly on Android, iOS, and web browsers, leveraging modern technologies and tools for efficient development and an excellent user experience.
 
-## Get started
+## Features
 
-1. Install dependencies
+- Track daily water intake
+- Interactive onboarding for new users
+- Localization support powered by `i18next`
+- Smooth animations using `react-native-reanimated`
+- Styling with TailwindCSS (`nativewind`)
+- Google Mobile Ads integration
+- Optimized for both tablets and mobile devices
+
+## Tech Stack
+
+- **React Native**: Framework for building cross-platform mobile apps.
+- **Expo**: Platform and set of tools for developing React Native apps.
+- **TypeScript**: Strongly typed language for enhanced code quality.
+- **TailwindCSS**: Utility-first CSS framework (via `nativewind`).
+- **Zustand**: Lightweight state management library.
+- **React Navigation**: Navigation library for React Native apps.
+- **React Native Reanimated**: Advanced animation library for smooth UI effects.
+- **i18next**: Internationalization and localization library.
+- **Google Mobile Ads**: Monetization and ad integration.
+
+## Installation
+
+1. Make sure you have [Node.js](https://nodejs.org/), [npm](https://www.npmjs.com/), and [Expo CLI](https://docs.expo.dev/get-started/installation/) installed:
+
+   ```bash
+   npm install -g expo-cli
+   ```
+
+2. Clone the repository:
+
+   ```bash
+   git clone https://github.com/michalstaniecko/water-tracker-hydration.git
+   cd water-tracker-hydration
+   ```
+
+3. Install dependencies:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+4. Run the app:
 
    ```bash
-    npx expo start
+   # Start the project with Expo Go
+   npm start
+   # Or run on a specific platform:
+   npm run android
+   npm run ios
+   npm run web
    ```
 
-In the output, you'll find options to open the app in a
+## Project Structure
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- `app.json` & `package.json` — Project and dependency configuration
+- `scripts/` — Additional scripts (e.g., project reset)
+- `assets/` — Icons, splash screens, images
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Useful Scripts
 
-## Get a fresh project
+- `npm start` — Launch the Expo development server
+- `npm run android` — Run the app on Android
+- `npm run ios` — Run the app on iOS
+- `npm run web` — Run the app in the browser
+- `npm test` — Run unit tests
+- `npm run lint` — Check code style and linting
 
-When you're ready, run:
+## License
 
-```bash
-npm run reset-project
-```
+This project is licensed under the MIT License.  
+You are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, as long as the original copyright
+and permission notice are included in all copies or substantial portions of the software.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+See the [LICENSE](./LICENSE) file for more details.
 
-## Learn more
+---
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Created by [michalstaniecko](https://github.com/michalstaniecko)
