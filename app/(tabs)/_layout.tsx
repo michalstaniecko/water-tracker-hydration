@@ -18,6 +18,7 @@ export default function TabLayout() {
           // TODO: Fix this type error, blue[600] is not recognized
           // @ts-ignore
           tabBarActiveTintColor: theme?.theme?.extend?.colors?.blue[600],
+          animation: "shift",
         }}
         screenLayout={({ children }) => {
           return (
