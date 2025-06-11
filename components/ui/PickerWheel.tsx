@@ -1,9 +1,10 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Text,
   View,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  TextInput,
 } from "react-native";
 import Animated, {
   scrollTo,
@@ -13,6 +14,9 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
   SharedValue,
+  useScrollViewOffset,
+  useAnimatedScrollHandler,
+  useAnimatedProps,
 } from "react-native-reanimated";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useFocusEffect } from "@react-navigation/native";
@@ -38,6 +42,8 @@ type PickerWheelItemProps = {
   scroll: SharedValue<number>;
   index: number;
 };
+
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 const PickerWheelItem = ({ children, scroll, index }: PickerWheelItemProps) => {
   // TODO: Replace with your own initial value
@@ -86,7 +92,7 @@ const PickerWheel = ({
     if (!initValue || !data.length) return 0;
     const initIndex = data.findIndex((d) => d.value === initValue);
     return initIndex !== -1 ? initIndex * ITEM_HEIGHT : 0;
-  }, [data, initValue]);
+  }, []);
   const animatedRef = useAnimatedRef<Animated.FlatList<Animated.View>>();
   const scroll = useSharedValue<number>(initialOffset);
 
@@ -106,21 +112,28 @@ const PickerWheel = ({
     }
   };
 
-  useDerivedValue(() => {
-    scrollTo(animatedRef, 0, scroll.value, true);
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scroll.value = event.contentOffset.y;
+    },
+    onMomentumBegin: () => {
+      console.log("Momentum began");
+    },
+    onMomentumEnd: () => {
+      console.log("Momentum ended");
+    },
   });
 
   return (
     <Animated.FlatList
+      onScroll={scrollHandler}
       ref={animatedRef}
-      onScroll={(event) => {
-        scroll.value = event.nativeEvent.contentOffset.y;
-      }}
       getItemLayout={(_, index) => ({
         length: ITEM_HEIGHT,
         offset: ITEM_HEIGHT * index,
         index,
       })}
+      initialScrollIndex={Math.floor(initialOffset / ITEM_HEIGHT)}
       onMomentumScrollEnd={onMomentumScrollEnd}
       showsVerticalScrollIndicator={false}
       bounces={false}

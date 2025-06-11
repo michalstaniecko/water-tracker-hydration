@@ -9,9 +9,10 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PickerWheel from "@/components/ui/PickerWheel";
+import Modal from "@/components/ui/Modal";
 
 export default function AddWater() {
   const { t } = useTranslation();
@@ -56,6 +57,7 @@ const CapacityPicker = () => {
   const { bottom } = useSafeAreaInsets();
   const { setGlassCapacity, glassCapacity } = useSetupStore();
   const ref = useRef<BottomSheetModal>(null);
+  const [visible, setVisible] = useState(false);
 
   const handleSelect = (value: string) => {
     setGlassCapacity(value);
@@ -74,7 +76,7 @@ const CapacityPicker = () => {
   );
 
   const handleOpen = () => {
-    ref.current?.present();
+    setVisible(true);
   };
 
   return (
@@ -87,20 +89,13 @@ const CapacityPicker = () => {
       >
         <FontAwesome name={"edit"} size={16} color={"#ffffff"} />
       </Pressable>
-      <BottomSheetModal
-        backdropComponent={renderBackdrop}
-        enablePanDownToClose={true}
-        ref={ref}
-        index={0}
-      >
-        <BottomSheetView>
-          <PickerWheel
-            options={data}
-            value={glassCapacity}
-            onValueChange={handleSelect}
-          />
-        </BottomSheetView>
-      </BottomSheetModal>
+      <Modal visible={visible} onDismiss={setVisible}>
+        <PickerWheel
+          options={data}
+          value={glassCapacity}
+          onValueChange={handleSelect}
+        />
+      </Modal>
     </>
   );
 };
