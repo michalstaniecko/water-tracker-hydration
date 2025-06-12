@@ -1,4 +1,5 @@
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { useSetupStore } from "@/stores/setup";
 import { useWater } from "@/hooks/useWater";
 import AddWater from "@/components/AddWater";
