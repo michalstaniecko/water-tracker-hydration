@@ -23,7 +23,7 @@ export const ModalPickerItem = ({
 }: ItemProps) => {
   const handleLayout = (event: LayoutChangeEvent) => {
     const { height } = event.nativeEvent.layout;
-    onMeasureHeight?.(option.value, height);
+    onMeasureHeight?.(option.value ? height : 0);
   };
 
   return (
