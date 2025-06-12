@@ -17,11 +17,11 @@ export default function Modal({
 
   return (
     <RNModal animationType={"fade"} transparent={true} visible={visible}>
-      <TouchableWithoutFeedback onPress={handleClose}>
-        <View className={"absolute top-0 left-0 right-0 bottom-0 "} />
-      </TouchableWithoutFeedback>
-      <View className={"flex-1 justify-center"}>
-        <View className={"bg-white p-5 rounded-lg"}>{children}</View>
+      <View className={" bg-gray-700/75 flex-1 justify-center p-5"}>
+        <TouchableWithoutFeedback onPress={handleClose}>
+          <View className={"absolute top-0 left-0 right-0 bottom-0"} />
+        </TouchableWithoutFeedback>
+        <View className={"bg-white p-5 rounded-lg shadow"}>{children}</View>
       </View>
     </RNModal>
   );
