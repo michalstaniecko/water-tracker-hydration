@@ -12,7 +12,7 @@ import {
 import { useCallback, useRef, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PickerWheel from "@/components/ui/PickerWheel";
-import Modal from "@/components/ui/Modal";
+import Modal, { ModalHeader } from "@/components/ui/Modal";
 
 export default function AddWater() {
   const { t } = useTranslation();
@@ -89,7 +89,8 @@ const CapacityPicker = () => {
       >
         <FontAwesome name={"edit"} size={16} color={"#ffffff"} />
       </Pressable>
-      <Modal visible={visible} onDismiss={setVisible}>
+      <Modal visible={visible} onDismiss={setVisible} closeText={t("close")}>
+        <ModalHeader title={t("glassCapacityInMl", { ns: "setup" })} />
         <PickerWheel
           options={data}
           value={glassCapacity}

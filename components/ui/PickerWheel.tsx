@@ -1,25 +1,19 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import {
-  Text,
-  View,
-  NativeSyntheticEvent,
   NativeScrollEvent,
+  NativeSyntheticEvent,
+  Text,
   TextInput,
 } from "react-native";
 import Animated, {
-  scrollTo,
-  useAnimatedRef,
-  useSharedValue,
-  useDerivedValue,
-  useAnimatedStyle,
+  Extrapolation,
   interpolate,
   SharedValue,
-  useScrollViewOffset,
+  useAnimatedRef,
   useAnimatedScrollHandler,
-  useAnimatedProps,
+  useAnimatedStyle,
+  useSharedValue,
 } from "react-native-reanimated";
-import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import { useFocusEffect } from "@react-navigation/native";
 
 // TODO: Replace with your own initial value
 const ITEM_HEIGHT = 50;
@@ -58,8 +52,8 @@ const PickerWheelItem = ({ children, scroll, index }: PickerWheelItemProps) => {
     opacity: interpolate(
       scroll.value,
       inputRange,
-      [0.2, 0.35, 1, 0.35, 0.2],
-      "clamp",
+      [0.1, 0.4, 1, 0.4, 0.1],
+      Extrapolation.EXTEND,
     ),
   }));
   const scale = useAnimatedStyle(() => ({
@@ -116,13 +110,15 @@ const PickerWheel = ({
     onScroll: (event) => {
       scroll.value = event.contentOffset.y;
     },
-    onMomentumBegin: () => {
-      console.log("Momentum began");
-    },
-    onMomentumEnd: () => {
-      console.log("Momentum ended");
-    },
   });
+
+  const renderItem = useCallback((item: { label: string }, index: number) => {
+    return (
+      <PickerWheelItem scroll={scroll} index={index}>
+        {item ? (item.label ? item.label : "") : ""}
+      </PickerWheelItem>
+    );
+  }, []);
 
   return (
     <Animated.FlatList
@@ -137,16 +133,12 @@ const PickerWheel = ({
       onMomentumScrollEnd={onMomentumScrollEnd}
       showsVerticalScrollIndicator={false}
       bounces={true}
-      decelerationRate={"fast"}
+      decelerationRate={"normal"}
       snapToInterval={ITEM_HEIGHT}
       style={{ height: ITEM_HEIGHT * (ITEMS_OFFSET * 2 + 1) }}
       data={paddedData}
       scrollEventThrottle={16}
-      renderItem={({ item, index }) => (
-        <PickerWheelItem scroll={scroll} index={index}>
-          {item ? (item.label ? item.label : "") : ""}
-        </PickerWheelItem>
-      )}
+      renderItem={({ item, index }) => renderItem(item, index)}
     />
   );
 };
