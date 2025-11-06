@@ -18,7 +18,7 @@ export function useWater() {
     const todayWater = waterStore.getTodayWater();
     const minimumWater = Number(setupStore.minimumWater);
     
-    if (minimumWater === 0) {
+    if (minimumWater <= 0) {
       return 0;
     }
     

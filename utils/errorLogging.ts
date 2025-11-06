@@ -47,20 +47,21 @@ export function logError(error: unknown, context: ErrorContext): void {
  * @param context - Additional context about the warning
  */
 export function logWarning(message: string, context: ErrorContext): void {
-  const logEntry = {
-    timestamp: new Date().toISOString(),
-    level: 'warn' as LogLevel,
-    message,
-    operation: context.operation,
-    component: context.component,
-    data: context.data,
-  };
-
   console.warn(`[WARN] ${context.operation}:`, {
     message,
     component: context.component,
     data: context.data,
   });
+
+  // In production, you could send this to a logging service
+  // Example: sendToLoggingService({
+  //   timestamp: new Date().toISOString(),
+  //   level: 'warn',
+  //   message,
+  //   operation: context.operation,
+  //   component: context.component,
+  //   data: context.data,
+  // });
 }
 
 /**
@@ -69,20 +70,21 @@ export function logWarning(message: string, context: ErrorContext): void {
  * @param context - Additional context
  */
 export function logInfo(message: string, context: ErrorContext): void {
-  const logEntry = {
-    timestamp: new Date().toISOString(),
-    level: 'info' as LogLevel,
-    message,
-    operation: context.operation,
-    component: context.component,
-    data: context.data,
-  };
-
   console.info(`[INFO] ${context.operation}:`, {
     message,
     component: context.component,
     data: context.data,
   });
+
+  // In production, you could send this to a logging service
+  // Example: sendToLoggingService({
+  //   timestamp: new Date().toISOString(),
+  //   level: 'info',
+  //   message,
+  //   operation: context.operation,
+  //   component: context.component,
+  //   data: context.data,
+  // });
 }
 
 /**

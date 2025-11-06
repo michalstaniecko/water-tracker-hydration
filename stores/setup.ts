@@ -26,9 +26,9 @@ type SetupState = {
 };
 
 type SetupActions = {
-  setGlassCapacity: (capacity: string) => void;
-  setMinimumWater: (water: string) => void;
-  setLanguageCode: (languageCode: string) => void;
+  setGlassCapacity: (capacity: string) => Promise<void>;
+  setMinimumWater: (water: string) => Promise<void>;
+  setLanguageCode: (languageCode: string) => Promise<void>;
   getOptions: () => SetupState;
   setOption: (option: SetupOptions, value: number | string | {}) => Promise<void>;
   reset: () => Promise<void>;
@@ -126,13 +126,13 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
     dateFormat: get()[SetupOptions.DATE_FORMAT],
     languageCode: get()[SetupOptions.LANGUAGE_CODE],
   }),
-  setGlassCapacity: (capacity: string) => {
+  setGlassCapacity: async (capacity: string) => {
     const sanitized = sanitizePositiveNumber(capacity, '250');
-    get().setOption(SetupOptions.GLASS_CAPACITY, sanitized);
+    await get().setOption(SetupOptions.GLASS_CAPACITY, sanitized);
   },
-  setMinimumWater: (water: string) => {
+  setMinimumWater: async (water: string) => {
     const sanitized = sanitizePositiveNumber(water, '2000');
-    get().setOption(SetupOptions.MINIMUM_WATER, sanitized);
+    await get().setOption(SetupOptions.MINIMUM_WATER, sanitized);
   },
   setOption: async (option: SetupOptions, value: number | string | {}) => {
     set((state) => ({
@@ -150,8 +150,8 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
       });
     }
   },
-  setLanguageCode: (languageCode: string) => {
-    get().setOption(SetupOptions.LANGUAGE_CODE, languageCode);
+  setLanguageCode: async (languageCode: string) => {
+    await get().setOption(SetupOptions.LANGUAGE_CODE, languageCode);
   },
   reset: async () => {
     set(initialState);

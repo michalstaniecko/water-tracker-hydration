@@ -140,7 +140,7 @@ export const useWaterStore = create<WaterStore>((set, get) => ({
   },
   resetWater: async () => {
     try {
-      set({ history: null });
+      set({ history: {} });
       await AsyncStorage.removeItem(storageKey);
     } catch (error) {
       logError(error, {
