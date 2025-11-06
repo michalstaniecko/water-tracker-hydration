@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import { useWaterStore } from "@/stores/water";
 import { useSetupStore } from "@/stores/setup";
+import { useGamificationStore } from "@/stores/gamification";
 import { roundBy } from "@/utils/numbers";
 import { logError } from "@/utils/errorLogging";
 
 export function useWater() {
   const waterStore = useWaterStore();
   const setupStore = useSetupStore();
+  const gamificationStore = useGamificationStore();
 
   const computeLeftToDrink = () => {
     const todayWater = waterStore.getTodayWater();
@@ -17,11 +19,11 @@ export function useWater() {
   const percentOfDailyWater = () => {
     const todayWater = waterStore.getTodayWater();
     const minimumWater = Number(setupStore.minimumWater);
-    
+
     if (minimumWater <= 0) {
       return 0;
     }
-    
+
     const percent = (Number(todayWater) / minimumWater) * 100;
     return percent > 100 ? 100 : percent;
   };
@@ -32,10 +34,11 @@ export function useWater() {
       const newCurrentWater =
         Number(currentWater) + Number(setupStore.glassCapacity);
       await waterStore.setTodayWater(newCurrentWater.toString());
+      gamificationStore.checkAndUnlockAchievements();
     } catch (error) {
       logError(error, {
-        operation: 'addWater',
-        component: 'useWater',
+        operation: "addWater",
+        component: "useWater",
       });
     }
   };
@@ -52,8 +55,8 @@ export function useWater() {
       await waterStore.setTodayWater(newCurrentWater.toString());
     } catch (error) {
       logError(error, {
-        operation: 'removeWater',
-        component: 'useWater',
+        operation: "removeWater",
+        component: "useWater",
       });
     }
   };

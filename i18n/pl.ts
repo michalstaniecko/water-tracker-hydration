@@ -3,6 +3,7 @@ import tabs from "@/i18n/pl/tabs.json";
 import setup from "@/i18n/pl/setup.json";
 import languages from "@/i18n/pl/languages.json";
 import onboarding from "@/i18n/pl/onboarding.json";
+import gamification from "@/i18n/pl/gamification.json";
 
 export default {
   translation,
@@ -10,4 +11,5 @@ export default {
   setup,
   languages,
   onboarding,
+  gamification,
 };
