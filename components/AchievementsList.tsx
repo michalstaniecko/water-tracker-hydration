@@ -47,7 +47,7 @@ export default function AchievementsList() {
                     </Text>
                     {achievement.unlockedAt && (
                       <Text className="mt-1 text-xs text-green-600">
-                        Unlocked:{" "}
+                        {t("gamification:unlockedOn")}{" "}
                         {new Date(achievement.unlockedAt).toLocaleDateString()}
                       </Text>
                     )}

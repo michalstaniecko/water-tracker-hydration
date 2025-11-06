@@ -4,6 +4,7 @@
   "unlockedAchievements": "Unlocked",
   "lockedAchievements": "Locked",
   "achievementUnlocked": "Achievement Unlocked!",
+  "unlockedOn": "Unlocked:",
   "noAchievements": "No achievements yet. Keep tracking your water intake!",
   "noNotifications": "No notifications",
   "markAllAsRead": "Mark all as read",
@@ -36,5 +37,6 @@
   "goalReminderMessage": "You're almost there! {{remaining}}ml to reach your goal.",
   "congratulations": "Congratulations!",
   "keepItUp": "Keep it up!",
-  "wellDone": "Well done!"
+  "wellDone": "Well done!",
+  "youUnlocked": "You've unlocked: {{title}}"
 }

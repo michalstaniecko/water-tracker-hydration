@@ -32,8 +32,9 @@ export type NotificationType = "achievement" | "reminder" | "milestone";
 export type Notification = {
   id: string;
   type: NotificationType;
-  title: string;
-  message: string;
+  titleKey: string;
+  messageKey: string;
+  messageParams?: Record<string, string | number>;
   timestamp: string;
   read: boolean;
   achievementId?: AchievementType;
@@ -247,8 +248,9 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
           // Add notification for unlocked achievement
           get().addNotification({
             type: "achievement",
-            title: "Achievement Unlocked!",
-            message: `You've unlocked: ${achievement.title}`,
+            titleKey: "gamification:achievementUnlocked",
+            messageKey: "gamification:youUnlocked",
+            messageParams: { title: achievement.title },
             achievementId: achievement.id as AchievementType,
           });
         }
@@ -280,7 +282,7 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
     try {
       const newNotification: Notification = {
         ...notification,
-        id: `${Date.now()}-${Math.random()}`,
+        id: `notif-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
         timestamp: new Date().toISOString(),
         read: false,
       };

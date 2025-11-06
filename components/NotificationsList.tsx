@@ -92,7 +92,7 @@ export default function NotificationsList() {
                           notification.read ? "text-gray-500" : "text-gray-800"
                         }`}
                       >
-                        {notification.title}
+                        {t(notification.titleKey)}
                       </Text>
                       {!notification.read && (
                         <View className="w-2 h-2 bg-blue-500 rounded-full" />
@@ -103,7 +103,7 @@ export default function NotificationsList() {
                         notification.read ? "text-gray-400" : "text-gray-600"
                       }`}
                     >
-                      {notification.message}
+                      {t(notification.messageKey, notification.messageParams)}
                     </Text>
                     <Text className="text-xs text-gray-400">
                       {new Date(notification.timestamp).toLocaleString()}

@@ -4,6 +4,7 @@
   "unlockedAchievements": "Odblokowane",
   "lockedAchievements": "Zablokowane",
   "achievementUnlocked": "Osiągnięcie odblokowane!",
+  "unlockedOn": "Odblokowano:",
   "noAchievements": "Brak osiągnięć. Kontynuuj śledzenie spożycia wody!",
   "noNotifications": "Brak powiadomień",
   "markAllAsRead": "Oznacz wszystkie jako przeczytane",
@@ -36,5 +37,6 @@
   "goalReminderMessage": "Jesteś blisko! {{remaining}}ml do osiągnięcia celu.",
   "congratulations": "Gratulacje!",
   "keepItUp": "Trzymaj tak dalej!",
-  "wellDone": "Świetna robota!"
+  "wellDone": "Świetna robota!",
+  "youUnlocked": "Odblokowałeś: {{title}}"
 }
