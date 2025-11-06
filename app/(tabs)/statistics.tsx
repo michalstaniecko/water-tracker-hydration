@@ -77,7 +77,6 @@ export default function Statistics() {
                 height={220}
                 color="#3b82f6"
                 thickness={2}
-                curved
                 dataPointsColor="#2563eb"
                 dataPointsRadius={4}
                 spacing={
@@ -89,7 +88,11 @@ export default function Statistics() {
                 yAxisColor="#e5e7eb"
                 xAxisColor="#e5e7eb"
                 yAxisTextStyle={{ color: "#6b7280", fontSize: 10 }}
-                xAxisLabelTextStyle={{ color: "#6b7280", fontSize: 10 }}
+                xAxisLabelTextStyle={{
+                  color: "#6b7280",
+                  fontSize: 10,
+                  transform: period === "month" ? [{ rotate: "-90deg" }] : [],
+                }}
                 showVerticalLines
                 verticalLinesColor="#f3f4f6"
                 backgroundColor="#ffffff"
