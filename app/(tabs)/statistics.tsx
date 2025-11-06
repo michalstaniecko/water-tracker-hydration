@@ -9,6 +9,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStatisticsStore, PeriodType } from "@/stores/statistics";
 import { Card } from "@/components/ui/Card";
+// Using react-native-chart-kit for initial implementation due to Expo compatibility
+// TODO: Consider migrating to victory-native or custom SVG charts for better performance
 import { LineChart } from "react-native-chart-kit";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import dayjs from "@/plugins/dayjs";
@@ -23,21 +25,24 @@ export default function Statistics() {
   const streak = getCurrentStreak();
 
   const screenWidth = Dimensions.get("window").width;
+  const hasData = stats.daysTracked > 0;
 
-  // Prepare chart data
-  const chartData = {
-    labels: stats.dailyData.map((d) => {
-      const date = dayjs(d.date);
-      return period === "week" ? date.format("ddd") : date.format("D");
-    }),
-    datasets: [
-      {
-        data: stats.dailyData.map((d) => d.amount || 0),
-        color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`, // blue-500
-        strokeWidth: 2,
-      },
-    ],
-  };
+  // Prepare chart data only if there's data to display
+  const chartData = hasData
+    ? {
+        labels: stats.dailyData.map((d) => {
+          const date = dayjs(d.date);
+          return period === "week" ? date.format("ddd") : date.format("D");
+        }),
+        datasets: [
+          {
+            data: stats.dailyData.map((d) => d.amount || 0),
+            color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`, // blue-500
+            strokeWidth: 2,
+          },
+        ],
+      }
+    : { labels: [], datasets: [{ data: [0] }] };
 
   const chartConfig = {
     backgroundColor: "#ffffff",
@@ -55,8 +60,6 @@ export default function Statistics() {
       stroke: "#2563eb",
     },
   };
-
-  const hasData = stats.daysTracked > 0;
 
   return (
     <ErrorBoundary componentName="Statistics Screen">
