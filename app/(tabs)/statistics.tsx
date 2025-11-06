@@ -91,6 +91,7 @@ export default function Statistics() {
                 xAxisLabelTextStyle={{
                   color: "#6b7280",
                   fontSize: 10,
+                  width: period === "month" ? 50 : undefined,
                   transform: period === "month" ? [{ rotate: "-90deg" }] : [],
                 }}
                 showVerticalLines
