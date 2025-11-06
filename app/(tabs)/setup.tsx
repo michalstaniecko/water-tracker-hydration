@@ -11,6 +11,7 @@ import { ModalPicker } from "@/components/ui/ModalPicker";
 import { languages } from "@/config/languages";
 import InputTime from "@/components/ui/InputTime";
 import { useOnboardingStore, Status } from "@/stores/onboarding";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 export default function Setup() {
   const { t } = useTranslation("setup");
@@ -45,77 +46,79 @@ export default function Setup() {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView contentContainerClassName={"gap-5 flex-1 p-5"}>
-        <View className={"gap-1"}>
-          <Input
-            label={t("glassCapacityInMl")}
-            keyboardType={"numeric"}
-            value={setupStore.glassCapacity as unknown as string}
-            onChangeText={(text) => {
-              setupStore.setGlassCapacity(text);
-            }}
-            placeholder={"0"}
-          />
-        </View>
-        <View className={"gap-1"}>
-          <Input
-            label={t("dailyWaterRequirementInMl")}
-            keyboardType={"numeric"}
-            value={setupStore.minimumWater as unknown as string}
-            onChangeText={(text) => {
-              setupStore.setMinimumWater(text);
-            }}
-            placeholder={"0"}
-          />
-        </View>
+    <ErrorBoundary componentName="Setup Screen">
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView contentContainerClassName={"gap-5 flex-1 p-5"}>
+          <View className={"gap-1"}>
+            <Input
+              label={t("glassCapacityInMl")}
+              keyboardType={"numeric"}
+              value={setupStore.glassCapacity as unknown as string}
+              onChangeText={(text) => {
+                setupStore.setGlassCapacity(text);
+              }}
+              placeholder={"0"}
+            />
+          </View>
+          <View className={"gap-1"}>
+            <Input
+              label={t("dailyWaterRequirementInMl")}
+              keyboardType={"numeric"}
+              value={setupStore.minimumWater as unknown as string}
+              onChangeText={(text) => {
+                setupStore.setMinimumWater(text);
+              }}
+              placeholder={"0"}
+            />
+          </View>
 
-        <View className={"flex-row justify-between"}>
-          <View className={"w-[48%]"}>
-            <InputTime
-              value={setupStore.day.startHour}
-              label={t("startOfTheDay")}
-              onChange={handleStartTimeChange}
-              confirmText={t("confirm", { ns: "translation" })}
-              cancelText={t("cancel", { ns: "translation" })}
+          <View className={"flex-row justify-between"}>
+            <View className={"w-[48%]"}>
+              <InputTime
+                value={setupStore.day.startHour}
+                label={t("startOfTheDay")}
+                onChange={handleStartTimeChange}
+                confirmText={t("confirm", { ns: "translation" })}
+                cancelText={t("cancel", { ns: "translation" })}
+              />
+            </View>
+            <View className={"w-[48%]"}>
+              <InputTime
+                value={setupStore.day.endHour}
+                label={t("endOfTheDay")}
+                onChange={handleEndTimeChange}
+                confirmText={t("confirm", { ns: "translation" })}
+                cancelText={t("cancel", { ns: "translation" })}
+              />
+            </View>
+          </View>
+          <View>
+            <ModalPicker
+              label={t("selectLanguage")}
+              options={mappedLanguages}
+              onSelect={handleChangeLanguage}
+              value={setupStore[SetupOptions.LANGUAGE_CODE]}
             />
           </View>
-          <View className={"w-[48%]"}>
-            <InputTime
-              value={setupStore.day.endHour}
-              label={t("endOfTheDay")}
-              onChange={handleEndTimeChange}
-              confirmText={t("confirm", { ns: "translation" })}
-              cancelText={t("cancel", { ns: "translation" })}
+          <View>
+            <ModalPicker
+              label={t("enableOnboarding")}
+              options={[
+                {
+                  label: t("on"),
+                  value: "in-progress",
+                },
+                {
+                  label: t("off"),
+                  value: "completed",
+                },
+              ]}
+              onSelect={handleChangeOnboarding}
+              value={onboarding.status}
             />
           </View>
-        </View>
-        <View>
-          <ModalPicker
-            label={t("selectLanguage")}
-            options={mappedLanguages}
-            onSelect={handleChangeLanguage}
-            value={setupStore[SetupOptions.LANGUAGE_CODE]}
-          />
-        </View>
-        <View>
-          <ModalPicker
-            label={t("enableOnboarding")}
-            options={[
-              {
-                label: t("on"),
-                value: "in-progress",
-              },
-              {
-                label: t("off"),
-                value: "completed",
-              },
-            ]}
-            onSelect={handleChangeOnboarding}
-            value={onboarding.status}
-          />
-        </View>
-      </ScrollView>
-    </TouchableWithoutFeedback>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </ErrorBoundary>
   );
 }

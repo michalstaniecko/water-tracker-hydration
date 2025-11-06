@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getToday } from "@/utils/date";
+import { sanitizeNonNegativeNumber, isNonNegativeNumber } from "@/utils/validation";
+import { logError, logWarning } from "@/utils/errorLogging";
 
 type Water = {
   amount: string;
@@ -15,10 +17,10 @@ export type HistoryRows = {
 type WaterStore = {
   history: HistoryRows;
   fetchOrInitData: () => Promise<void>;
-  resetWater: () => void;
-  resetTodayWater: () => void;
-  setWater: (date: string, amount: string) => void;
-  setTodayWater: (amount: string) => void;
+  resetWater: () => Promise<void>;
+  resetTodayWater: () => Promise<void>;
+  setWater: (date: string, amount: string) => Promise<void>;
+  setTodayWater: (amount: string) => Promise<void>;
   getWater: (date: string) => string;
   getTodayWater: () => string;
   hasHistory: () => boolean;
@@ -26,6 +28,7 @@ type WaterStore = {
     water: string;
     date: string;
   }[];
+  updateStorage: () => Promise<void>;
 };
 
 const storageKey = "waterData";
@@ -37,7 +40,26 @@ export const useWaterStore = create<WaterStore>((set, get) => ({
       const data = await AsyncStorage.getItem(storageKey);
       if (data !== null) {
         const parsedData = JSON.parse(data);
-        set({ history: parsedData });
+        
+        // Validate parsed data structure
+        if (typeof parsedData === 'object' && parsedData !== null) {
+          // Sanitize all water values to ensure they're non-negative
+          const sanitizedHistory: HistoryRows = {};
+          Object.keys(parsedData).forEach((date) => {
+            if (parsedData[date]?.water !== undefined) {
+              sanitizedHistory[date] = {
+                water: sanitizeNonNegativeNumber(parsedData[date].water),
+              };
+            }
+          });
+          set({ history: sanitizedHistory });
+        } else {
+          logWarning('Invalid data structure in storage, reinitializing', {
+            operation: 'fetchOrInitData',
+            component: 'WaterStore',
+          });
+          throw new Error('Invalid data structure');
+        }
       } else {
         const today = getToday();
         const history = {
@@ -49,40 +71,87 @@ export const useWaterStore = create<WaterStore>((set, get) => ({
         set({ history });
       }
     } catch (error) {
-      console.error("Error initializing water data:", error);
-    }
-  },
-  setWater: (date: string, amount: string) => {
-    try {
-      const history = get().history || {};
-      history[date] = { water: amount };
+      logError(error, {
+        operation: 'fetchOrInitData',
+        component: 'WaterStore',
+      });
+      
+      // Initialize with default data on error
+      const today = getToday();
+      const history = {
+        [today]: {
+          water: "0",
+        },
+      };
       set({ history });
-      AsyncStorage.setItem(storageKey, JSON.stringify(history));
-    } catch (error) {
-      console.error("Error setting water data:", error);
+      
+      try {
+        await AsyncStorage.setItem(storageKey, JSON.stringify(history));
+      } catch (storageError) {
+        logError(storageError, {
+          operation: 'fetchOrInitData - recovery',
+          component: 'WaterStore',
+        });
+      }
     }
   },
-  setTodayWater: (amount: string) => {
+  setWater: async (date: string, amount: string) => {
+    try {
+      // Validate input
+      if (!isNonNegativeNumber(amount)) {
+        logWarning('Attempted to set negative water amount', {
+          operation: 'setWater',
+          component: 'WaterStore',
+          data: { date, amount },
+        });
+        return;
+      }
+      
+      const sanitizedAmount = sanitizeNonNegativeNumber(amount);
+      const history = get().history || {};
+      history[date] = { water: sanitizedAmount };
+      set({ history });
+      
+      await AsyncStorage.setItem(storageKey, JSON.stringify(history));
+    } catch (error) {
+      logError(error, {
+        operation: 'setWater',
+        component: 'WaterStore',
+        data: { date, amount },
+      });
+    }
+  },
+  setTodayWater: async (amount: string) => {
     const today = getToday();
-    get().setWater(today, amount);
+    await get().setWater(today, amount);
   },
   updateStorage: async () => {
     try {
-      await AsyncStorage.setItem(storageKey, JSON.stringify(get().history));
+      const history = get().history;
+      if (history) {
+        await AsyncStorage.setItem(storageKey, JSON.stringify(history));
+      }
     } catch (error) {
-      console.error("Error updating water data:", error);
+      logError(error, {
+        operation: 'updateStorage',
+        component: 'WaterStore',
+      });
     }
   },
-  resetWater: () => {
-    set({ history: null });
-  },
-  resetTodayWater: () => {
-    const today = getToday();
+  resetWater: async () => {
     try {
+      set({ history: {} });
+      await AsyncStorage.removeItem(storageKey);
     } catch (error) {
-      console.error("Error resetting water data:", error);
+      logError(error, {
+        operation: 'resetWater',
+        component: 'WaterStore',
+      });
     }
-    get().setTodayWater("0");
+  },
+  resetTodayWater: async () => {
+    const today = getToday();
+    await get().setTodayWater("0");
   },
   getWater: (date) => {
     return get().history?.[date]?.water || "0";
