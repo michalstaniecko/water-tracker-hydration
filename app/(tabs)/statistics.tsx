@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/Card";
 import { LineChart } from "react-native-gifted-charts";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import dayjs from "@/plugins/dayjs";
+import { DEFAULT_DATE_FORMAT } from "@/config/date";
 
 export default function Statistics() {
   const { t } = useTranslation();
@@ -28,7 +29,7 @@ export default function Statistics() {
   // Prepare chart data only if there's data to display
   const chartData = hasData
     ? stats.dailyData.map((d) => {
-        const date = dayjs(d.date);
+        const date = dayjs(d.date, DEFAULT_DATE_FORMAT);
         return {
           value: d.amount || 0,
           label: period === "week" ? date.format("ddd") : date.format("D"),
