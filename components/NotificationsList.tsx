@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useGamificationStore } from "@/stores/gamification";
 import { Card } from "@/components/ui/Card";
 import { useEffect } from "react";
-import { Button } from "./ui/Button";
+import Button from "./ui/Button";
 
 export default function NotificationsList() {
   const { t } = useTranslation();
@@ -42,7 +42,7 @@ export default function NotificationsList() {
         {unreadNotifications.length > 0 && (
           <View className="flex-1">
             <Button
-              title={t("gamification:markAllAsRead")}
+              text={t("gamification:markAllAsRead")}
               onPress={handleMarkAllAsRead}
             />
           </View>
@@ -50,7 +50,7 @@ export default function NotificationsList() {
         {notifications.length > 0 && (
           <View className="flex-1">
             <Button
-              title={t("gamification:clearAll")}
+              text={t("gamification:clearAll")}
               onPress={handleClearAll}
             />
           </View>

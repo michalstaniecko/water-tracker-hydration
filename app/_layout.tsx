@@ -23,7 +23,10 @@ export default function RootLayout() {
   const { fetchOrInitData: fetchOrInitWaterData } = useWaterStore();
   const { fetchOrInitData: fetchOrInitSetup, languageCode } = useSetupStore();
   const { fetchOrInitData: fetchOrInitOnboarding } = useOnboardingStore();
-  const { fetchOrInitData: fetchOrInitGamification, checkAndUnlockAchievements } = useGamificationStore();
+  const {
+    fetchOrInitData: fetchOrInitGamification,
+    checkAndUnlockAchievements,
+  } = useGamificationStore();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
