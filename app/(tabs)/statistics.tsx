@@ -80,20 +80,24 @@ export default function Statistics() {
                 dataPointsColor="#2563eb"
                 dataPointsRadius={4}
                 spacing={
-                  (screenWidth - 120) / Math.max(chartData.length - 1, 1)
+                  period === "month"
+                    ? (screenWidth - 100) / Math.max(chartData.length - 1, 1)
+                    : (screenWidth - 120) / Math.max(chartData.length - 1, 1)
                 }
-                initialSpacing={20}
-                endSpacing={20}
+                initialSpacing={period === "month" ? 10 : 20}
+                endSpacing={period === "month" ? 10 : 20}
                 noOfSections={5}
                 yAxisColor="#e5e7eb"
                 xAxisColor="#e5e7eb"
                 yAxisTextStyle={{ color: "#6b7280", fontSize: 10 }}
                 xAxisLabelTextStyle={{
                   color: "#6b7280",
-                  fontSize: 10,
-                  width: period === "month" ? 50 : undefined,
+                  fontSize: 9,
+                  width: period === "month" ? 60 : undefined,
+                  marginLeft: period === "month" ? -25 : 0,
                   transform: period === "month" ? [{ rotate: "-90deg" }] : [],
                 }}
+                rotateLabel={period === "month"}
                 showVerticalLines
                 verticalLinesColor="#f3f4f6"
                 backgroundColor="#ffffff"
