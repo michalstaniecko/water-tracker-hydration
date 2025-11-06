@@ -21,6 +21,18 @@ export type PeriodStats = {
   dailyData: DailyStats[];
 };
 
+/**
+ * Statistics Store
+ * 
+ * Provides analytics and statistics for water intake tracking.
+ * Supports weekly and monthly views with average calculations,
+ * goal achievement tracking, and streak monitoring.
+ * 
+ * Future integration points:
+ * - Analytics service integration (e.g., Google Analytics, Firebase Analytics)
+ * - Export functionality for data analysis
+ * - Advanced metrics and insights
+ */
 type StatisticsStore = {
   getWeeklyStats: () => PeriodStats;
   getMonthlyStats: () => PeriodStats;
