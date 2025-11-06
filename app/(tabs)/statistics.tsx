@@ -9,9 +9,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStatisticsStore, PeriodType } from "@/stores/statistics";
 import { Card } from "@/components/ui/Card";
-// Using react-native-chart-kit for initial implementation due to Expo compatibility
-// TODO: Consider migrating to victory-native or custom SVG charts for better performance
-import { LineChart } from "react-native-chart-kit";
+import { LineChart } from "react-native-gifted-charts";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import dayjs from "@/plugins/dayjs";
 
@@ -29,37 +27,14 @@ export default function Statistics() {
 
   // Prepare chart data only if there's data to display
   const chartData = hasData
-    ? {
-        labels: stats.dailyData.map((d) => {
-          const date = dayjs(d.date);
-          return period === "week" ? date.format("ddd") : date.format("D");
-        }),
-        datasets: [
-          {
-            data: stats.dailyData.map((d) => d.amount || 0),
-            color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`, // blue-500
-            strokeWidth: 2,
-          },
-        ],
-      }
-    : { labels: [], datasets: [{ data: [0] }] };
-
-  const chartConfig = {
-    backgroundColor: "#ffffff",
-    backgroundGradientFrom: "#ffffff",
-    backgroundGradientTo: "#f3f4f6",
-    decimalPlaces: 0,
-    color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    style: {
-      borderRadius: 16,
-    },
-    propsForDots: {
-      r: "4",
-      strokeWidth: "2",
-      stroke: "#2563eb",
-    },
-  };
+    ? stats.dailyData.map((d) => {
+        const date = dayjs(d.date);
+        return {
+          value: d.amount || 0,
+          label: period === "week" ? date.format("ddd") : date.format("D"),
+        };
+      })
+    : [];
 
   return (
     <ErrorBoundary componentName="Statistics Screen">
@@ -91,24 +66,39 @@ export default function Statistics() {
 
           {/* Chart */}
           {hasData ? (
-            <View className="bg-white rounded-lg overflow-hidden shadow-sm">
-              <Text className="text-lg font-semibold p-4 pb-2">
+            <View className="bg-white rounded-lg overflow-hidden shadow-sm p-4">
+              <Text className="text-lg font-semibold pb-2">
                 {t("waterIntakeChart")}
               </Text>
               <LineChart
                 data={chartData}
-                width={screenWidth - 40}
+                width={screenWidth - 80}
                 height={220}
-                chartConfig={chartConfig}
-                bezier
-                style={{
-                  marginVertical: 8,
-                  borderRadius: 16,
+                color="#3b82f6"
+                thickness={2}
+                curved
+                dataPointsColor="#2563eb"
+                dataPointsRadius={4}
+                spacing={
+                  (screenWidth - 120) / Math.max(chartData.length - 1, 1)
+                }
+                initialSpacing={20}
+                endSpacing={20}
+                noOfSections={5}
+                yAxisColor="#e5e7eb"
+                xAxisColor="#e5e7eb"
+                yAxisTextStyle={{ color: "#6b7280", fontSize: 10 }}
+                xAxisLabelTextStyle={{ color: "#6b7280", fontSize: 10 }}
+                showVerticalLines
+                verticalLinesColor="#f3f4f6"
+                backgroundColor="#ffffff"
+                rulesColor="#e5e7eb"
+                showReferenceLine1
+                referenceLine1Config={{
+                  color: "#93c5fd",
+                  dashWidth: 2,
+                  dashGap: 3,
                 }}
-                withInnerLines={false}
-                withOuterLines={true}
-                withVerticalLabels={true}
-                withHorizontalLabels={true}
               />
             </View>
           ) : (
