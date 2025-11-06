@@ -16,5 +16,18 @@
   "dismiss": "Odrzuć",
   "previousTip": "Poprzedna",
   "nextTip": "Następna",
-  "finish": "Zakończ"
+  "finish": "Zakończ",
+  "statistics": "Statystyki",
+  "weeklyView": "Widok tygodniowy",
+  "monthlyView": "Widok miesięczny",
+  "average": "Średnia",
+  "total": "Suma",
+  "daysTracked": "Dni śledzenia",
+  "goalAchieved": "Cel osiągnięty",
+  "currentStreak": "Aktualna passa",
+  "bestDay": "Najlepszy dzień",
+  "days": "dni",
+  "noDataAvailable": "Brak danych dla tego okresu",
+  "waterIntakeChart": "Wykres spożycia wody",
+  "progressSummary": "Podsumowanie progresu"
 }

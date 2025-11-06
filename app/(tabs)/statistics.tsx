@@ -1,0 +1,175 @@
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useStatisticsStore, PeriodType } from "@/stores/statistics";
+import { Card } from "@/components/ui/Card";
+import { LineChart } from "react-native-gifted-charts";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import dayjs from "@/plugins/dayjs";
+import { DEFAULT_DATE_FORMAT } from "@/config/date";
+
+export default function Statistics() {
+  const { t } = useTranslation();
+  const [period, setPeriod] = useState<PeriodType>("week");
+  const { getPeriodStats, getBestDay, getCurrentStreak } = useStatisticsStore();
+
+  const stats = getPeriodStats(period);
+  const bestDay = getBestDay(period);
+  const streak = getCurrentStreak();
+
+  const screenWidth = Dimensions.get("window").width;
+  const hasData = stats.daysTracked > 0;
+
+  // Prepare chart data only if there's data to display
+  const chartData = hasData
+    ? stats.dailyData.map((d) => {
+        const date = dayjs(d.date, DEFAULT_DATE_FORMAT);
+        return {
+          value: d.amount || 0,
+          label: period === "week" ? date.format("ddd") : date.format("D"),
+        };
+      })
+    : [];
+
+  return (
+    <ErrorBoundary componentName="Statistics Screen">
+      <ScrollView className="flex-1 bg-white">
+        <View className="p-5 gap-3">
+          {/* Period selector */}
+          <View className="flex-row gap-3">
+            <TouchableOpacity
+              className={`flex-1 p-4 rounded-lg ${period === "week" ? "bg-blue-600" : "bg-gray-200"}`}
+              onPress={() => setPeriod("week")}
+            >
+              <Text
+                className={`text-center font-semibold ${period === "week" ? "text-white" : "text-gray-700"}`}
+              >
+                {t("weeklyView")}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className={`flex-1 p-4 rounded-lg ${period === "month" ? "bg-blue-600" : "bg-gray-200"}`}
+              onPress={() => setPeriod("month")}
+            >
+              <Text
+                className={`text-center font-semibold ${period === "month" ? "text-white" : "text-gray-700"}`}
+              >
+                {t("monthlyView")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Chart */}
+          {hasData ? (
+            <View className="bg-white rounded-lg overflow-hidden shadow-sm p-4">
+              <Text className="text-lg font-semibold pb-2">
+                {t("waterIntakeChart")}
+              </Text>
+              <LineChart
+                scrollToEnd={true}
+                data={chartData}
+                width={screenWidth - 80}
+                height={220}
+                color="#3b82f6"
+                thickness={2}
+                dataPointsColor="#2563eb"
+                dataPointsRadius={4}
+                spacing={
+                  period === "month"
+                    ? 40
+                    : (screenWidth - 120) / Math.max(chartData.length - 1, 1)
+                }
+                initialSpacing={20}
+                endSpacing={20}
+                noOfSections={5}
+                yAxisColor="#e5e7eb"
+                xAxisColor="#e5e7eb"
+                yAxisTextStyle={{ color: "#6b7280", fontSize: 10 }}
+                xAxisLabelTextStyle={{
+                  color: "#6b7280",
+                  fontSize: 9,
+                  marginLeft: 0,
+                }}
+                showVerticalLines
+                verticalLinesColor="#f3f4f6"
+                backgroundColor="#ffffff"
+                rulesColor="#e5e7eb"
+                showReferenceLine1
+                referenceLine1Config={{
+                  color: "#93c5fd",
+                  dashWidth: 2,
+                  dashGap: 3,
+                }}
+              />
+            </View>
+          ) : (
+            <Card title={t("noDataAvailable")} backgroundColor="bg-gray-100" />
+          )}
+
+          {/* Progress Summary */}
+          <Text className="text-xl font-bold mt-2">{t("progressSummary")}</Text>
+
+          {/* Stats Cards */}
+          <View className="flex-row gap-3">
+            <View className="flex-1">
+              <Card
+                title={`${stats.average}ml`}
+                description={t("average")}
+                backgroundColor="bg-blue-50"
+              />
+            </View>
+            <View className="flex-1">
+              <Card
+                title={`${stats.total}ml`}
+                description={t("total")}
+                backgroundColor="bg-blue-50"
+              />
+            </View>
+          </View>
+
+          <View className="flex-row gap-3">
+            <View className="flex-1">
+              <Card
+                title={`${stats.daysTracked}`}
+                description={t("daysTracked")}
+                backgroundColor="bg-green-50"
+              />
+            </View>
+            <View className="flex-1">
+              <Card
+                title={`${stats.goalMetPercentage}%`}
+                description={t("goalAchieved")}
+                backgroundColor="bg-green-50"
+              />
+            </View>
+          </View>
+
+          <View className="flex-row gap-3">
+            <View className="flex-1">
+              <Card
+                title={`${streak} ${t("days")}`}
+                description={t("currentStreak")}
+                backgroundColor="bg-yellow-50"
+              />
+            </View>
+            {bestDay && (
+              <View className="flex-1">
+                <Card
+                  title={`${bestDay.amount}ml`}
+                  description={t("bestDay")}
+                  backgroundColor="bg-yellow-50"
+                />
+              </View>
+            )}
+          </View>
+        </View>
+      </ScrollView>
+    </ErrorBoundary>
+  );
+}
