@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useWaterStore } from "@/stores/water";
 import { useSetupStore } from "@/stores/setup";
 import { roundBy } from "@/utils/numbers";
+import { logError } from "@/utils/errorLogging";
 
 export function useWater() {
   const waterStore = useWaterStore();
@@ -15,27 +16,46 @@ export function useWater() {
 
   const percentOfDailyWater = () => {
     const todayWater = waterStore.getTodayWater();
-    const percent =
-      (Number(todayWater) / Number(setupStore.minimumWater)) * 100;
+    const minimumWater = Number(setupStore.minimumWater);
+    
+    if (minimumWater === 0) {
+      return 0;
+    }
+    
+    const percent = (Number(todayWater) / minimumWater) * 100;
     return percent > 100 ? 100 : percent;
   };
 
-  const addWater = () => {
-    const currentWater = waterStore.getTodayWater();
-    const newCurrentWater =
-      Number(currentWater) + Number(setupStore.glassCapacity);
-    waterStore.setTodayWater(newCurrentWater.toString());
+  const addWater = async () => {
+    try {
+      const currentWater = waterStore.getTodayWater();
+      const newCurrentWater =
+        Number(currentWater) + Number(setupStore.glassCapacity);
+      await waterStore.setTodayWater(newCurrentWater.toString());
+    } catch (error) {
+      logError(error, {
+        operation: 'addWater',
+        component: 'useWater',
+      });
+    }
   };
 
-  const removeWater = () => {
-    const currentWater = waterStore.getTodayWater();
-    const newCurrentWater =
-      Number(currentWater) - Number(setupStore.glassCapacity);
-    if (newCurrentWater <= 0) {
-      waterStore.setTodayWater("0");
-      return;
+  const removeWater = async () => {
+    try {
+      const currentWater = waterStore.getTodayWater();
+      const newCurrentWater =
+        Number(currentWater) - Number(setupStore.glassCapacity);
+      if (newCurrentWater <= 0) {
+        await waterStore.setTodayWater("0");
+        return;
+      }
+      await waterStore.setTodayWater(newCurrentWater.toString());
+    } catch (error) {
+      logError(error, {
+        operation: 'removeWater',
+        component: 'useWater',
+      });
     }
-    waterStore.setTodayWater(newCurrentWater.toString());
   };
 
   useEffect(() => {

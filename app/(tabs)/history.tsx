@@ -3,6 +3,7 @@ import { useWaterStore } from "@/stores/water";
 import { convertDateFormat } from "@/utils/date";
 import { DEFAULT_DATE_FORMAT } from "@/config/date";
 import { useSetupStore } from "@/stores/setup";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const possibleDateFormatsFrom = [
   "MM/DD/YYYY",
@@ -23,12 +24,14 @@ export default function History() {
   }
 
   return (
-    <FlatList
-      className={"flex-1 p-5"}
-      contentContainerClassName={"gap-1"}
-      data={getSortedHistory()}
-      renderItem={({ item }) => <Item date={item.date} water={item.water} />}
-    ></FlatList>
+    <ErrorBoundary componentName="History Screen">
+      <FlatList
+        className={"flex-1 p-5"}
+        contentContainerClassName={"gap-1"}
+        data={getSortedHistory()}
+        renderItem={({ item }) => <Item date={item.date} water={item.water} />}
+      ></FlatList>
+    </ErrorBoundary>
   );
 }
 
