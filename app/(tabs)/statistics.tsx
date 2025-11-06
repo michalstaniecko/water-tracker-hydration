@@ -72,6 +72,7 @@ export default function Statistics() {
                 {t("waterIntakeChart")}
               </Text>
               <LineChart
+                scrollToEnd={true}
                 data={chartData}
                 width={screenWidth - 80}
                 height={220}
@@ -81,11 +82,11 @@ export default function Statistics() {
                 dataPointsRadius={4}
                 spacing={
                   period === "month"
-                    ? (screenWidth - 100) / Math.max(chartData.length - 1, 1)
+                    ? 40
                     : (screenWidth - 120) / Math.max(chartData.length - 1, 1)
                 }
-                initialSpacing={period === "month" ? 10 : 20}
-                endSpacing={period === "month" ? 10 : 20}
+                initialSpacing={20}
+                endSpacing={20}
                 noOfSections={5}
                 yAxisColor="#e5e7eb"
                 xAxisColor="#e5e7eb"
@@ -93,11 +94,8 @@ export default function Statistics() {
                 xAxisLabelTextStyle={{
                   color: "#6b7280",
                   fontSize: 9,
-                  width: period === "month" ? 60 : undefined,
-                  marginLeft: period === "month" ? -25 : 0,
-                  transform: period === "month" ? [{ rotate: "-90deg" }] : [],
+                  marginLeft: 0,
                 }}
-                rotateLabel={period === "month"}
                 showVerticalLines
                 verticalLinesColor="#f3f4f6"
                 backgroundColor="#ffffff"
