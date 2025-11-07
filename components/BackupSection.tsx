@@ -84,22 +84,22 @@ export default function BackupSection() {
 
       <View className="gap-3">
         <Button
-          label={t("exportDataJSON")}
+          text={t("exportDataJSON")}
           onPress={handleExportJSON}
           disabled={isProcessing || backupStore.isLoading}
         />
         <Button
-          label={t("exportDataCSV")}
+          text={t("exportDataCSV")}
           onPress={handleExportCSV}
           disabled={isProcessing || backupStore.isLoading}
         />
         <Button
-          label={t("importDataJSON")}
+          text={t("importDataJSON")}
           onPress={handleImportJSON}
           disabled={isProcessing || backupStore.isLoading}
         />
         <Button
-          label={t("importDataCSV")}
+          text={t("importDataCSV")}
           onPress={handleImportCSV}
           disabled={isProcessing || backupStore.isLoading}
         />

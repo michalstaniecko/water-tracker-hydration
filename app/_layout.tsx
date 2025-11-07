@@ -55,10 +55,10 @@ export default function RootLayout() {
     fetchOrInitWaterData();
     fetchOrInitOnboarding();
     fetchOrInitGamification();
-    
+
     // Create automatic backup on app start (once per day)
     createAutomaticBackup();
-    
+
     return () => {
       subscription.remove();
     };
