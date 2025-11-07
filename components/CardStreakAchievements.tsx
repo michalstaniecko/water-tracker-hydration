@@ -26,15 +26,19 @@ export default function CardStreakAchievements() {
   };
 
   return (
-    <TouchableOpacity onPress={handleNavigateToAchievements} activeOpacity={0.7}>
-      <Card className="p-0 shadow shadow-blue-700 active:shadow-blue-500" backgroundColor="bg-white">
+    <TouchableOpacity
+      onPress={handleNavigateToAchievements}
+      activeOpacity={0.7}
+    >
+      <Card className="p-0 shadow shadow-blue-500" backgroundColor="bg-white">
         <View className="relative z-10">
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-3">
               <View className="flex-row items-center gap-2">
                 <Text className="text-2xl">🔥</Text>
                 <Text className="text-lg font-semibold text-gray-900">
-                  {currentStreak} {currentStreak === 1 ? t("dayStreak") : t("daysStreak")}
+                  {currentStreak}{" "}
+                  {currentStreak === 1 ? t("dayStreak") : t("daysStreak")}
                 </Text>
               </View>
               <View className="flex-row items-center gap-2">
