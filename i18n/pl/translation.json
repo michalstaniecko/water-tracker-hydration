@@ -27,6 +27,8 @@
   "currentStreak": "Aktualna passa",
   "bestDay": "Najlepszy dzień",
   "days": "dni",
+  "dayStreak": "dzień z rzędu",
+  "daysStreak": "dni z rzędu",
   "noDataAvailable": "Brak danych dla tego okresu",
   "waterIntakeChart": "Wykres spożycia wody",
   "progressSummary": "Podsumowanie progresu"

@@ -18,6 +18,7 @@ import CardWelcome from "@/components/onboarding/CardWelcome";
 import CardSecond from "@/components/onboarding/CardSecond";
 import CardThird from "@/components/onboarding/CardThird";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import CardStreakAchievements from "@/components/CardStreakAchievements";
 
 const duration = 50;
 
@@ -31,6 +32,9 @@ export default function Index() {
       <ScrollView contentContainerClassName={"p-5"}>
         <View className={"gap-3"}>
           <CardWelcome />
+          <Animated.View layout={CurvedTransition}>
+            <CardStreakAchievements />
+          </Animated.View>
           <Animated.View layout={CurvedTransition} className={"flex-row gap-3"}>
             <View className={"flex-1 gap-3"}>
               <Card

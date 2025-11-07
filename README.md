@@ -6,6 +6,10 @@ Water Tracker Hydration is a React Native application built with Expo that helps
 
 - Track daily water intake
 - Interactive onboarding for new users
+- **Gamification system with achievements and streaks**
+- **Achievement badges and milestones**
+- **In-app notifications for achievements**
+- **Streak tracking to maintain hydration habits**
 - Localization support powered by `i18next`
 - Smooth animations using `react-native-reanimated`
 - Styling with TailwindCSS (`nativewind`)
@@ -61,6 +65,22 @@ Water Tracker Hydration is a React Native application built with Expo that helps
 - `app.json` & `package.json` — Project and dependency configuration
 - `scripts/` — Additional scripts (e.g., project reset)
 - `assets/` — Icons, splash screens, images
+- `stores/` — Zustand state management stores
+- `components/` — Reusable UI components
+- `i18n/` — Internationalization translations
+- `docs/` — Documentation (see [GAMIFICATION.md](./docs/GAMIFICATION.md) for gamification features)
+
+## Gamification Features
+
+The app includes a comprehensive gamification system to boost user engagement and retention:
+
+- **11 Achievements**: Unlock badges for various milestones (streaks, total water consumed, perfect weeks)
+- **Streak Tracking**: Monitor consecutive days of meeting your hydration goals
+- **In-App Notifications**: Get notified when you unlock new achievements
+- **Progress Visualization**: See your achievements and streak on the home screen
+- **Dedicated Achievements Tab**: Browse all locked and unlocked achievements
+
+For detailed information about the gamification system, see [docs/GAMIFICATION.md](./docs/GAMIFICATION.md).
 
 ## Useful Scripts
 
