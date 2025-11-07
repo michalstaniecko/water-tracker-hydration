@@ -128,7 +128,7 @@ export const useBackupStore = create<BackupStore>((set, get) => ({
         copyToCacheDirectory: true,
       });
 
-      if (result.canceled) {
+      if (result.canceled || !result.assets || result.assets.length === 0) {
         set({ isLoading: false });
         return false;
       }
@@ -160,7 +160,7 @@ export const useBackupStore = create<BackupStore>((set, get) => ({
         copyToCacheDirectory: true,
       });
 
-      if (result.canceled) {
+      if (result.canceled || !result.assets || result.assets.length === 0) {
         set({ isLoading: false });
         return false;
       }

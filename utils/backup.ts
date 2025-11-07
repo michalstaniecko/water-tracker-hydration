@@ -1,8 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { logError, logWarning } from "./errorLogging";
+import { sanitizeNonNegativeNumber } from "./validation";
+import { HistoryRows } from "@/stores/water";
 
 export type BackupData = {
-  waterData: any;
+  waterData: HistoryRows;
   setupData: any;
   gamificationData: any;
   onboardingData: any;
@@ -107,14 +109,14 @@ export async function exportToJSON(): Promise<string | null> {
 /**
  * Converts water history data to CSV format
  */
-export function waterHistoryToCSV(waterData: any): string {
+export function waterHistoryToCSV(waterData: HistoryRows): string {
   if (!waterData || typeof waterData !== "object") {
     return "Date,Water (ml)\n";
   }
 
   const headers = "Date,Water (ml)\n";
   const rows = Object.entries(waterData)
-    .map(([date, data]: [string, any]) => {
+    .map(([date, data]) => {
       const amount = data?.water || "0";
       return `${date},${amount}`;
     })
@@ -147,7 +149,7 @@ export async function exportToCSV(): Promise<string | null> {
 /**
  * Parses CSV data and returns water history object
  */
-export function parseCSVToWaterHistory(csvContent: string): any {
+export function parseCSVToWaterHistory(csvContent: string): HistoryRows {
   try {
     const lines = csvContent.trim().split("\n");
     if (lines.length < 2) {
@@ -156,15 +158,17 @@ export function parseCSVToWaterHistory(csvContent: string): any {
 
     // Skip header row
     const dataLines = lines.slice(1);
-    const waterHistory: any = {};
+    const waterHistory: HistoryRows = {};
 
     dataLines.forEach((line) => {
       const [date, amount] = line.split(",").map((s) => s.trim());
       if (date && amount) {
         // Validate date format (YYYY-MM-DD)
         if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+          // Sanitize the amount to ensure it's a valid non-negative number
+          const sanitizedAmount = sanitizeNonNegativeNumber(amount);
           waterHistory[date] = {
-            water: amount,
+            water: sanitizedAmount,
           };
         }
       }
@@ -202,7 +206,7 @@ export async function importFromJSON(jsonContent: string): Promise<boolean> {
 export async function importFromCSV(csvContent: string): Promise<boolean> {
   try {
     const waterHistory = parseCSVToWaterHistory(csvContent);
-    if (Object.keys(waterHistory).length === 0) {
+    if (!waterHistory || Object.keys(waterHistory).length === 0) {
       logWarning("No valid data found in CSV", {
         operation: "importFromCSV",
         component: "BackupUtility",

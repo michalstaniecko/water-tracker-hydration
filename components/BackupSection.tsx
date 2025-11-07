@@ -49,7 +49,7 @@ export default function BackupSection() {
       await waterStore.fetchOrInitData();
       await setupStore.fetchOrInitData();
       await gamificationStore.fetchOrInitData();
-      
+
       Alert.alert(t("importSuccess"));
     } else {
       Alert.alert(t("importError"));
@@ -64,7 +64,7 @@ export default function BackupSection() {
     if (success) {
       // Reload water store
       await waterStore.fetchOrInitData();
-      
+
       Alert.alert(t("importSuccess"));
     } else {
       Alert.alert(t("importError"));
