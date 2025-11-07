@@ -10,6 +10,8 @@ Water Tracker Hydration is a React Native application built with Expo that helps
 - **Achievement badges and milestones**
 - **In-app notifications for achievements**
 - **Streak tracking to maintain hydration habits**
+- **Backup and data synchronization (JSON/CSV export/import)**
+- **Automatic daily backups for data protection**
 - Localization support powered by `i18next`
 - Smooth animations using `react-native-reanimated`
 - Styling with TailwindCSS (`nativewind`)
@@ -68,7 +70,9 @@ Water Tracker Hydration is a React Native application built with Expo that helps
 - `stores/` — Zustand state management stores
 - `components/` — Reusable UI components
 - `i18n/` — Internationalization translations
-- `docs/` — Documentation (see [GAMIFICATION.md](./docs/GAMIFICATION.md) for gamification features)
+- `docs/` — Documentation
+  - [GAMIFICATION.md](./docs/GAMIFICATION.md) - Gamification features
+  - [BACKUP.md](./docs/BACKUP.md) - Backup and data synchronization
 
 ## Gamification Features
 
@@ -81,6 +85,18 @@ The app includes a comprehensive gamification system to boost user engagement an
 - **Dedicated Achievements Tab**: Browse all locked and unlocked achievements
 
 For detailed information about the gamification system, see [docs/GAMIFICATION.md](./docs/GAMIFICATION.md).
+
+## Backup and Data Protection
+
+The app includes comprehensive backup features to protect your data:
+
+- **Automatic Daily Backups**: Creates a backup automatically every day (keeps last 7)
+- **Manual Export**: Export all your data as JSON or water history as CSV
+- **Easy Import**: Restore your data from JSON or import water history from CSV
+- **Data Validation**: All imported data is validated for integrity
+- **No Data Loss**: CSV imports merge with existing data instead of replacing it
+
+Access backup features from the Settings (⚙️) tab. For detailed information about the backup system, see [docs/BACKUP.md](./docs/BACKUP.md).
 
 ## Useful Scripts
 
