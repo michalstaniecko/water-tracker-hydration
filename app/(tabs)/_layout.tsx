@@ -40,15 +40,6 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name={"history"}
-          options={{
-            title: t("history"),
-            tabBarIcon: ({ color }) => (
-              <FontAwesome size={24} name={"calendar"} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
           name={"statistics"}
           options={{
             title: t("statistics"),
@@ -73,6 +64,12 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <FontAwesome size={28} name={"cog"} color={color} />
             ),
+          }}
+        />
+        <Tabs.Screen
+          name={"history"}
+          options={{
+            href: null,
           }}
         />
       </Tabs>
