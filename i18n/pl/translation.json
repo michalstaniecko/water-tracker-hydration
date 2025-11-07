@@ -31,5 +31,9 @@
   "daysStreak": "dni z rzędu",
   "noDataAvailable": "Brak danych dla tego okresu",
   "waterIntakeChart": "Wykres spożycia wody",
-  "progressSummary": "Podsumowanie progresu"
+  "progressSummary": "Podsumowanie progresu",
+  "history": "Historia",
+  "date": "Data",
+  "amount": "Ilość",
+  "noHistoryAvailable": "Brak historii. Wypij trochę wody."
 }
