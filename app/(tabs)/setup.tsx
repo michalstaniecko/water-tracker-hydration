@@ -12,6 +12,7 @@ import { languages } from "@/config/languages";
 import InputTime from "@/components/ui/InputTime";
 import { useOnboardingStore, Status } from "@/stores/onboarding";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import BackupSection from "@/components/BackupSection";
 
 export default function Setup() {
   const { t } = useTranslation("setup");
@@ -117,6 +118,7 @@ export default function Setup() {
               value={onboarding.status}
             />
           </View>
+          <BackupSection />
         </ScrollView>
       </TouchableWithoutFeedback>
     </ErrorBoundary>
