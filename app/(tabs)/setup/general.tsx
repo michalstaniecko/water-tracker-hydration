@@ -12,9 +12,8 @@ import { languages } from "@/config/languages";
 import InputTime from "@/components/ui/InputTime";
 import { useOnboardingStore, Status } from "@/stores/onboarding";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import BackupSection from "@/components/BackupSection";
 
-export default function Setup() {
+export default function GeneralSettings() {
   const { t } = useTranslation("setup");
   const setupStore = useSetupStore();
   const onboarding = useOnboardingStore();
@@ -47,7 +46,7 @@ export default function Setup() {
   };
 
   return (
-    <ErrorBoundary componentName="Setup Screen">
+    <ErrorBoundary componentName="General Settings">
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerClassName={"gap-5 flex-1 p-5"}>
           <View className={"gap-1"}>
@@ -118,7 +117,6 @@ export default function Setup() {
               value={onboarding.status}
             />
           </View>
-          <BackupSection />
         </ScrollView>
       </TouchableWithoutFeedback>
     </ErrorBoundary>
