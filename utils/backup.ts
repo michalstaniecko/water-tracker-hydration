@@ -3,6 +3,13 @@ import { logError, logWarning } from "./errorLogging";
 import { sanitizeNonNegativeNumber } from "./validation";
 import { HistoryRows } from "@/stores/water";
 
+// Type for water history data (non-null version)
+export type WaterHistoryData = {
+  [date: string]: {
+    water: string;
+  };
+};
+
 export type BackupData = {
   waterData: HistoryRows;
   setupData: any;
@@ -149,7 +156,7 @@ export async function exportToCSV(): Promise<string | null> {
 /**
  * Parses CSV data and returns water history object
  */
-export function parseCSVToWaterHistory(csvContent: string): HistoryRows {
+export function parseCSVToWaterHistory(csvContent: string): WaterHistoryData {
   try {
     const lines = csvContent.trim().split("\n");
     if (lines.length < 2) {
@@ -158,7 +165,7 @@ export function parseCSVToWaterHistory(csvContent: string): HistoryRows {
 
     // Skip header row
     const dataLines = lines.slice(1);
-    const waterHistory: HistoryRows = {};
+    const waterHistory: WaterHistoryData = {};
 
     dataLines.forEach((line) => {
       const [date, amount] = line.split(",").map((s) => s.trim());
