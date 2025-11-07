@@ -125,6 +125,7 @@ export const useStatisticsStore = create<StatisticsStore>((set, get) => ({
 
     let streak = 0;
     let currentDate = dayjs();
+    let checkingToday = true;
 
     while (true) {
       const dateStr = currentDate.format(DEFAULT_DATE_FORMAT);
@@ -134,7 +135,15 @@ export const useStatisticsStore = create<StatisticsStore>((set, get) => ({
       if (amount >= minimumWater) {
         streak++;
         currentDate = currentDate.subtract(1, "day");
+        checkingToday = false;
       } else {
+        // If today's goal isn't met yet, skip to yesterday and continue counting
+        if (checkingToday) {
+          currentDate = currentDate.subtract(1, "day");
+          checkingToday = false;
+          continue;
+        }
+        // If any previous day didn't meet the goal, break the streak
         break;
       }
 
