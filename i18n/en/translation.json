@@ -27,6 +27,8 @@
   "currentStreak": "Current Streak",
   "bestDay": "Best Day",
   "days": "days",
+  "dayStreak": "day streak",
+  "daysStreak": "days streak",
   "noDataAvailable": "No data available for this period",
   "waterIntakeChart": "Water Intake Chart",
   "progressSummary": "Progress Summary"
