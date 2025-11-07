@@ -27,46 +27,35 @@ export default function CardStreakAchievements() {
 
   return (
     <TouchableOpacity onPress={handleNavigateToAchievements}>
-      <Card backgroundColor="bg-gradient-to-r from-yellow-100 to-orange-100">
-        <View className="gap-2">
+      <Card className="p-0 h-[200]" backgroundColor="bg-white">
+        <View className="relative z-10 h-full">
+          <View className="flex-row items-center gap-2 mb-2">
+            <Text className="text-2xl">🔥</Text>
+            <Text className="text-lg font-semibold text-gray-900">
+              {currentStreak} {currentStreak === 1 ? t("days").slice(0, -1) : t("days")}
+            </Text>
+          </View>
           <View className="flex-row items-center gap-2">
-            <Text className="text-3xl">🔥</Text>
-            <View className="flex-1">
-              <Text className="text-lg font-semibold text-gray-800">
-                {t("currentStreak")}
-              </Text>
-              <Text className="text-2xl font-bold text-orange-600">
-                {currentStreak} {t("days")}
-              </Text>
-            </View>
+            <Text className="text-2xl">🏆</Text>
+            <Text className="text-lg font-semibold text-gray-900">
+              {unlockedCount} / {totalCount}
+            </Text>
           </View>
-
-          <View className="mt-2 pt-2 border-t border-gray-300">
-            <View className="flex-row items-center gap-2">
-              <Text className="text-2xl">🏆</Text>
-              <View className="flex-1">
-                <Text className="text-sm font-semibold text-gray-700">
-                  {t("gamification:achievements")}
-                </Text>
-                <Text className="text-lg font-bold text-gray-800">
-                  {unlockedCount} / {totalCount}
-                </Text>
-              </View>
-            </View>
-          </View>
-
           {unlockedCount > 0 && (
             <View className="mt-2 flex-row flex-wrap gap-1">
               {achievements
                 .filter((a) => a.isUnlocked)
-                .slice(0, 8)
+                .slice(0, 6)
                 .map((achievement) => (
-                  <Text key={achievement.id} className="text-xl">
+                  <Text key={achievement.id} className="text-lg">
                     {achievement.icon}
                   </Text>
                 ))}
             </View>
           )}
+          <Text className="text-gray-700 mt-auto">
+            {t("gamification:achievements")}
+          </Text>
         </View>
       </Card>
     </TouchableOpacity>

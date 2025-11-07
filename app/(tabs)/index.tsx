@@ -74,11 +74,11 @@ export default function Index() {
           </Animated.View>
 
           <CardSecond />
-          <Animated.View layout={CurvedTransition}>
+          <Animated.View layout={CurvedTransition} className={"flex-row gap-3"}>
+            <CardDayProgress />
             <CardStreakAchievements />
           </Animated.View>
           <Animated.View layout={CurvedTransition} className={"flex-row gap-3"}>
-            <CardDayProgress />
             <CardWaterAmount />
           </Animated.View>
           <CardThird />
