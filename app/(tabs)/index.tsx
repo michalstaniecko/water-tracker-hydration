@@ -32,6 +32,9 @@ export default function Index() {
       <ScrollView contentContainerClassName={"p-5"}>
         <View className={"gap-3"}>
           <CardWelcome />
+          <Animated.View layout={CurvedTransition}>
+            <CardStreakAchievements />
+          </Animated.View>
           <Animated.View layout={CurvedTransition} className={"flex-row gap-3"}>
             <View className={"flex-1 gap-3"}>
               <Card
@@ -76,9 +79,6 @@ export default function Index() {
           <CardSecond />
           <Animated.View layout={CurvedTransition} className={"flex-row gap-3"}>
             <CardDayProgress />
-            <CardStreakAchievements />
-          </Animated.View>
-          <Animated.View layout={CurvedTransition} className={"flex-row gap-3"}>
             <CardWaterAmount />
           </Animated.View>
           <CardThird />

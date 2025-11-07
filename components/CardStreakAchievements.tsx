@@ -27,33 +27,37 @@ export default function CardStreakAchievements() {
 
   return (
     <TouchableOpacity onPress={handleNavigateToAchievements}>
-      <Card className="p-0 h-[200]" backgroundColor="bg-white">
-        <View className="relative z-10 h-full">
-          <View className="flex-row items-center gap-2 mb-2">
-            <Text className="text-2xl">🔥</Text>
-            <Text className="text-lg font-semibold text-gray-900">
-              {currentStreak} {currentStreak === 1 ? t("days").slice(0, -1) : t("days")}
-            </Text>
-          </View>
-          <View className="flex-row items-center gap-2">
-            <Text className="text-2xl">🏆</Text>
-            <Text className="text-lg font-semibold text-gray-900">
-              {unlockedCount} / {totalCount}
-            </Text>
-          </View>
-          {unlockedCount > 0 && (
-            <View className="mt-2 flex-row flex-wrap gap-1">
-              {achievements
-                .filter((a) => a.isUnlocked)
-                .slice(0, 6)
-                .map((achievement) => (
-                  <Text key={achievement.id} className="text-lg">
-                    {achievement.icon}
-                  </Text>
-                ))}
+      <Card className="p-0" backgroundColor="bg-white">
+        <View className="relative z-10">
+          <View className="flex-row items-center justify-between">
+            <View className="flex-row items-center gap-3">
+              <View className="flex-row items-center gap-2">
+                <Text className="text-2xl">🔥</Text>
+                <Text className="text-lg font-semibold text-gray-900">
+                  {currentStreak} {currentStreak === 1 ? t("days").slice(0, -1) : t("days")}
+                </Text>
+              </View>
+              <View className="flex-row items-center gap-2">
+                <Text className="text-2xl">🏆</Text>
+                <Text className="text-lg font-semibold text-gray-900">
+                  {unlockedCount} / {totalCount}
+                </Text>
+              </View>
             </View>
-          )}
-          <Text className="text-gray-700 mt-auto">
+            {unlockedCount > 0 && (
+              <View className="flex-row flex-wrap gap-1">
+                {achievements
+                  .filter((a) => a.isUnlocked)
+                  .slice(0, 8)
+                  .map((achievement) => (
+                    <Text key={achievement.id} className="text-xl">
+                      {achievement.icon}
+                    </Text>
+                  ))}
+              </View>
+            )}
+          </View>
+          <Text className="text-gray-700 mt-2">
             {t("gamification:achievements")}
           </Text>
         </View>
