@@ -16,6 +16,9 @@ import {
   BackupData,
 } from "@/utils/backup";
 import { logError } from "@/utils/errorLogging";
+import { useWaterStore } from "./water";
+import { useGamificationStore } from "./gamification";
+import { useSetupStore } from "./setup";
 
 type BackupStore = {
   isLoading: boolean;
@@ -139,6 +142,14 @@ export const useBackupStore = create<BackupStore>((set, get) => ({
       // Import the data
       const success = await importFromJSON(fileContent);
 
+      // If import was successful, reload stores to reflect the new data
+      if (success) {
+        await useWaterStore.getState().fetchOrInitData();
+        await useSetupStore.getState().fetchOrInitData();
+        await useGamificationStore.getState().fetchOrInitData();
+        await useGamificationStore.getState().checkAndUnlockAchievements();
+      }
+
       set({ isLoading: false });
       return success;
     } catch (error) {
@@ -170,6 +181,12 @@ export const useBackupStore = create<BackupStore>((set, get) => ({
 
       // Import the data
       const success = await importFromCSV(fileContent);
+
+      // If import was successful, reload stores to reflect the new data
+      if (success) {
+        await useWaterStore.getState().fetchOrInitData();
+        await useGamificationStore.getState().checkAndUnlockAchievements();
+      }
 
       set({ isLoading: false });
       return success;
@@ -216,6 +233,15 @@ export const useBackupStore = create<BackupStore>((set, get) => ({
     set({ isLoading: true });
     try {
       const success = await restoreAutoBackup(backupKey);
+      
+      // If restore was successful, reload stores to reflect the new data
+      if (success) {
+        await useWaterStore.getState().fetchOrInitData();
+        await useSetupStore.getState().fetchOrInitData();
+        await useGamificationStore.getState().fetchOrInitData();
+        await useGamificationStore.getState().checkAndUnlockAchievements();
+      }
+      
       set({ isLoading: false });
       return success;
     } catch (error) {
@@ -248,6 +274,15 @@ export const useBackupStore = create<BackupStore>((set, get) => ({
     set({ isLoading: true });
     try {
       const success = await restoreBackup(backup);
+      
+      // If restore was successful, reload stores to reflect the new data
+      if (success) {
+        await useWaterStore.getState().fetchOrInitData();
+        await useSetupStore.getState().fetchOrInitData();
+        await useGamificationStore.getState().fetchOrInitData();
+        await useGamificationStore.getState().checkAndUnlockAchievements();
+      }
+      
       set({ isLoading: false });
       return success;
     } catch (error) {

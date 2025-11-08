@@ -2,6 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { logError, logWarning } from "./errorLogging";
 import { sanitizeNonNegativeNumber } from "./validation";
 import { HistoryRows } from "@/stores/water";
+import dayjs from "@/plugins/dayjs";
+import { DEFAULT_DATE_FORMAT } from "@/config/date";
 
 // Type for water history data (non-null version)
 export type WaterHistoryData = {
@@ -21,6 +23,57 @@ export type BackupData = {
 };
 
 const BACKUP_VERSION = "1.0.0";
+
+// Possible date formats that might be in imported backup files
+const POSSIBLE_DATE_FORMATS = [
+  "YYYY-MM-DD",     // ISO format (most common in manual backups)
+  DEFAULT_DATE_FORMAT, // DD/MM/YYYY (app's internal format)
+  "MM/DD/YYYY",
+  "DD/M/YYYY",
+  "M/D/YYYY",
+];
+
+/**
+ * Normalizes water data dates to the app's internal format (DD/MM/YYYY)
+ * This ensures compatibility with manually created backup files that may use different date formats
+ */
+function normalizeWaterDataDates(waterData: HistoryRows): HistoryRows {
+  if (!waterData || typeof waterData !== "object") {
+    return waterData;
+  }
+
+  const normalized: HistoryRows = {};
+  
+  Object.entries(waterData).forEach(([date, data]) => {
+    // Try to parse the date with various formats
+    let parsedDate = null;
+    
+    for (const format of POSSIBLE_DATE_FORMATS) {
+      const parsed = dayjs(date, format, true);
+      if (parsed.isValid()) {
+        parsedDate = parsed;
+        break;
+      }
+    }
+    
+    if (parsedDate && parsedDate.isValid()) {
+      // Convert to app's internal format
+      const normalizedDate = parsedDate.format(DEFAULT_DATE_FORMAT);
+      normalized[normalizedDate] = data;
+    } else {
+      // If we can't parse it, keep the original date
+      // This prevents data loss for edge cases
+      logWarning("Could not parse date during normalization, keeping original", {
+        operation: "normalizeWaterDataDates",
+        component: "BackupUtility",
+        data: { date },
+      });
+      normalized[date] = data;
+    }
+  });
+  
+  return normalized;
+}
 
 /**
  * Creates a complete backup of all app data
@@ -67,7 +120,9 @@ export async function restoreBackup(backup: BackupData): Promise<boolean> {
 
     // Restore each data store
     if (backup.waterData) {
-      await AsyncStorage.setItem("waterData", JSON.stringify(backup.waterData));
+      // Normalize dates to app's internal format before saving
+      const normalizedWaterData = normalizeWaterDataDates(backup.waterData);
+      await AsyncStorage.setItem("waterData", JSON.stringify(normalizedWaterData));
     }
     if (backup.setupData) {
       await AsyncStorage.setItem("setupData", JSON.stringify(backup.setupData));
@@ -170,11 +225,31 @@ export function parseCSVToWaterHistory(csvContent: string): WaterHistoryData {
     dataLines.forEach((line) => {
       const [date, amount] = line.split(",").map((s) => s.trim());
       if (date && amount) {
-        // Validate date format (YYYY-MM-DD)
+        // Try to parse date with various formats
+        let parsedDate = null;
+        
+        // First check if it's YYYY-MM-DD (common in CSV)
         if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+          parsedDate = dayjs(date, "YYYY-MM-DD", true);
+        }
+        
+        // If not, try other formats
+        if (!parsedDate || !parsedDate.isValid()) {
+          for (const format of POSSIBLE_DATE_FORMATS) {
+            const parsed = dayjs(date, format, true);
+            if (parsed.isValid()) {
+              parsedDate = parsed;
+              break;
+            }
+          }
+        }
+        
+        if (parsedDate && parsedDate.isValid()) {
           // Sanitize the amount to ensure it's a valid non-negative number
           const sanitizedAmount = sanitizeNonNegativeNumber(amount);
-          waterHistory[date] = {
+          // Store with normalized date format
+          const normalizedDate = parsedDate.format(DEFAULT_DATE_FORMAT);
+          waterHistory[normalizedDate] = {
             water: sanitizedAmount,
           };
         }
