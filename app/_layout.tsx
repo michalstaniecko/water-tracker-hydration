@@ -13,6 +13,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useOnboardingStore } from "@/stores/onboarding";
 import { useGamificationStore } from "@/stores/gamification";
+import { useBackupStore } from "@/stores/backup";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -27,6 +28,7 @@ export default function RootLayout() {
     fetchOrInitData: fetchOrInitGamification,
     checkAndUnlockAchievements,
   } = useGamificationStore();
+  const { createAutomaticBackup } = useBackupStore();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -53,6 +55,10 @@ export default function RootLayout() {
     fetchOrInitWaterData();
     fetchOrInitOnboarding();
     fetchOrInitGamification();
+
+    // Create automatic backup on app start (once per day)
+    createAutomaticBackup();
+
     return () => {
       subscription.remove();
     };

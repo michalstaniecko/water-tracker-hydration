@@ -7,5 +7,19 @@
   "close": "Close",
   "on": "On",
   "off": "Off",
-  "enableOnboarding": "Enable onboarding"
+  "enableOnboarding": "Enable onboarding",
+  "backupAndSync": "Backup & Sync",
+  "exportDataJSON": "Export Data (JSON)",
+  "exportDataCSV": "Export Data (CSV)",
+  "importDataJSON": "Import Data (JSON)",
+  "importDataCSV": "Import Data (CSV)",
+  "exportSuccess": "Data exported successfully",
+  "exportError": "Failed to export data",
+  "importSuccess": "Data imported successfully",
+  "importError": "Failed to import data",
+  "backupDescription": "Backup and restore your data to prevent data loss",
+  "setup": "Settings",
+  "general": "General",
+  "backup": "Backup",
+  "back": "Back"
 }
