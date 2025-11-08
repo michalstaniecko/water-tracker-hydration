@@ -24,7 +24,7 @@ describe('Backup Integration Tests', () => {
 
   describe('Full backup and restore flow', () => {
     it('should create and restore a complete backup', async () => {
-      // Setup initial data
+      // Setup initial data using YYYY-MM-DD format (simulating manual backup)
       const waterData = {
         '2024-01-01': { water: '2000' },
         '2024-01-02': { water: '2500' },
@@ -53,16 +53,19 @@ describe('Backup Integration Tests', () => {
       const restored = await restoreBackup(backup!);
       expect(restored).toBe(true);
 
-      // Verify restored data
+      // Verify restored data - dates should be normalized to DD/MM/YYYY
       const restoredWaterData = JSON.parse(await AsyncStorage.getItem('waterData') || '{}');
       const restoredSetupData = JSON.parse(await AsyncStorage.getItem('setupData') || '{}');
       
-      expect(restoredWaterData).toEqual(waterData);
+      expect(restoredWaterData).toEqual({
+        '01/01/2024': { water: '2000' },
+        '02/01/2024': { water: '2500' },
+      });
       expect(restoredSetupData).toEqual(setupData);
     });
 
     it('should handle JSON export and import', async () => {
-      // Setup initial data
+      // Setup initial data using YYYY-MM-DD format (simulating manual backup)
       const waterData = {
         '2024-01-01': { water: '2000' },
         '2024-01-02': { water: '2500' },
@@ -84,13 +87,16 @@ describe('Backup Integration Tests', () => {
       const imported = await importFromJSON(jsonExport!);
       expect(imported).toBe(true);
 
-      // Verify imported data
+      // Verify imported data - dates should be normalized to DD/MM/YYYY
       const restoredWaterData = JSON.parse(await AsyncStorage.getItem('waterData') || '{}');
-      expect(restoredWaterData).toEqual(waterData);
+      expect(restoredWaterData).toEqual({
+        '01/01/2024': { water: '2000' },
+        '02/01/2024': { water: '2500' },
+      });
     });
 
     it('should handle CSV export and import', async () => {
-      // Setup initial data
+      // Setup initial data using YYYY-MM-DD format
       const waterData = {
         '2024-01-01': { water: '2000' },
         '2024-01-02': { water: '2500' },
@@ -111,20 +117,24 @@ describe('Backup Integration Tests', () => {
       const imported = await importFromCSV(csvExport!);
       expect(imported).toBe(true);
 
-      // Verify imported data
+      // Verify imported data - dates should be normalized to DD/MM/YYYY
       const restoredWaterData = JSON.parse(await AsyncStorage.getItem('waterData') || '{}');
-      expect(restoredWaterData).toEqual(waterData);
+      expect(restoredWaterData).toEqual({
+        '01/01/2024': { water: '2000' },
+        '02/01/2024': { water: '2500' },
+        '03/01/2024': { water: '1800' },
+      });
     });
 
     it('should merge CSV data with existing data', async () => {
-      // Setup initial data
+      // Setup initial data in DD/MM/YYYY format
       const existingData = {
-        '2024-01-01': { water: '2000' },
-        '2024-01-02': { water: '2500' },
+        '01/01/2024': { water: '2000' },
+        '02/01/2024': { water: '2500' },
       };
       await AsyncStorage.setItem('waterData', JSON.stringify(existingData));
 
-      // Import CSV with overlapping and new data
+      // Import CSV with overlapping and new data (in YYYY-MM-DD format)
       const csvContent = `Date,Water (ml)
 2024-01-02,3000
 2024-01-03,1800`;
@@ -132,12 +142,12 @@ describe('Backup Integration Tests', () => {
       const imported = await importFromCSV(csvContent);
       expect(imported).toBe(true);
 
-      // Verify merged data
+      // Verify merged data - new dates should be normalized
       const mergedData = JSON.parse(await AsyncStorage.getItem('waterData') || '{}');
       expect(mergedData).toEqual({
-        '2024-01-01': { water: '2000' },
-        '2024-01-02': { water: '3000' }, // Updated
-        '2024-01-03': { water: '1800' }, // New
+        '01/01/2024': { water: '2000' },
+        '02/01/2024': { water: '3000' }, // Updated
+        '03/01/2024': { water: '1800' }, // New
       });
     });
 
@@ -149,7 +159,7 @@ describe('Backup Integration Tests', () => {
       await useWaterStore.getState().fetchOrInitData();
       expect(useWaterStore.getState().hasHistory()).toBe(true); // Will have today with 0
 
-      // Create a backup with water history
+      // Create a backup with water history using YYYY-MM-DD format (simulating manual backup)
       const waterData = {
         '2024-01-01': { water: '2000' },
         '2024-01-02': { water: '2500' },
@@ -176,11 +186,11 @@ describe('Backup Integration Tests', () => {
       await useGamificationStore.getState().fetchOrInitData();
       await useGamificationStore.getState().checkAndUnlockAchievements();
 
-      // Verify water data was loaded
+      // Verify water data was loaded - dates should be normalized to DD/MM/YYYY
       const history = useWaterStore.getState().history;
       expect(history).not.toBeNull();
-      expect(history?.['2024-01-01']?.water).toBe('2000');
-      expect(history?.['2024-01-02']?.water).toBe('2500');
+      expect(history?.['01/01/2024']?.water).toBe('2000');
+      expect(history?.['02/01/2024']?.water).toBe('2500');
 
       // Verify gamification achievements were recalculated
       const achievements = useGamificationStore.getState().achievements;

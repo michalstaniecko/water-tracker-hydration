@@ -53,10 +53,11 @@ describe('Backup Utils', () => {
 
       const result = parseCSVToWaterHistory(csvContent);
       
+      // Dates should be normalized to DD/MM/YYYY format
       expect(result).toEqual({
-        '2024-01-01': { water: '2000' },
-        '2024-01-02': { water: '2500' },
-        '2024-01-03': { water: '1800' },
+        '01/01/2024': { water: '2000' },
+        '02/01/2024': { water: '2500' },
+        '03/01/2024': { water: '1800' },
       });
     });
 
@@ -67,8 +68,9 @@ describe('Backup Utils', () => {
 
       const result = parseCSVToWaterHistory(csvContent);
       
-      expect(result['2024-01-01']).toEqual({ water: '2000' });
-      expect(result['2024-01-02']).toEqual({ water: '2500' });
+      // Dates should be normalized to DD/MM/YYYY format
+      expect(result['01/01/2024']).toEqual({ water: '2000' });
+      expect(result['02/01/2024']).toEqual({ water: '2500' });
     });
 
     it('should skip invalid date formats', () => {
@@ -79,9 +81,10 @@ invalid-date,1500
 
       const result = parseCSVToWaterHistory(csvContent);
       
+      // Dates should be normalized to DD/MM/YYYY format
       expect(result).toEqual({
-        '2024-01-01': { water: '2000' },
-        '2024-01-03': { water: '1800' },
+        '01/01/2024': { water: '2000' },
+        '03/01/2024': { water: '1800' },
       });
       expect(result['invalid-date']).toBeUndefined();
     });
@@ -93,8 +96,9 @@ invalid-date,1500
 
       const result = parseCSVToWaterHistory(csvContent);
       
-      expect(result['2024-01-01']).toEqual({ water: '0' });
-      expect(result['2024-01-02']).toEqual({ water: '2000' });
+      // Dates should be normalized to DD/MM/YYYY format
+      expect(result['01/01/2024']).toEqual({ water: '0' });
+      expect(result['02/01/2024']).toEqual({ water: '2000' });
     });
 
     it('should sanitize invalid water amounts', () => {
@@ -104,8 +108,9 @@ invalid-date,1500
 
       const result = parseCSVToWaterHistory(csvContent);
       
-      expect(result['2024-01-01']).toEqual({ water: '0' });
-      expect(result['2024-01-02']).toEqual({ water: '2000' });
+      // Dates should be normalized to DD/MM/YYYY format
+      expect(result['01/01/2024']).toEqual({ water: '0' });
+      expect(result['02/01/2024']).toEqual({ water: '2000' });
     });
 
     it('should handle empty CSV', () => {
@@ -128,19 +133,21 @@ invalid-date,1500
 
       const result = parseCSVToWaterHistory(csvContent);
       
+      // Dates should be normalized to DD/MM/YYYY format
       expect(result).toEqual({
-        '2024-01-01': { water: '2000' },
-        '2024-01-03': { water: '1800' },
+        '01/01/2024': { water: '2000' },
+        '03/01/2024': { water: '1800' },
       });
     });
   });
 
   describe('CSV round-trip', () => {
     it('should maintain data integrity in round-trip conversion', () => {
+      // Use DD/MM/YYYY format (app's internal format) for original data
       const originalData = {
-        '2024-01-01': { water: '2000' },
-        '2024-01-02': { water: '2500' },
-        '2024-01-03': { water: '1800' },
+        '01/01/2024': { water: '2000' },
+        '02/01/2024': { water: '2500' },
+        '03/01/2024': { water: '1800' },
       };
 
       const csv = waterHistoryToCSV(originalData);

@@ -6,6 +6,7 @@ import { useSetupStore } from "@/stores/setup";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 const possibleDateFormatsFrom = [
+  "YYYY-MM-DD", // ISO format (common in backups)
   "MM/DD/YYYY",
   "DD/M/YYYY",
   "M/D/YYYY",

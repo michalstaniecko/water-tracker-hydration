@@ -21,6 +21,7 @@ import { useSetupStore } from "@/stores/setup";
 type TabType = "week" | "month" | "history";
 
 const possibleDateFormatsFrom = [
+  "YYYY-MM-DD", // ISO format (common in backups)
   "MM/DD/YYYY",
   "DD/M/YYYY",
   "M/D/YYYY",
