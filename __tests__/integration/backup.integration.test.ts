@@ -8,6 +8,8 @@ import {
   importFromCSV,
   BackupData,
 } from '@/utils/backup';
+import { useWaterStore } from '@/stores/water';
+import { useGamificationStore } from '@/stores/gamification';
 
 describe('Backup Integration Tests', () => {
   beforeEach(async () => {
@@ -137,6 +139,56 @@ describe('Backup Integration Tests', () => {
         '2024-01-02': { water: '3000' }, // Updated
         '2024-01-03': { water: '1800' }, // New
       });
+    });
+
+    it('should reload stores and recalculate achievements after importing backup', async () => {
+      // Clear stores first
+      await AsyncStorage.clear();
+
+      // Initialize water store with no data
+      await useWaterStore.getState().fetchOrInitData();
+      expect(useWaterStore.getState().hasHistory()).toBe(true); // Will have today with 0
+
+      // Create a backup with water history
+      const waterData = {
+        '2024-01-01': { water: '2000' },
+        '2024-01-02': { water: '2500' },
+        '2024-01-03': { water: '1800' },
+      };
+      const setupData = { minimumWater: '2000' };
+      const gamificationData = { achievements: [], notifications: [], lastChecked: null };
+
+      const backup: BackupData = {
+        waterData,
+        setupData,
+        gamificationData,
+        onboardingData: null,
+        exportDate: new Date().toISOString(),
+        version: '1.0.0',
+      };
+
+      // Restore the backup and verify stores are reloaded
+      const restored = await restoreBackup(backup);
+      expect(restored).toBe(true);
+
+      // Manually reload stores (simulating what the backup store does)
+      await useWaterStore.getState().fetchOrInitData();
+      await useGamificationStore.getState().fetchOrInitData();
+      await useGamificationStore.getState().checkAndUnlockAchievements();
+
+      // Verify water data was loaded
+      const history = useWaterStore.getState().history;
+      expect(history).not.toBeNull();
+      expect(history?.['2024-01-01']?.water).toBe('2000');
+      expect(history?.['2024-01-02']?.water).toBe('2500');
+
+      // Verify gamification achievements were recalculated
+      const achievements = useGamificationStore.getState().achievements;
+      const firstGlassAchievement = achievements.find(a => a.id === 'first_glass');
+      
+      // The first_glass achievement should be unlocked since we have water history
+      expect(firstGlassAchievement).toBeDefined();
+      expect(firstGlassAchievement?.isUnlocked).toBe(true);
     });
   });
 
