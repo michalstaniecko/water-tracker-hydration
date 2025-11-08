@@ -73,6 +73,7 @@ Water Tracker Hydration is a React Native application built with Expo that helps
 - `docs/` — Documentation
   - [GAMIFICATION.md](./docs/GAMIFICATION.md) - Gamification features
   - [BACKUP.md](./docs/BACKUP.md) - Backup and data synchronization
+  - [TESTING.md](./docs/TESTING.md) - Testing and CI/CD pipeline
 
 ## Gamification Features
 
@@ -104,8 +105,21 @@ Access backup features from the Settings (⚙️) tab. For detailed information 
 - `npm run android` — Run the app on Android
 - `npm run ios` — Run the app on iOS
 - `npm run web` — Run the app in the browser
-- `npm test` — Run unit tests
+- `npm test` — Run unit and integration tests
+- `npm run test:watch` — Run tests in watch mode
+- `npm run test:coverage` — Run tests with coverage report
 - `npm run lint` — Check code style and linting
+
+## Testing and CI/CD
+
+The project includes comprehensive testing and automated CI/CD pipelines:
+
+- **44 Unit Tests**: Testing core utilities (validation, numbers, backup)
+- **7 Integration Tests**: Testing complete workflows
+- **GitHub Actions CI**: Automated linting, testing, and coverage reporting
+- **100% Coverage**: For critical utility functions
+
+For detailed information about testing and CI/CD, see [docs/TESTING.md](./docs/TESTING.md).
 
 ## License
 
