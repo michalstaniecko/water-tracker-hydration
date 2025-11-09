@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Dimensions,
   FlatList,
-  Alert,
 } from "react-native";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -18,8 +17,9 @@ import { DEFAULT_DATE_FORMAT } from "@/config/date";
 import { useWaterStore } from "@/stores/water";
 import { convertDateFormat } from "@/utils/date";
 import { useSetupStore } from "@/stores/setup";
-import { exportWeeklyReport, exportMonthlyReport } from "@/utils/pdfExport";
-import { trackEngagement } from "@/utils/analytics";
+// PDF export functions kept for future use but hidden from UI
+// import { exportWeeklyReport, exportMonthlyReport } from "@/utils/pdfExport";
+// import { trackEngagement } from "@/utils/analytics";
 
 type TabType = "week" | "month" | "history";
 
@@ -34,7 +34,8 @@ const possibleDateFormatsFrom = [
 export default function Statistics() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabType>("week");
-  const [isExporting, setIsExporting] = useState(false);
+  // PDF export state - hidden from UI but kept for future use
+  // const [isExporting, setIsExporting] = useState(false);
   const { getPeriodStats, getBestDay, getCurrentStreak, getTrend } =
     useStatisticsStore();
   const { minimumWater } = useSetupStore();
@@ -59,32 +60,33 @@ export default function Statistics() {
       })
     : [];
 
-  const handleExportPDF = async () => {
-    if (!hasData) {
-      Alert.alert(t("noDataAvailable"), "");
-      return;
-    }
-
-    setIsExporting(true);
-    trackEngagement("export_pdf_clicked", { period });
-
-    try {
-      const success =
-        period === "week"
-          ? await exportWeeklyReport(stats, parseInt(minimumWater))
-          : await exportMonthlyReport(stats, parseInt(minimumWater));
-
-      if (success) {
-        Alert.alert(t("pdfExportSuccess"), "");
-      } else {
-        Alert.alert(t("pdfExportFailed"), "");
-      }
-    } catch {
-      Alert.alert(t("pdfExportFailed"), "");
-    } finally {
-      setIsExporting(false);
-    }
-  };
+  // PDF export handler - hidden from UI but kept for future use
+  // const handleExportPDF = async () => {
+  //   if (!hasData) {
+  //     Alert.alert(t("noDataAvailable"), "");
+  //     return;
+  //   }
+  //
+  //   setIsExporting(true);
+  //   trackEngagement("export_pdf_clicked", { period });
+  //
+  //   try {
+  //     const success =
+  //       period === "week"
+  //         ? await exportWeeklyReport(stats, parseInt(minimumWater))
+  //         : await exportMonthlyReport(stats, parseInt(minimumWater));
+  //
+  //     if (success) {
+  //       Alert.alert(t("pdfExportSuccess"), "");
+  //     } else {
+  //       Alert.alert(t("pdfExportFailed"), "");
+  //     }
+  //   } catch {
+  //     Alert.alert(t("pdfExportFailed"), "");
+  //   } finally {
+  //     setIsExporting(false);
+  //   }
+  // };
 
   return (
     <ErrorBoundary componentName="Statistics Screen">
@@ -180,8 +182,8 @@ export default function Statistics() {
                 />
               )}
 
-              {/* Export PDF Button */}
-              {hasData && activeTab !== "history" && (
+              {/* Export PDF Button - Hidden from UI but kept for future use */}
+              {/* {hasData && activeTab !== "history" && (
                 <TouchableOpacity
                   className={`p-4 rounded-lg ${isExporting ? "bg-gray-400" : "bg-blue-600"}`}
                   onPress={handleExportPDF}
@@ -191,7 +193,7 @@ export default function Statistics() {
                     {isExporting ? t("exportingPDF") : t("exportPDF")}
                   </Text>
                 </TouchableOpacity>
-              )}
+              )} */}
 
               {/* Trend Analysis */}
               {hasData && (

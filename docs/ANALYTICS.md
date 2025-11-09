@@ -56,6 +56,8 @@ const { current, previous } = getComparisonWithPreviousPeriod('week');
 
 ### 3. PDF Export
 
+> **Note:** PDF export functionality is currently hidden from the user interface but remains available in the codebase for future use. The functions in `utils/pdfExport.ts` are fully implemented and tested.
+
 Export detailed reports as PDF documents for sharing or record-keeping.
 
 #### Report Types
@@ -70,12 +72,19 @@ Export detailed reports as PDF documents for sharing or record-keeping.
 - Metadata (report period, daily goal, generation date)
 - Professional formatting with color-coded visualizations
 
-#### Usage
+#### Programmatic Usage
 
-From the Statistics screen:
-1. Switch to Weekly or Monthly view
-2. Tap "Export PDF" button
-3. Share or save the generated PDF report
+The PDF export functions can be called programmatically:
+
+```typescript
+import { exportWeeklyReport, exportMonthlyReport } from '@/utils/pdfExport';
+
+// Export weekly report
+const success = await exportWeeklyReport(stats, minimumWater);
+
+// Export monthly report
+const success = await exportMonthlyReport(stats, minimumWater);
+```
 
 Technical implementation in `utils/pdfExport.ts` using `expo-print`.
 
@@ -113,18 +122,306 @@ This automatically tracks:
 
 ### 5. Analytics Integration Points
 
-The codebase is prepared for integration with analytics platforms:
+The codebase is prepared for integration with analytics platforms. Below are detailed integration guides.
 
-#### Google Analytics Integration (Planned)
+#### Google Analytics Integration with gtag.js
+
+Google Analytics 4 (GA4) integration using the Global Site Tag (gtag.js) provides powerful insights into user behavior and app performance.
+
+##### Setup Steps
+
+**1. Install Google Analytics for React Native**
+
+For React Native/Expo apps, you'll need to add the appropriate analytics library:
+
+```bash
+# For web support
+npx expo install react-ga4
+
+# Or for native support
+npx expo install @react-native-firebase/analytics
+```
+
+**2. Add gtag.js Script (Web Only)**
+
+For web builds, add the Google Analytics script to your `app.json` or `index.html`:
+
+```json
+// app.json
+{
+  "expo": {
+    "web": {
+      "config": {
+        "googleAnalytics": {
+          "trackingId": "G-XXXXXXXXXX"
+        }
+      }
+    }
+  }
+}
+```
+
+Or in your HTML head:
+
+```html
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+```
+
+**3. Enable gtag Integration in Code**
+
+Modify `utils/analytics.ts` to enable gtag tracking:
 
 ```typescript
-// In utils/analytics.ts (commented out, ready to enable)
-if (service === 'google_analytics') {
-  gtag('event', event.action, {
-    event_category: event.category,
-    event_label: event.label,
-    value: event.value,
+// Add type declaration for gtag
+declare global {
+  interface Window {
+    gtag: (
+      command: string,
+      eventName: string,
+      eventParams?: Record<string, any>
+    ) => void;
+  }
+}
+
+export function trackEvent(event: AnalyticsEvent, service?: AnalyticsService): void {
+  // Log for debugging/monitoring
+  console.log('[Analytics Event]', {
+    timestamp: new Date().toISOString(),
+    service: service || 'default',
+    ...event,
   });
+
+  // Google Analytics integration
+  if (service === 'google_analytics' || service === undefined) {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', event.action, {
+        event_category: event.category,
+        event_label: event.label,
+        value: event.value,
+        // Include custom parameters
+        ...event.metadata,
+      });
+    }
+  }
+}
+```
+
+##### Event Tracking Examples
+
+**Track User Engagement:**
+
+```typescript
+import { trackEvent } from '@/utils/analytics';
+
+// Button click
+trackEvent({
+  category: 'engagement',
+  action: 'button_click',
+  label: 'add_water',
+  value: 250,
+}, 'google_analytics');
+
+// Screen view
+trackEvent({
+  category: 'navigation',
+  action: 'screen_view',
+  label: 'statistics',
+}, 'google_analytics');
+```
+
+**Track Goal Achievements:**
+
+```typescript
+// Daily goal met
+trackEvent({
+  category: 'goals',
+  action: 'goal_achieved',
+  label: 'daily_hydration',
+  value: 2000,
+  metadata: {
+    goal_type: 'daily',
+    percentage: 100,
+  },
+}, 'google_analytics');
+```
+
+**Track Data Exports:**
+
+```typescript
+// PDF export
+trackEvent({
+  category: 'data_export',
+  action: 'export_success',
+  label: 'pdf',
+  metadata: {
+    report_type: 'weekly',
+    timestamp: new Date().toISOString(),
+  },
+}, 'google_analytics');
+```
+
+##### Custom Dimensions and Metrics
+
+You can add custom dimensions to track app-specific data:
+
+```typescript
+// Set user properties
+if (window.gtag) {
+  window.gtag('set', 'user_properties', {
+    hydration_goal: '2000ml',
+    streak_length: 7,
+    preferred_language: 'en',
+  });
+}
+
+// Track with custom dimensions
+trackEvent({
+  category: 'hydration',
+  action: 'water_added',
+  value: 250,
+  metadata: {
+    time_of_day: 'morning',
+    container_type: 'glass',
+    goal_percentage: 25,
+  },
+}, 'google_analytics');
+```
+
+##### Recommended Events to Track
+
+Based on the water tracking app functionality:
+
+1. **User Onboarding:**
+   - `onboarding_started`
+   - `onboarding_completed`
+   - `goal_set`
+
+2. **Core Actions:**
+   - `water_added` (value: ml amount)
+   - `water_removed` (value: ml amount)
+   - `daily_goal_achieved`
+
+3. **Engagement:**
+   - `statistics_viewed` (label: 'weekly' | 'monthly')
+   - `achievement_unlocked` (label: achievement name)
+   - `streak_milestone` (value: days)
+
+4. **Data Management:**
+   - `backup_created` (label: 'manual' | 'automatic')
+   - `data_exported` (label: 'json' | 'csv')
+   - `data_imported` (label: 'json' | 'csv')
+
+5. **Errors:**
+   - `error_occurred` (label: error message)
+   - `operation_failed` (label: operation name)
+
+##### GA4 Conversion Events
+
+Set up these events as conversions in GA4 for business insights:
+
+```typescript
+// Mark as conversion in GA4 dashboard
+trackEvent({
+  category: 'conversions',
+  action: 'first_goal_achieved',
+  value: 1,
+}, 'google_analytics');
+
+trackEvent({
+  category: 'conversions',
+  action: 'week_streak',
+  value: 7,
+}, 'google_analytics');
+```
+
+##### Performance Monitoring with gtag
+
+Track app performance metrics:
+
+```typescript
+// Track operation performance
+const startTime = performance.now();
+
+// ... perform operation ...
+
+const duration = performance.now() - startTime;
+
+if (window.gtag) {
+  window.gtag('event', 'timing_complete', {
+    name: 'data_load',
+    value: Math.round(duration),
+    event_category: 'performance',
+  });
+}
+```
+
+##### Privacy and Data Protection
+
+When implementing Google Analytics, ensure GDPR compliance:
+
+```typescript
+// Check for user consent
+const hasAnalyticsConsent = localStorage.getItem('analytics_consent') === 'true';
+
+export function trackEvent(event: AnalyticsEvent, service?: AnalyticsService): void {
+  // Only track if user has consented
+  if (!hasAnalyticsConsent) {
+    console.log('[Analytics] Tracking disabled - no user consent');
+    return;
+  }
+
+  // ... rest of tracking code
+}
+
+// Disable Google Analytics cookies if needed
+if (window.gtag) {
+  window.gtag('consent', 'default', {
+    'analytics_storage': hasAnalyticsConsent ? 'granted' : 'denied'
+  });
+}
+```
+
+##### Testing Analytics Integration
+
+**1. Enable Debug Mode:**
+
+```javascript
+// In app.json or initialization code
+window.gtag('config', 'G-XXXXXXXXXX', {
+  'debug_mode': true
+});
+```
+
+**2. Use GA4 DebugView:**
+- Go to GA4 Admin > DebugView
+- Events appear in real-time
+- Verify event parameters are correct
+
+**3. Test Event Tracking:**
+
+```typescript
+// Test helper function
+export function testAnalyticsIntegration(): void {
+  console.log('Testing analytics integration...');
+  
+  trackEvent({
+    category: 'test',
+    action: 'test_event',
+    label: 'integration_test',
+    value: 1,
+    metadata: {
+      test_timestamp: new Date().toISOString(),
+    },
+  }, 'google_analytics');
+  
+  console.log('Test event sent. Check GA4 DebugView.');
 }
 ```
 
