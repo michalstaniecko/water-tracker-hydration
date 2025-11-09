@@ -25,17 +25,21 @@ export default function SettingsMenu() {
 
   return (
     <ErrorBoundary componentName="Settings Menu">
-      <View className="flex-1 bg-white dark:bg-gray-900 p-5">
+      <View className="flex-1 bg-white  p-5">
         <View className="gap-3">
           {menuItems.map((item) => (
             <Pressable
               key={item.id}
               onPress={item.onPress}
-              className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg flex-row items-center justify-between active:opacity-70"
+              className="bg-gray-50  p-4 rounded-lg flex-row items-center justify-between active:opacity-70"
             >
               <View className="flex-row items-center gap-3">
-                <FontAwesome name={item.icon as any} size={24} color="#3b82f6" />
-                <Text className="text-lg font-semibold text-gray-900 dark:text-white">
+                <FontAwesome
+                  name={item.icon as any}
+                  size={24}
+                  color="#3b82f6"
+                />
+                <Text className="text-lg font-semibold text-gray-900 ">
                   {item.title}
                 </Text>
               </View>
