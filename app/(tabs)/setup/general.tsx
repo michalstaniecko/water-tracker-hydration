@@ -12,6 +12,7 @@ import { languages } from "@/config/languages";
 import InputTime from "@/components/ui/InputTime";
 import { useOnboardingStore, Status } from "@/stores/onboarding";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { sanitizePositiveNumber } from "@/utils/validation";
 
 export default function GeneralSettings() {
   const { t } = useTranslation("setup");
@@ -45,6 +46,16 @@ export default function GeneralSettings() {
     onboarding.setStatus(value as Status);
   };
 
+  const handleGlassCapacityBlur = (value: string) => {
+    const sanitized = sanitizePositiveNumber(value, "250");
+    setupStore.setGlassCapacity(sanitized);
+  };
+
+  const handleMinimumWaterBlur = (value: string) => {
+    const sanitized = sanitizePositiveNumber(value, "2000");
+    setupStore.setMinimumWater(sanitized);
+  };
+
   return (
     <ErrorBoundary componentName="General Settings">
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -57,6 +68,7 @@ export default function GeneralSettings() {
               onChangeText={(text) => {
                 setupStore.setGlassCapacity(text);
               }}
+              onBlur={handleGlassCapacityBlur}
               placeholder={"0"}
             />
           </View>
@@ -68,6 +80,7 @@ export default function GeneralSettings() {
               onChangeText={(text) => {
                 setupStore.setMinimumWater(text);
               }}
+              onBlur={handleMinimumWaterBlur}
               placeholder={"0"}
             />
           </View>

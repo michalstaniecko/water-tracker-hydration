@@ -127,12 +127,12 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
     languageCode: get()[SetupOptions.LANGUAGE_CODE],
   }),
   setGlassCapacity: async (capacity: string) => {
-    const sanitized = sanitizePositiveNumber(capacity, '250');
-    await get().setOption(SetupOptions.GLASS_CAPACITY, sanitized);
+    // Allow empty string during editing, will be sanitized on blur
+    await get().setOption(SetupOptions.GLASS_CAPACITY, capacity);
   },
   setMinimumWater: async (water: string) => {
-    const sanitized = sanitizePositiveNumber(water, '2000');
-    await get().setOption(SetupOptions.MINIMUM_WATER, sanitized);
+    // Allow empty string during editing, will be sanitized on blur
+    await get().setOption(SetupOptions.MINIMUM_WATER, water);
   },
   setOption: async (option: SetupOptions, value: number | string | {}) => {
     set((state) => ({
