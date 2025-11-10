@@ -17,6 +17,9 @@ import { DEFAULT_DATE_FORMAT } from "@/config/date";
 import { useWaterStore } from "@/stores/water";
 import { convertDateFormat } from "@/utils/date";
 import { useSetupStore } from "@/stores/setup";
+// PDF export functions kept for future use but hidden from UI
+// import { exportWeeklyReport, exportMonthlyReport } from "@/utils/pdfExport";
+// import { trackEngagement } from "@/utils/analytics";
 
 type TabType = "week" | "month" | "history";
 
@@ -31,12 +34,17 @@ const possibleDateFormatsFrom = [
 export default function Statistics() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabType>("week");
-  const { getPeriodStats, getBestDay, getCurrentStreak } = useStatisticsStore();
+  // PDF export state - hidden from UI but kept for future use
+  // const [isExporting, setIsExporting] = useState(false);
+  const { getPeriodStats, getBestDay, getCurrentStreak, getTrend } =
+    useStatisticsStore();
+  const { minimumWater } = useSetupStore();
 
   const period: PeriodType = activeTab === "month" ? "month" : "week";
   const stats = getPeriodStats(period);
   const bestDay = getBestDay(period);
   const streak = getCurrentStreak();
+  const trend = getTrend(period);
 
   const screenWidth = Dimensions.get("window").width;
   const hasData = stats.daysTracked > 0;
@@ -51,6 +59,34 @@ export default function Statistics() {
         };
       })
     : [];
+
+  // PDF export handler - hidden from UI but kept for future use
+  // const handleExportPDF = async () => {
+  //   if (!hasData) {
+  //     Alert.alert(t("noDataAvailable"), "");
+  //     return;
+  //   }
+  //
+  //   setIsExporting(true);
+  //   trackEngagement("export_pdf_clicked", { period });
+  //
+  //   try {
+  //     const success =
+  //       period === "week"
+  //         ? await exportWeeklyReport(stats, parseInt(minimumWater))
+  //         : await exportMonthlyReport(stats, parseInt(minimumWater));
+  //
+  //     if (success) {
+  //       Alert.alert(t("pdfExportSuccess"), "");
+  //     } else {
+  //       Alert.alert(t("pdfExportFailed"), "");
+  //     }
+  //   } catch {
+  //     Alert.alert(t("pdfExportFailed"), "");
+  //   } finally {
+  //     setIsExporting(false);
+  //   }
+  // };
 
   return (
     <ErrorBoundary componentName="Statistics Screen">
@@ -144,6 +180,60 @@ export default function Statistics() {
                   title={t("noDataAvailable")}
                   backgroundColor="bg-gray-100"
                 />
+              )}
+
+              {/* Export PDF Button - Hidden from UI but kept for future use */}
+              {/* {hasData && activeTab !== "history" && (
+                <TouchableOpacity
+                  className={`p-4 rounded-lg ${isExporting ? "bg-gray-400" : "bg-blue-600"}`}
+                  onPress={handleExportPDF}
+                  disabled={isExporting}
+                >
+                  <Text className="text-center text-white font-semibold">
+                    {isExporting ? t("exportingPDF") : t("exportPDF")}
+                  </Text>
+                </TouchableOpacity>
+              )} */}
+
+              {/* Trend Analysis */}
+              {hasData && (
+                <View className="bg-purple-50 rounded-lg p-4 mt-2">
+                  <Text className="text-lg font-semibold mb-2">
+                    {t("trendAnalysis")}
+                  </Text>
+                  <View className="flex-row items-center gap-2">
+                    <Text
+                      className={`text-2xl ${
+                        trend.direction === "up"
+                          ? "text-green-600"
+                          : trend.direction === "down"
+                            ? "text-red-600"
+                            : "text-gray-600"
+                      }`}
+                    >
+                      {trend.direction === "up"
+                        ? "↑"
+                        : trend.direction === "down"
+                          ? "↓"
+                          : "→"}
+                    </Text>
+                    <View>
+                      <Text className="font-semibold text-base">
+                        {trend.direction === "up"
+                          ? t("trendUp")
+                          : trend.direction === "down"
+                            ? t("trendDown")
+                            : t("trendStable")}
+                      </Text>
+                      <Text className="text-sm text-gray-600">
+                        {trend.description}
+                      </Text>
+                      <Text className="text-xs text-gray-500 mt-1">
+                        {t("comparedToPrevious")}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
               )}
 
               {/* Progress Summary */}

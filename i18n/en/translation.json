@@ -35,5 +35,17 @@
   "history": "History",
   "date": "Date",
   "amount": "Amount",
-  "noHistoryAvailable": "No history available. Drink some water."
+  "noHistoryAvailable": "No history available. Drink some water.",
+  "exportPDF": "Export PDF",
+  "exportingPDF": "Exporting PDF...",
+  "pdfExportSuccess": "PDF exported successfully!",
+  "pdfExportFailed": "Failed to export PDF",
+  "trendAnalysis": "Trend Analysis",
+  "comparedToPrevious": "Compared to Previous Period",
+  "trendUp": "Trending Up",
+  "trendDown": "Trending Down",
+  "trendStable": "Stable",
+  "advancedReports": "Advanced Reports",
+  "monthlyReport": "Monthly Report",
+  "weeklyReport": "Weekly Report"
 }
