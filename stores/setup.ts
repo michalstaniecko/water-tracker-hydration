@@ -28,6 +28,8 @@ type SetupState = {
 type SetupActions = {
   setGlassCapacity: (capacity: string) => Promise<void>;
   setMinimumWater: (water: string) => Promise<void>;
+  setGlassCapacityTemp: (capacity: string) => void;
+  setMinimumWaterTemp: (water: string) => void;
   setLanguageCode: (languageCode: string) => Promise<void>;
   getOptions: () => SetupState;
   setOption: (option: SetupOptions, value: number | string | {}) => Promise<void>;
@@ -127,12 +129,28 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
     languageCode: get()[SetupOptions.LANGUAGE_CODE],
   }),
   setGlassCapacity: async (capacity: string) => {
-    // Allow empty string during editing, will be sanitized on blur
-    await get().setOption(SetupOptions.GLASS_CAPACITY, capacity);
+    // Sanitize and persist to storage
+    const sanitized = sanitizePositiveNumber(capacity, '250');
+    await get().setOption(SetupOptions.GLASS_CAPACITY, sanitized);
   },
   setMinimumWater: async (water: string) => {
-    // Allow empty string during editing, will be sanitized on blur
-    await get().setOption(SetupOptions.MINIMUM_WATER, water);
+    // Sanitize and persist to storage
+    const sanitized = sanitizePositiveNumber(water, '2000');
+    await get().setOption(SetupOptions.MINIMUM_WATER, sanitized);
+  },
+  setGlassCapacityTemp: (capacity: string) => {
+    // Temporary update without persisting - for editing
+    set((state) => ({
+      ...state,
+      [SetupOptions.GLASS_CAPACITY]: capacity,
+    }));
+  },
+  setMinimumWaterTemp: (water: string) => {
+    // Temporary update without persisting - for editing
+    set((state) => ({
+      ...state,
+      [SetupOptions.MINIMUM_WATER]: water,
+    }));
   },
   setOption: async (option: SetupOptions, value: number | string | {}) => {
     set((state) => ({

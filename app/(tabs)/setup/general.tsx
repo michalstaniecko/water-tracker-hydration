@@ -47,11 +47,13 @@ export default function GeneralSettings() {
   };
 
   const handleGlassCapacityBlur = (value: string) => {
+    // Sanitize and persist on blur
     const sanitized = sanitizePositiveNumber(value, "250");
     setupStore.setGlassCapacity(sanitized);
   };
 
   const handleMinimumWaterBlur = (value: string) => {
+    // Sanitize and persist on blur
     const sanitized = sanitizePositiveNumber(value, "2000");
     setupStore.setMinimumWater(sanitized);
   };
@@ -66,7 +68,7 @@ export default function GeneralSettings() {
               keyboardType={"numeric"}
               value={setupStore.glassCapacity as unknown as string}
               onChangeText={(text) => {
-                setupStore.setGlassCapacity(text);
+                setupStore.setGlassCapacityTemp(text);
               }}
               onBlur={handleGlassCapacityBlur}
               placeholder={"0"}
@@ -78,7 +80,7 @@ export default function GeneralSettings() {
               keyboardType={"numeric"}
               value={setupStore.minimumWater as unknown as string}
               onChangeText={(text) => {
-                setupStore.setMinimumWater(text);
+                setupStore.setMinimumWaterTemp(text);
               }}
               onBlur={handleMinimumWaterBlur}
               placeholder={"0"}

@@ -18,74 +18,107 @@ describe("SetupStore - Input Field Behavior", () => {
 
     // Reset store state
     await useSetupStore.getState().reset();
+    
+    // Clear mocks again after reset (since reset calls setItem)
+    jest.clearAllMocks();
   });
 
   describe("setMinimumWater", () => {
-    it("should allow empty string during editing", async () => {
+    it("should sanitize and persist value", async () => {
+      await useSetupStore.getState().setMinimumWater("1500");
+      expect(useSetupStore.getState().minimumWater).toBe("1500");
+      expect(AsyncStorage.setItem).toHaveBeenCalled();
+    });
+
+    it("should sanitize empty string to default", async () => {
+      await useSetupStore.getState().setMinimumWater("");
+      expect(useSetupStore.getState().minimumWater).toBe("2000");
+      expect(AsyncStorage.setItem).toHaveBeenCalled();
+    });
+
+    it("should sanitize invalid values to default", async () => {
+      await useSetupStore.getState().setMinimumWater("0");
+      expect(useSetupStore.getState().minimumWater).toBe("2000");
+      expect(AsyncStorage.setItem).toHaveBeenCalled();
+    });
+  });
+
+  describe("setMinimumWaterTemp", () => {
+    it("should allow empty string during editing without persisting", () => {
       // Set initial value
-      await useSetupStore.getState().setMinimumWater("2000");
+      useSetupStore.getState().setMinimumWaterTemp("2000");
       expect(useSetupStore.getState().minimumWater).toBe("2000");
 
       // Clear the field (empty string)
-      await useSetupStore.getState().setMinimumWater("");
+      useSetupStore.getState().setMinimumWaterTemp("");
 
       // Should allow empty string
       expect(useSetupStore.getState().minimumWater).toBe("");
+      // Should not persist during editing
+      expect(AsyncStorage.setItem).not.toHaveBeenCalled();
     });
 
-    it("should allow partial values during editing", async () => {
+    it("should allow partial values during editing", () => {
       // User starts typing a new value
-      await useSetupStore.getState().setMinimumWater("1");
+      useSetupStore.getState().setMinimumWaterTemp("1");
       expect(useSetupStore.getState().minimumWater).toBe("1");
 
-      await useSetupStore.getState().setMinimumWater("16");
+      useSetupStore.getState().setMinimumWaterTemp("16");
       expect(useSetupStore.getState().minimumWater).toBe("16");
 
-      await useSetupStore.getState().setMinimumWater("160");
+      useSetupStore.getState().setMinimumWaterTemp("160");
       expect(useSetupStore.getState().minimumWater).toBe("160");
 
-      await useSetupStore.getState().setMinimumWater("1600");
+      useSetupStore.getState().setMinimumWaterTemp("1600");
       expect(useSetupStore.getState().minimumWater).toBe("1600");
-    });
 
-    it("should store valid numeric values", async () => {
-      await useSetupStore.getState().setMinimumWater("1500");
-
-      expect(useSetupStore.getState().minimumWater).toBe("1500");
-      expect(AsyncStorage.setItem).toHaveBeenCalled();
+      // Should not persist during editing
+      expect(AsyncStorage.setItem).not.toHaveBeenCalled();
     });
   });
 
   describe("setGlassCapacity", () => {
-    it("should allow empty string during editing", async () => {
+    it("should sanitize and persist value", async () => {
+      await useSetupStore.getState().setGlassCapacity("300");
+      expect(useSetupStore.getState().glassCapacity).toBe("300");
+      expect(AsyncStorage.setItem).toHaveBeenCalled();
+    });
+
+    it("should sanitize empty string to default", async () => {
+      await useSetupStore.getState().setGlassCapacity("");
+      expect(useSetupStore.getState().glassCapacity).toBe("250");
+      expect(AsyncStorage.setItem).toHaveBeenCalled();
+    });
+  });
+
+  describe("setGlassCapacityTemp", () => {
+    it("should allow empty string during editing without persisting", () => {
       // Set initial value
-      await useSetupStore.getState().setGlassCapacity("250");
+      useSetupStore.getState().setGlassCapacityTemp("250");
       expect(useSetupStore.getState().glassCapacity).toBe("250");
 
       // Clear the field (empty string)
-      await useSetupStore.getState().setGlassCapacity("");
+      useSetupStore.getState().setGlassCapacityTemp("");
 
       // Should allow empty string
       expect(useSetupStore.getState().glassCapacity).toBe("");
+      // Should not persist during editing
+      expect(AsyncStorage.setItem).not.toHaveBeenCalled();
     });
 
-    it("should allow partial values during editing", async () => {
+    it("should allow partial values during editing", () => {
       // User starts typing a new value
-      await useSetupStore.getState().setGlassCapacity("3");
+      useSetupStore.getState().setGlassCapacityTemp("3");
       expect(useSetupStore.getState().glassCapacity).toBe("3");
 
-      await useSetupStore.getState().setGlassCapacity("30");
+      useSetupStore.getState().setGlassCapacityTemp("30");
       expect(useSetupStore.getState().glassCapacity).toBe("30");
 
-      await useSetupStore.getState().setGlassCapacity("300");
+      useSetupStore.getState().setGlassCapacityTemp("300");
       expect(useSetupStore.getState().glassCapacity).toBe("300");
-    });
 
-    it("should store valid numeric values", async () => {
-      await useSetupStore.getState().setGlassCapacity("300");
-
-      expect(useSetupStore.getState().glassCapacity).toBe("300");
-      expect(AsyncStorage.setItem).toHaveBeenCalled();
+      // Should not persist during editing
+      expect(AsyncStorage.setItem).not.toHaveBeenCalled();
     });
   });
 
