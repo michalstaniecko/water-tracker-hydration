@@ -32,6 +32,8 @@ export default function Statistics() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabType>("week");
   const { getPeriodStats, getBestDay, getCurrentStreak } = useStatisticsStore();
+  // Subscribe to water history to trigger re-render when water data changes
+  useWaterStore((state) => state.history);
 
   const period: PeriodType = activeTab === "month" ? "month" : "week";
   const stats = getPeriodStats(period);
