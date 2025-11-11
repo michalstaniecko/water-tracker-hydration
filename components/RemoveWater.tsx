@@ -9,7 +9,7 @@ export default function RemoveWater() {
   const { glassCapacity } = useSetupStore();
 
   const defaultClasses =
-    "border-blue-500 border text-blue-500 px-3 py-3 rounded text-center font-semibold";
+    "border-blue-500 border text-blue-500 text-lg px-3 py-3 rounded text-center font-semibold";
 
   const variantStyles = {
     default: "",

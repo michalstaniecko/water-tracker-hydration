@@ -4,5 +4,22 @@
   "startOfTheDay": "Godzina rozpoczęcia dnia",
   "endOfTheDay": "Godzina zakończenia dnia",
   "selectLanguage": "Wybierz język",
-  "close": "Zamknij"
+  "close": "Zamknij",
+  "on": "Włączone",
+  "off": "Wyłączone",
+  "enableOnboarding": "Włącz onboarding",
+  "backupAndSync": "Kopia zapasowa i synchronizacja",
+  "exportDataJSON": "Eksportuj dane (JSON)",
+  "exportDataCSV": "Eksportuj dane (CSV)",
+  "importDataJSON": "Importuj dane (JSON)",
+  "importDataCSV": "Importuj dane (CSV)",
+  "exportSuccess": "Dane zostały wyeksportowane pomyślnie",
+  "exportError": "Nie udało się wyeksportować danych",
+  "importSuccess": "Dane zostały zaimportowane pomyślnie",
+  "importError": "Nie udało się zaimportować danych",
+  "backupDescription": "Twórz kopie zapasowe i przywracaj dane, aby zapobiec ich utracie",
+  "setup": "Ustawienia",
+  "general": "Ogólne",
+  "backup": "Kopia zapasowa",
+  "back": "Wstecz"
 }

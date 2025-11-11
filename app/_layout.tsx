@@ -12,6 +12,9 @@ import { getLocales } from "expo-localization";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useOnboardingStore } from "@/stores/onboarding";
+import { useGamificationStore } from "@/stores/gamification";
+import { useBackupStore } from "@/stores/backup";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -21,6 +24,11 @@ export default function RootLayout() {
   const { fetchOrInitData: fetchOrInitWaterData } = useWaterStore();
   const { fetchOrInitData: fetchOrInitSetup, languageCode } = useSetupStore();
   const { fetchOrInitData: fetchOrInitOnboarding } = useOnboardingStore();
+  const {
+    fetchOrInitData: fetchOrInitGamification,
+    checkAndUnlockAchievements,
+  } = useGamificationStore();
+  const { createAutomaticBackup } = useBackupStore();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -39,12 +47,18 @@ export default function RootLayout() {
         nextAppState === "active"
       ) {
         fetchOrInitWaterData();
+        checkAndUnlockAchievements();
       }
       appState.current = nextAppState;
     });
     fetchOrInitSetup();
     fetchOrInitWaterData();
     fetchOrInitOnboarding();
+    fetchOrInitGamification();
+
+    // Create automatic backup on app start (once per day)
+    createAutomaticBackup();
+
     return () => {
       subscription.remove();
     };
@@ -61,13 +75,15 @@ export default function RootLayout() {
   }
 
   return (
-    <GestureHandlerRootView>
-      <BottomSheetModalProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
+    <ErrorBoundary componentName="App Root">
+      <GestureHandlerRootView>
+        <BottomSheetModalProvider>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
+    </ErrorBoundary>
   );
 }

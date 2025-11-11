@@ -18,6 +18,7 @@ export default function TabLayout() {
           // TODO: Fix this type error, blue[600] is not recognized
           // @ts-ignore
           tabBarActiveTintColor: theme?.theme?.extend?.colors?.blue[600],
+          animation: "shift",
         }}
         screenLayout={({ children }) => {
           return (
@@ -39,11 +40,20 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name={"history"}
+          name={"statistics"}
           options={{
-            title: t("history"),
+            title: t("statistics"),
             tabBarIcon: ({ color }) => (
-              <FontAwesome size={24} name={"calendar"} color={color} />
+              <FontAwesome size={24} name={"bar-chart"} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name={"achievements"}
+          options={{
+            title: t("achievements"),
+            tabBarIcon: ({ color }) => (
+              <FontAwesome size={24} name={"trophy"} color={color} />
             ),
           }}
         />
@@ -54,6 +64,12 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <FontAwesome size={28} name={"cog"} color={color} />
             ),
+          }}
+        />
+        <Tabs.Screen
+          name={"history"}
+          options={{
+            href: null,
           }}
         />
       </Tabs>

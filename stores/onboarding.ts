@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { logError } from "@/utils/errorLogging";
 
 export type Status = "completed" | "in-progress";
 
@@ -9,11 +10,11 @@ type OnboardingStateProps = {
 };
 
 type OnBoardingActionsProps = {
-  setStatus: (status: Status) => void;
+  setStatus: (status: Status) => Promise<void>;
   setCurrentTipId?: (tipId: number) => void;
   setNextTipId: () => void;
   setPreviousTipId: () => void;
-  setCompleted: () => void;
+  setCompleted: () => Promise<void>;
 
   getIsShown: () => boolean;
   getIsShownTip: (tipId: number) => boolean;
@@ -29,9 +30,17 @@ export const useOnboardingStore = create<OnboardingStoreProps>((set, get) => ({
   status: "completed",
   currentTipId: 0,
 
-  setStatus: (status: Status) => {
+  setStatus: async (status: Status) => {
     set({ status, currentTipId: 0 });
-    AsyncStorage.setItem(storageKey, JSON.stringify(status));
+    try {
+      await AsyncStorage.setItem(storageKey, JSON.stringify(status));
+    } catch (error) {
+      logError(error, {
+        operation: 'setStatus',
+        component: 'OnboardingStore',
+        data: { status },
+      });
+    }
   },
 
   setCurrentTipId: (tipId: number) => {
@@ -50,9 +59,16 @@ export const useOnboardingStore = create<OnboardingStoreProps>((set, get) => ({
     }
   },
 
-  setCompleted: () => {
+  setCompleted: async () => {
     set({ status: "completed", currentTipId: 0 });
-    AsyncStorage.setItem(storageKey, JSON.stringify("completed"));
+    try {
+      await AsyncStorage.setItem(storageKey, JSON.stringify("completed"));
+    } catch (error) {
+      logError(error, {
+        operation: 'setCompleted',
+        component: 'OnboardingStore',
+      });
+    }
   },
 
   fetchOrInitData: async () => {
@@ -60,13 +76,30 @@ export const useOnboardingStore = create<OnboardingStoreProps>((set, get) => ({
       const data = await AsyncStorage.getItem(storageKey);
       if (data !== null) {
         const parsedData = JSON.parse(data);
-        set({ status: parsedData });
-        return;
+        
+        // Validate that the parsed data is a valid status
+        if (parsedData === "completed" || parsedData === "in-progress") {
+          set({ status: parsedData });
+        } else {
+          // Invalid data, reinitialize
+          await get().setStatus("in-progress");
+        }
+      } else {
+        await get().setStatus("in-progress");
       }
-      get().setStatus("in-progress");
     } catch (error) {
-      console.error("Error initializing onboarding data:", error);
-      get().setStatus("in-progress");
+      logError(error, {
+        operation: 'fetchOrInitData',
+        component: 'OnboardingStore',
+      });
+      
+      // Set default status on error
+      try {
+        await get().setStatus("in-progress");
+      } catch (setError) {
+        // If even setting fails, just update the state
+        set({ status: "in-progress" });
+      }
     }
   },
 

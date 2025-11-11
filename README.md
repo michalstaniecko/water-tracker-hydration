@@ -6,6 +6,12 @@ Water Tracker Hydration is a React Native application built with Expo that helps
 
 - Track daily water intake
 - Interactive onboarding for new users
+- **Gamification system with achievements and streaks**
+- **Achievement badges and milestones**
+- **In-app notifications for achievements**
+- **Streak tracking to maintain hydration habits**
+- **Backup and data synchronization (JSON/CSV export/import)**
+- **Automatic daily backups for data protection**
 - Localization support powered by `i18next`
 - Smooth animations using `react-native-reanimated`
 - Styling with TailwindCSS (`nativewind`)
@@ -61,6 +67,37 @@ Water Tracker Hydration is a React Native application built with Expo that helps
 - `app.json` & `package.json` — Project and dependency configuration
 - `scripts/` — Additional scripts (e.g., project reset)
 - `assets/` — Icons, splash screens, images
+- `stores/` — Zustand state management stores
+- `components/` — Reusable UI components
+- `i18n/` — Internationalization translations
+- `docs/` — Documentation
+  - [GAMIFICATION.md](./docs/GAMIFICATION.md) - Gamification features
+  - [BACKUP.md](./docs/BACKUP.md) - Backup and data synchronization
+  - [TESTING.md](./docs/TESTING.md) - Testing and CI/CD pipeline
+
+## Gamification Features
+
+The app includes a comprehensive gamification system to boost user engagement and retention:
+
+- **11 Achievements**: Unlock badges for various milestones (streaks, total water consumed, perfect weeks)
+- **Streak Tracking**: Monitor consecutive days of meeting your hydration goals
+- **In-App Notifications**: Get notified when you unlock new achievements
+- **Progress Visualization**: See your achievements and streak on the home screen
+- **Dedicated Achievements Tab**: Browse all locked and unlocked achievements
+
+For detailed information about the gamification system, see [docs/GAMIFICATION.md](./docs/GAMIFICATION.md).
+
+## Backup and Data Protection
+
+The app includes comprehensive backup features to protect your data:
+
+- **Automatic Daily Backups**: Creates a backup automatically every day (keeps last 7)
+- **Manual Export**: Export all your data as JSON or water history as CSV
+- **Easy Import**: Restore your data from JSON or import water history from CSV
+- **Data Validation**: All imported data is validated for integrity
+- **No Data Loss**: CSV imports merge with existing data instead of replacing it
+
+Access backup features from the Settings (⚙️) tab. For detailed information about the backup system, see [docs/BACKUP.md](./docs/BACKUP.md).
 
 ## Useful Scripts
 
@@ -68,8 +105,21 @@ Water Tracker Hydration is a React Native application built with Expo that helps
 - `npm run android` — Run the app on Android
 - `npm run ios` — Run the app on iOS
 - `npm run web` — Run the app in the browser
-- `npm test` — Run unit tests
+- `npm test` — Run unit and integration tests
+- `npm run test:watch` — Run tests in watch mode
+- `npm run test:coverage` — Run tests with coverage report
 - `npm run lint` — Check code style and linting
+
+## Testing and CI/CD
+
+The project includes comprehensive testing and automated CI/CD pipelines:
+
+- **44 Unit Tests**: Testing core utilities (validation, numbers, backup)
+- **7 Integration Tests**: Testing complete workflows
+- **GitHub Actions CI**: Automated linting, testing, and coverage reporting
+- **100% Coverage**: For critical utility functions
+
+For detailed information about testing and CI/CD, see [docs/TESTING.md](./docs/TESTING.md).
 
 ## License
 
