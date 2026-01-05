@@ -1,0 +1,63 @@
+import { View, Text, Pressable } from "react-native";
+import { useSetupStore } from "@/stores/setup";
+import { useWaterStore } from "@/stores/water";
+import { useGamificationStore } from "@/stores/gamification";
+import { useTranslation } from "react-i18next";
+import * as Haptics from "expo-haptics";
+import { logError } from "@/utils/errorLogging";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+
+export default function QuickActions() {
+  const { t } = useTranslation();
+  const { quickActions } = useSetupStore();
+  const waterStore = useWaterStore();
+  const gamificationStore = useGamificationStore();
+
+  const enabledActions = quickActions.filter((action) => action.enabled);
+
+  const handleQuickAction = async (amount: number) => {
+    try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      const currentWater = waterStore.getTodayWater();
+      const newCurrentWater = Number(currentWater) + amount;
+      await waterStore.setTodayWater(newCurrentWater.toString());
+      gamificationStore.checkAndUnlockAchievements();
+    } catch (error) {
+      logError(error, {
+        operation: "handleQuickAction",
+        component: "QuickActions",
+      });
+    }
+  };
+
+  if (enabledActions.length === 0) {
+    return null;
+  }
+
+  return (
+    <View className="bg-white rounded-lg p-4 border border-gray-200">
+      <Text className="text-sm text-gray-600 mb-3 font-medium">
+        {t("quickActions")}
+      </Text>
+      <View className="flex-row gap-2">
+        {enabledActions.map((action) => (
+          <Pressable
+            key={action.id}
+            onPress={() => handleQuickAction(action.amount)}
+            className="flex-1 bg-blue-500 rounded-lg p-3 active:opacity-70 active:bg-blue-600"
+          >
+            <View className="items-center">
+              <FontAwesome name="plus-circle" size={20} color="#ffffff" />
+              <Text className="text-white font-bold text-base mt-1">
+                {action.amount}ml
+              </Text>
+              <Text className="text-blue-100 text-xs">
+                {t(action.labelKey)}
+              </Text>
+            </View>
+          </Pressable>
+        ))}
+      </View>
+    </View>
+  );
+}

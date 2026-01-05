@@ -19,5 +19,8 @@
   "setup": "Settings",
   "general": "General",
   "backup": "Backup",
-  "back": "Back"
+  "back": "Back",
+  "quickActions": "Quick Actions",
+  "quickActionsDescription": "Configure quick action buttons for adding water with predefined amounts.",
+  "addQuickAction": "Add Quick Action"
 }

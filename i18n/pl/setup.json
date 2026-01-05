@@ -19,5 +19,8 @@
   "setup": "Ustawienia",
   "general": "Ogólne",
   "backup": "Kopia zapasowa",
-  "back": "Wstecz"
+  "back": "Wstecz",
+  "quickActions": "Szybkie akcje",
+  "quickActionsDescription": "Skonfiguruj przyciski szybkich akcji do dodawania wody z predefiniowanymi ilosciami.",
+  "addQuickAction": "Dodaj szybka akcje"
 }

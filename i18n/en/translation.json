@@ -45,5 +45,10 @@
   "trendStable": "Stable",
   "advancedReports": "Advanced Reports",
   "monthlyReport": "Monthly Report",
-  "weeklyReport": "Weekly Report"
+  "weeklyReport": "Weekly Report",
+  "quickActions": "Quick Actions",
+  "quickActionGlass": "Glass",
+  "quickActionBottle": "Bottle",
+  "quickActionCan": "Can",
+  "quickActionCustom": "Custom"
 }

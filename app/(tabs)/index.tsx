@@ -19,6 +19,7 @@ import CardSecond from "@/components/onboarding/CardSecond";
 import CardThird from "@/components/onboarding/CardThird";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import CardStreakAchievements from "@/components/CardStreakAchievements";
+import QuickActions from "@/components/QuickActions";
 
 const duration = 50;
 
@@ -82,6 +83,9 @@ export default function Index() {
             <CardWaterAmount />
           </Animated.View>
           <CardThird />
+          <Animated.View layout={CurvedTransition}>
+            <QuickActions />
+          </Animated.View>
           <Animated.View layout={CurvedTransition} className={"flex-row gap-3"}>
             <View className={"flex-1"}>
               <RemoveWater />
