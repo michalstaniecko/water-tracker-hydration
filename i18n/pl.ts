@@ -4,6 +4,7 @@ import setup from "@/i18n/pl/setup.json";
 import languages from "@/i18n/pl/languages.json";
 import onboarding from "@/i18n/pl/onboarding.json";
 import gamification from "@/i18n/pl/gamification.json";
+import errors from "@/i18n/pl/errors.json";
 
 export default {
   translation,
@@ -12,4 +13,5 @@ export default {
   languages,
   onboarding,
   gamification,
+  errors,
 };
