@@ -5,7 +5,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Banner } from "@/components/ads/Banner";
 import { useSetupStore } from "@/stores/setup";
 import { useTranslation } from "react-i18next";
-import theme from "@/tailwind.config";
+import { colors } from "@/constants/colors";
 
 export default function TabLayout() {
   const { t } = useTranslation("tabs");
@@ -15,9 +15,7 @@ export default function TabLayout() {
       <Tabs
         screenOptions={{
           tabBarHideOnKeyboard: true,
-          // TODO: Fix this type error, blue[600] is not recognized
-          // @ts-ignore
-          tabBarActiveTintColor: theme?.theme?.extend?.colors?.blue[600],
+          tabBarActiveTintColor: colors.blue[600],
           animation: "shift",
         }}
         screenLayout={({ children }) => {
