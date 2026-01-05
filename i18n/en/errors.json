@@ -1,0 +1,15 @@
+{
+  "somethingWentWrong": "Something went wrong",
+  "componentError": "An error occurred in the component. Please try again later.",
+  "exportSuccess": "Data exported successfully",
+  "exportError": "Failed to export data",
+  "importSuccess": "Data imported successfully",
+  "importError": "Failed to import data",
+  "backupError": "Failed to create backup",
+  "restoreError": "Failed to restore backup",
+  "fileReadError": "Failed to read file",
+  "fileWriteError": "Failed to write file",
+  "invalidFileFormat": "Invalid file format",
+  "networkError": "Network error. Please check your connection.",
+  "unknownError": "An unknown error occurred"
+}

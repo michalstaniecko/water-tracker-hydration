@@ -9,6 +9,7 @@ import { useGamificationStore } from "@/stores/gamification";
 
 export default function BackupSection() {
   const { t } = useTranslation("setup");
+  const { t: tErrors } = useTranslation("errors");
   const backupStore = useBackupStore();
   const waterStore = useWaterStore();
   const setupStore = useSetupStore();
@@ -21,9 +22,9 @@ export default function BackupSection() {
     setIsProcessing(false);
 
     if (success) {
-      Alert.alert(t("exportSuccess"));
+      Alert.alert(tErrors("exportSuccess"));
     } else {
-      Alert.alert(t("exportError"));
+      Alert.alert(tErrors("exportError"));
     }
   };
 
@@ -33,9 +34,9 @@ export default function BackupSection() {
     setIsProcessing(false);
 
     if (success) {
-      Alert.alert(t("exportSuccess"));
+      Alert.alert(tErrors("exportSuccess"));
     } else {
-      Alert.alert(t("exportError"));
+      Alert.alert(tErrors("exportError"));
     }
   };
 
@@ -50,9 +51,9 @@ export default function BackupSection() {
       await setupStore.fetchOrInitData();
       await gamificationStore.fetchOrInitData();
 
-      Alert.alert(t("importSuccess"));
+      Alert.alert(tErrors("importSuccess"));
     } else {
-      Alert.alert(t("importError"));
+      Alert.alert(tErrors("importError"));
     }
   };
 
@@ -65,9 +66,9 @@ export default function BackupSection() {
       // Reload water store
       await waterStore.fetchOrInitData();
 
-      Alert.alert(t("importSuccess"));
+      Alert.alert(tErrors("importSuccess"));
     } else {
-      Alert.alert(t("importError"));
+      Alert.alert(tErrors("importError"));
     }
   };
 

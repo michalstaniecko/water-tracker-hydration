@@ -1,8 +1,9 @@
 import React, { Component, ReactNode } from "react";
 import { View, Text } from "react-native";
+import { withTranslation, WithTranslation } from "react-i18next";
 import { logError } from "@/utils/errorLogging";
 
-interface ErrorBoundaryProps {
+interface ErrorBoundaryProps extends WithTranslation {
   children: ReactNode;
   fallback?: ReactNode;
   componentName?: string;
@@ -17,7 +18,7 @@ interface ErrorBoundaryState {
  * Error Boundary component to catch and handle errors in React component tree
  * Prevents the entire app from crashing when a component fails
  */
-export class ErrorBoundary extends Component<
+class ErrorBoundaryComponent extends Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
 > {
@@ -43,6 +44,8 @@ export class ErrorBoundary extends Component<
   }
 
   render() {
+    const { t } = this.props;
+
     if (this.state.hasError) {
       // You can render any custom fallback UI
       if (this.props.fallback) {
@@ -52,10 +55,10 @@ export class ErrorBoundary extends Component<
       return (
         <View className="flex-1 justify-center items-center p-4">
           <Text className="text-red-500 text-lg font-semibold mb-2">
-            Coś poszło nie tak
+            {t("errors:somethingWentWrong")}
           </Text>
           <Text className="text-gray-600 text-center">
-            Wystąpił błąd w komponencie. Spróbuj ponownie później.
+            {t("errors:componentError")}
           </Text>
         </View>
       );
@@ -64,5 +67,7 @@ export class ErrorBoundary extends Component<
     return this.props.children;
   }
 }
+
+export const ErrorBoundary = withTranslation()(ErrorBoundaryComponent);
 
 export default ErrorBoundary;

@@ -1,0 +1,15 @@
+{
+  "somethingWentWrong": "Coś poszło nie tak",
+  "componentError": "Wystąpił błąd w komponencie. Spróbuj ponownie później.",
+  "exportSuccess": "Dane zostały wyeksportowane pomyślnie",
+  "exportError": "Nie udało się wyeksportować danych",
+  "importSuccess": "Dane zostały zaimportowane pomyślnie",
+  "importError": "Nie udało się zaimportować danych",
+  "backupError": "Nie udało się utworzyć kopii zapasowej",
+  "restoreError": "Nie udało się przywrócić kopii zapasowej",
+  "fileReadError": "Nie udało się odczytać pliku",
+  "fileWriteError": "Nie udało się zapisać pliku",
+  "invalidFileFormat": "Nieprawidłowy format pliku",
+  "networkError": "Błąd sieci. Sprawdź połączenie.",
+  "unknownError": "Wystąpił nieznany błąd"
+}
