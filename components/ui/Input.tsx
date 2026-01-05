@@ -27,6 +27,17 @@ export default function Input({
   const [value, setValue] = useState(`${initValue}`);
   const [isFocused, setIsFocused] = useState(false);
   const ref = useRef<TextInput>(null);
+  const valueRef = useRef(value);
+  const onBlurRef = useRef(onBlur);
+
+  // Keep refs up to date
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
+
+  useEffect(() => {
+    onBlurRef.current = onBlur;
+  }, [onBlur]);
 
   function changeHandler(text: string) {
     setValue(text);
@@ -34,7 +45,7 @@ export default function Input({
   }
   function blurHandler() {
     setIsFocused(false);
-    onBlur?.(value);
+    onBlurRef.current?.(valueRef.current);
   }
 
   function focusHandler() {

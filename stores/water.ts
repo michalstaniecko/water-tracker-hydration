@@ -108,8 +108,12 @@ export const useWaterStore = create<WaterStore>((set, get) => ({
       }
       
       const sanitizedAmount = sanitizeNonNegativeNumber(amount);
-      const history = get().history || {};
-      history[date] = { water: sanitizedAmount };
+      const currentHistory = get().history || {};
+      // Create a new object to ensure Zustand detects the change
+      const history = {
+        ...currentHistory,
+        [date]: { water: sanitizedAmount },
+      };
       set({ history });
       
       await AsyncStorage.setItem(storageKey, JSON.stringify(history));

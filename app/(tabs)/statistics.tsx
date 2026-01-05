@@ -39,6 +39,8 @@ export default function Statistics() {
   const { getPeriodStats, getBestDay, getCurrentStreak, getTrend } =
     useStatisticsStore();
   const { minimumWater } = useSetupStore();
+  // Subscribe to water history to trigger re-render when water data changes
+  useWaterStore((state) => state.history);
 
   const period: PeriodType = activeTab === "month" ? "month" : "week";
   const stats = getPeriodStats(period);
