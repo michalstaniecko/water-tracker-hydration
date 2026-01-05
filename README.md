@@ -12,6 +12,10 @@ Water Tracker Hydration is a React Native application built with Expo that helps
 - **Streak tracking to maintain hydration habits**
 - **Backup and data synchronization (JSON/CSV export/import)**
 - **Automatic daily backups for data protection**
+- **Advanced analytics and trend analysis**
+- **PDF report export for weekly and monthly statistics**
+- **Error monitoring and performance tracking**
+- **Analytics integration hooks for business insights**
 - Localization support powered by `i18next`
 - Smooth animations using `react-native-reanimated`
 - Styling with TailwindCSS (`nativewind`)
@@ -74,6 +78,7 @@ Water Tracker Hydration is a React Native application built with Expo that helps
   - [GAMIFICATION.md](./docs/GAMIFICATION.md) - Gamification features
   - [BACKUP.md](./docs/BACKUP.md) - Backup and data synchronization
   - [TESTING.md](./docs/TESTING.md) - Testing and CI/CD pipeline
+  - [ANALYTICS.md](./docs/ANALYTICS.md) - Advanced analytics and monitoring
 
 ## Gamification Features
 
@@ -99,6 +104,19 @@ The app includes comprehensive backup features to protect your data:
 
 Access backup features from the Settings (⚙️) tab. For detailed information about the backup system, see [docs/BACKUP.md](./docs/BACKUP.md).
 
+## Advanced Analytics and Monitoring
+
+The app includes comprehensive analytics and monitoring features:
+
+- **Trend Analysis**: Compare current period with previous period to track progress
+- **PDF Report Export**: Generate professional weekly and monthly reports
+- **Performance Monitoring**: Track app performance and operation duration
+- **Error Logging**: Structured error reporting with context
+- **Analytics Integration**: Ready for Google Analytics, Firebase, or custom platforms
+- **Business Insights**: Track user engagement, goals, and data exports
+
+For detailed information about analytics features, see [docs/ANALYTICS.md](./docs/ANALYTICS.md).
+
 ## Useful Scripts
 
 - `npm start` — Launch the Expo development server
@@ -114,7 +132,7 @@ Access backup features from the Settings (⚙️) tab. For detailed information 
 
 The project includes comprehensive testing and automated CI/CD pipelines:
 
-- **44 Unit Tests**: Testing core utilities (validation, numbers, backup)
+- **57 Unit Tests**: Testing core utilities (validation, numbers, backup, analytics)
 - **7 Integration Tests**: Testing complete workflows
 - **GitHub Actions CI**: Automated linting, testing, and coverage reporting
 - **100% Coverage**: For critical utility functions

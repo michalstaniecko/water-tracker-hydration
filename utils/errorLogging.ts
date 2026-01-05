@@ -1,6 +1,8 @@
 /**
- * Error logging utility with structured error reporting
+ * Error logging utility with structured error reporting and analytics integration
  */
+
+import { trackError, trackPerformance } from './analytics';
 
 type ErrorContext = {
   operation: string;
@@ -35,6 +37,13 @@ export function logError(error: unknown, context: ErrorContext): void {
     component: context.component,
     data: context.data,
     stack: errorStack,
+  });
+
+  // Track error in analytics for monitoring
+  trackError(error instanceof Error ? error : new Error(errorMessage), {
+    operation: context.operation,
+    component: context.component,
+    ...context.data,
   });
 
   // In production, you could send this to a logging service
@@ -88,7 +97,7 @@ export function logInfo(message: string, context: ErrorContext): void {
 }
 
 /**
- * Wraps an async operation with error logging
+ * Wraps an async operation with error logging and performance tracking
  * @param operation - The async operation to execute
  * @param context - Context information for logging
  * @returns Result of the operation or undefined on error
@@ -97,9 +106,35 @@ export async function withErrorLogging<T>(
   operation: () => Promise<T>,
   context: ErrorContext
 ): Promise<T | undefined> {
+  const startTime = Date.now();
   try {
-    return await operation();
+    const result = await operation();
+    const duration = Date.now() - startTime;
+    
+    // Track successful operation performance
+    trackPerformance({
+      operation: context.operation,
+      duration,
+      success: true,
+      metadata: {
+        component: context.component,
+      },
+    });
+    
+    return result;
   } catch (error) {
+    const duration = Date.now() - startTime;
+    
+    // Track failed operation performance
+    trackPerformance({
+      operation: context.operation,
+      duration,
+      success: false,
+      metadata: {
+        component: context.component,
+      },
+    });
+    
     logError(error, context);
     return undefined;
   }

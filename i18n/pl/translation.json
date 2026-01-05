@@ -35,5 +35,17 @@
   "history": "Historia",
   "date": "Data",
   "amount": "Ilość",
-  "noHistoryAvailable": "Brak historii. Wypij trochę wody."
+  "noHistoryAvailable": "Brak historii. Wypij trochę wody.",
+  "exportPDF": "Eksportuj PDF",
+  "exportingPDF": "Eksportowanie PDF...",
+  "pdfExportSuccess": "PDF wyeksportowany pomyślnie!",
+  "pdfExportFailed": "Nie udało się wyeksportować PDF",
+  "trendAnalysis": "Analiza trendów",
+  "comparedToPrevious": "W porównaniu do poprzedniego okresu",
+  "trendUp": "Trend wzrostowy",
+  "trendDown": "Trend spadkowy",
+  "trendStable": "Stabilny",
+  "advancedReports": "Zaawansowane raporty",
+  "monthlyReport": "Raport miesięczny",
+  "weeklyReport": "Raport tygodniowy"
 }
