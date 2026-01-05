@@ -3,6 +3,7 @@ import { View, Text, Alert } from "react-native";
 import { useBackupStore } from "@/stores/backup";
 import { useTranslation } from "react-i18next";
 import Button from "@/components/ui/Button";
+import LoadingOverlay from "@/components/ui/LoadingOverlay";
 import { useWaterStore } from "@/stores/water";
 import { useSetupStore } from "@/stores/setup";
 import { useGamificationStore } from "@/stores/gamification";
@@ -71,39 +72,44 @@ export default function BackupSection() {
     }
   };
 
-  return (
-    <View className="gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-      <View className="gap-2">
-        <Text className="text-lg font-semibold text-gray-900 dark:text-white">
-          {t("backupAndSync")}
-        </Text>
-        <Text className="text-sm text-gray-600 dark:text-gray-400">
-          {t("backupDescription")}
-        </Text>
-      </View>
+  const isLoading = isProcessing || backupStore.isLoading;
 
-      <View className="gap-3">
-        <Button
-          text={t("exportDataJSON")}
-          onPress={handleExportJSON}
-          disabled={isProcessing || backupStore.isLoading}
-        />
-        <Button
-          text={t("exportDataCSV")}
-          onPress={handleExportCSV}
-          disabled={isProcessing || backupStore.isLoading}
-        />
-        <Button
-          text={t("importDataJSON")}
-          onPress={handleImportJSON}
-          disabled={isProcessing || backupStore.isLoading}
-        />
-        <Button
-          text={t("importDataCSV")}
-          onPress={handleImportCSV}
-          disabled={isProcessing || backupStore.isLoading}
-        />
+  return (
+    <>
+      <View className="gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <View className="gap-2">
+          <Text className="text-lg font-semibold text-gray-900 dark:text-white">
+            {t("backupAndSync")}
+          </Text>
+          <Text className="text-sm text-gray-600 dark:text-gray-400">
+            {t("backupDescription")}
+          </Text>
+        </View>
+
+        <View className="gap-3">
+          <Button
+            text={t("exportDataJSON")}
+            onPress={handleExportJSON}
+            disabled={isLoading}
+          />
+          <Button
+            text={t("exportDataCSV")}
+            onPress={handleExportCSV}
+            disabled={isLoading}
+          />
+          <Button
+            text={t("importDataJSON")}
+            onPress={handleImportJSON}
+            disabled={isLoading}
+          />
+          <Button
+            text={t("importDataCSV")}
+            onPress={handleImportCSV}
+            disabled={isLoading}
+          />
+        </View>
       </View>
-    </View>
+      <LoadingOverlay visible={isLoading} message={t("processingBackup")} />
+    </>
   );
 }
