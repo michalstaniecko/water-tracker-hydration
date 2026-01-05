@@ -4,6 +4,7 @@ import { useWaterStore } from "./water";
 import { useStatisticsStore } from "./statistics";
 import { useSetupStore } from "./setup";
 import { logError, logWarning } from "@/utils/errorLogging";
+import { triggerHapticFeedback } from "@/hooks/useHaptics";
 
 export type AchievementType =
   | "first_glass"
@@ -233,6 +234,7 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
 
       // Unlock achievements and create notifications
       let hasChanges = false;
+      const hapticsEnabled = useSetupStore.getState().hapticsEnabled;
       updatedAchievements.forEach((achievement, index) => {
         if (
           !achievement.isUnlocked &&
@@ -244,6 +246,9 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
             unlockedAt: now,
           };
           hasChanges = true;
+
+          // Trigger haptic feedback for achievement unlock
+          triggerHapticFeedback("notificationSuccess", hapticsEnabled);
 
           // Add notification for unlocked achievement
           get().addNotification({
