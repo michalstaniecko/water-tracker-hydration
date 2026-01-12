@@ -8,6 +8,7 @@
   "on": "On",
   "off": "Off",
   "enableOnboarding": "Enable onboarding",
+  "hapticFeedback": "Haptic feedback",
   "backupAndSync": "Backup & Sync",
   "exportDataJSON": "Export Data (JSON)",
   "exportDataCSV": "Export Data (CSV)",
