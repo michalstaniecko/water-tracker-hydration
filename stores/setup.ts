@@ -5,7 +5,7 @@ import { DEFAULT_DATE_FORMAT } from "@/config/date";
 import * as Localization from "expo-localization";
 import { sanitizePositiveNumber, isValidTimeFormat } from "@/utils/validation";
 import { logError, logWarning } from "@/utils/errorLogging";
-import { DEFAULT_DAILY_GOAL } from "@/constants/app";
+import { DEFAULT_DAILY_GOAL, DEFAULT_GLASS_CAPACITY } from "@/constants/app";
 
 export enum SetupOptions {
   GLASS_CAPACITY = "glassCapacity",
@@ -45,7 +45,7 @@ type SetupActions = {
 const storageKey = "setupData";
 
 const initialState: SetupState = {
-  glassCapacity: "250",
+  glassCapacity: String(DEFAULT_GLASS_CAPACITY),
   minimumWater: String(DEFAULT_DAILY_GOAL),
   day: {
     startHour: "08:00",
@@ -70,7 +70,7 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
           
           // Sanitize numeric values
           if (parsedData.glassCapacity) {
-            validatedData.glassCapacity = sanitizePositiveNumber(parsedData.glassCapacity, '250');
+            validatedData.glassCapacity = sanitizePositiveNumber(parsedData.glassCapacity, String(DEFAULT_GLASS_CAPACITY));
           }
           if (parsedData.minimumWater) {
             validatedData.minimumWater = sanitizePositiveNumber(parsedData.minimumWater, String(DEFAULT_DAILY_GOAL));
@@ -141,7 +141,7 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
   }),
   setGlassCapacity: async (capacity: string) => {
     // Sanitize and persist to storage
-    const sanitized = sanitizePositiveNumber(capacity, '250');
+    const sanitized = sanitizePositiveNumber(capacity, String(DEFAULT_GLASS_CAPACITY));
     await get().setOption(SetupOptions.GLASS_CAPACITY, sanitized);
   },
   setMinimumWater: async (water: string) => {

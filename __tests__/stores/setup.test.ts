@@ -1,5 +1,6 @@
 import { useSetupStore } from "@/stores/setup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DEFAULT_DAILY_GOAL, DEFAULT_GLASS_CAPACITY } from "@/constants/app";
 
 // Mock AsyncStorage
 jest.mock("@react-native-async-storage/async-storage", () => ({
@@ -32,13 +33,13 @@ describe("SetupStore - Input Field Behavior", () => {
 
     it("should sanitize empty string to default", async () => {
       await useSetupStore.getState().setMinimumWater("");
-      expect(useSetupStore.getState().minimumWater).toBe("2000");
+      expect(useSetupStore.getState().minimumWater).toBe(String(DEFAULT_DAILY_GOAL));
       expect(AsyncStorage.setItem).toHaveBeenCalled();
     });
 
     it("should sanitize invalid values to default", async () => {
       await useSetupStore.getState().setMinimumWater("0");
-      expect(useSetupStore.getState().minimumWater).toBe("2000");
+      expect(useSetupStore.getState().minimumWater).toBe(String(DEFAULT_DAILY_GOAL));
       expect(AsyncStorage.setItem).toHaveBeenCalled();
     });
   });
@@ -46,8 +47,8 @@ describe("SetupStore - Input Field Behavior", () => {
   describe("setMinimumWaterTemp", () => {
     it("should allow empty string during editing without persisting", () => {
       // Set initial value
-      useSetupStore.getState().setMinimumWaterTemp("2000");
-      expect(useSetupStore.getState().minimumWater).toBe("2000");
+      useSetupStore.getState().setMinimumWaterTemp(String(DEFAULT_DAILY_GOAL));
+      expect(useSetupStore.getState().minimumWater).toBe(String(DEFAULT_DAILY_GOAL));
 
       // Clear the field (empty string)
       useSetupStore.getState().setMinimumWaterTemp("");
@@ -86,7 +87,7 @@ describe("SetupStore - Input Field Behavior", () => {
 
     it("should sanitize empty string to default", async () => {
       await useSetupStore.getState().setGlassCapacity("");
-      expect(useSetupStore.getState().glassCapacity).toBe("250");
+      expect(useSetupStore.getState().glassCapacity).toBe(String(DEFAULT_GLASS_CAPACITY));
       expect(AsyncStorage.setItem).toHaveBeenCalled();
     });
   });
@@ -94,8 +95,8 @@ describe("SetupStore - Input Field Behavior", () => {
   describe("setGlassCapacityTemp", () => {
     it("should allow empty string during editing without persisting", () => {
       // Set initial value
-      useSetupStore.getState().setGlassCapacityTemp("250");
-      expect(useSetupStore.getState().glassCapacity).toBe("250");
+      useSetupStore.getState().setGlassCapacityTemp(String(DEFAULT_GLASS_CAPACITY));
+      expect(useSetupStore.getState().glassCapacity).toBe(String(DEFAULT_GLASS_CAPACITY));
 
       // Clear the field (empty string)
       useSetupStore.getState().setGlassCapacityTemp("");
@@ -125,7 +126,7 @@ describe("SetupStore - Input Field Behavior", () => {
   describe("fetchOrInitData - sanitization on load", () => {
     it("should sanitize invalid minimumWater from storage", async () => {
       const invalidData = {
-        glassCapacity: "250",
+        glassCapacity: String(DEFAULT_GLASS_CAPACITY),
         minimumWater: "", // Invalid empty string
         day: {
           startHour: "08:00",
@@ -142,13 +143,13 @@ describe("SetupStore - Input Field Behavior", () => {
       await useSetupStore.getState().fetchOrInitData();
 
       // Should use default value for invalid data
-      expect(useSetupStore.getState().minimumWater).toBe("2000");
+      expect(useSetupStore.getState().minimumWater).toBe(String(DEFAULT_DAILY_GOAL));
     });
 
     it("should sanitize invalid glassCapacity from storage", async () => {
       const invalidData = {
         glassCapacity: "", // Invalid empty string
-        minimumWater: "2000",
+        minimumWater: String(DEFAULT_DAILY_GOAL),
         day: {
           startHour: "08:00",
           endHour: "23:00",
@@ -164,7 +165,7 @@ describe("SetupStore - Input Field Behavior", () => {
       await useSetupStore.getState().fetchOrInitData();
 
       // Should use default value for invalid data
-      expect(useSetupStore.getState().glassCapacity).toBe("250");
+      expect(useSetupStore.getState().glassCapacity).toBe(String(DEFAULT_GLASS_CAPACITY));
     });
 
     it("should keep valid values from storage", async () => {
