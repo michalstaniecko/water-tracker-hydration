@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, Alert } from "react-native";
 import { useBackupStore } from "@/stores/backup";
 import { useTranslation } from "react-i18next";
@@ -14,12 +14,9 @@ export default function BackupSection() {
   const waterStore = useWaterStore();
   const setupStore = useSetupStore();
   const gamificationStore = useGamificationStore();
-  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleExportJSON = async () => {
-    setIsProcessing(true);
     const success = await backupStore.exportDataAsJSON();
-    setIsProcessing(false);
 
     if (success) {
       Alert.alert(t("exportSuccess"));
@@ -29,9 +26,7 @@ export default function BackupSection() {
   };
 
   const handleExportCSV = async () => {
-    setIsProcessing(true);
     const success = await backupStore.exportDataAsCSV();
-    setIsProcessing(false);
 
     if (success) {
       Alert.alert(t("exportSuccess"));
@@ -41,9 +36,7 @@ export default function BackupSection() {
   };
 
   const handleImportJSON = async () => {
-    setIsProcessing(true);
     const success = await backupStore.importDataFromJSON();
-    setIsProcessing(false);
 
     if (success) {
       // Reload all stores
@@ -58,9 +51,7 @@ export default function BackupSection() {
   };
 
   const handleImportCSV = async () => {
-    setIsProcessing(true);
     const success = await backupStore.importDataFromCSV();
-    setIsProcessing(false);
 
     if (success) {
       // Reload water store
@@ -71,8 +62,6 @@ export default function BackupSection() {
       Alert.alert(t("importError"));
     }
   };
-
-  const isLoading = isProcessing || backupStore.isLoading;
 
   return (
     <>
@@ -90,26 +79,30 @@ export default function BackupSection() {
           <Button
             text={t("exportDataJSON")}
             onPress={handleExportJSON}
-            disabled={isLoading}
+            disabled={backupStore.isLoading}
           />
           <Button
             text={t("exportDataCSV")}
             onPress={handleExportCSV}
-            disabled={isLoading}
+            disabled={backupStore.isLoading}
           />
           <Button
             text={t("importDataJSON")}
             onPress={handleImportJSON}
-            disabled={isLoading}
+            disabled={backupStore.isLoading}
           />
           <Button
             text={t("importDataCSV")}
             onPress={handleImportCSV}
-            disabled={isLoading}
+            disabled={backupStore.isLoading}
           />
         </View>
       </View>
-      <LoadingOverlay visible={isLoading} message={t("processingBackup")} />
+      <LoadingOverlay
+        visible={backupStore.isLoading}
+        message={t("processingBackup")}
+        testID="backup-loading-overlay"
+      />
     </>
   );
 }

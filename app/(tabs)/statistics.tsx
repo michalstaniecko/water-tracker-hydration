@@ -17,7 +17,7 @@ import { DEFAULT_DATE_FORMAT } from "@/config/date";
 import { useWaterStore } from "@/stores/water";
 import { convertDateFormat } from "@/utils/date";
 import { useSetupStore } from "@/stores/setup";
-import { StatisticsSkeleton } from "@/components/ui/LoadingOverlay";
+import { StatisticsSkeleton } from "@/components/skeletons/StatisticsSkeleton";
 // PDF export functions kept for future use but hidden from UI
 // import { exportWeeklyReport, exportMonthlyReport } from "@/utils/pdfExport";
 // import { trackEngagement } from "@/utils/analytics";
