@@ -5,7 +5,7 @@ import { DEFAULT_DATE_FORMAT } from "@/config/date";
 import * as Localization from "expo-localization";
 import { sanitizePositiveNumber, isValidTimeFormat } from "@/utils/validation";
 import { logError, logWarning } from "@/utils/errorLogging";
-import { DEFAULT_DAILY_GOAL, DEFAULT_GLASS_CAPACITY } from "@/constants/app";
+import { DEFAULT_DAILY_GOAL, DEFAULT_GLASS_CAPACITY, MAX_QUICK_ACTION_AMOUNT } from "@/constants/app";
 
 export enum SetupOptions {
   GLASS_CAPACITY = "glassCapacity",
@@ -14,7 +14,27 @@ export enum SetupOptions {
   DATE_FORMAT = "dateFormat",
   LANGUAGE_CODE = "languageCode",
   HAPTICS_ENABLED = "hapticsEnabled",
+  QUICK_ACTIONS = "quickActions",
 }
+
+export type QuickActionLabelKey =
+  | "quickActionGlass"
+  | "quickActionBottle"
+  | "quickActionCan"
+  | "quickActionCustom";
+
+export type QuickAction = {
+  id: string;
+  amount: number;
+  labelKey: QuickActionLabelKey;
+  enabled: boolean;
+};
+
+export const DEFAULT_QUICK_ACTIONS: QuickAction[] = [
+  { id: "glass", amount: 250, labelKey: "quickActionGlass", enabled: true },
+  { id: "bottle", amount: 500, labelKey: "quickActionBottle", enabled: true },
+  { id: "can", amount: 330, labelKey: "quickActionCan", enabled: true },
+];
 
 type SetupState = {
   [SetupOptions.GLASS_CAPACITY]: string;
@@ -26,6 +46,7 @@ type SetupState = {
   [SetupOptions.DATE_FORMAT]: string;
   [SetupOptions.LANGUAGE_CODE]?: string;
   [SetupOptions.HAPTICS_ENABLED]: boolean;
+  [SetupOptions.QUICK_ACTIONS]: QuickAction[];
 };
 
 type SetupActions = {
@@ -36,10 +57,12 @@ type SetupActions = {
   setLanguageCode: (languageCode: string) => Promise<void>;
   setHapticsEnabled: (enabled: boolean) => Promise<void>;
   getOptions: () => SetupState;
-  setOption: (option: SetupOptions, value: number | string | {} | boolean) => Promise<void>;
+  setOption: (option: SetupOptions, value: number | string | {} | boolean | QuickAction[]) => Promise<void>;
   reset: () => Promise<void>;
   fetchOrInitData: () => Promise<void>;
   getDayProgress: () => number;
+  setQuickActions: (quickActions: QuickAction[]) => Promise<void>;
+  updateQuickAction: (id: string, updates: Partial<QuickAction>) => Promise<void>;
 };
 
 const storageKey = "setupData";
@@ -54,6 +77,7 @@ const initialState: SetupState = {
   dateFormat: DEFAULT_DATE_FORMAT,
   languageCode: Localization.getLocales()[0].languageCode || "en",
   hapticsEnabled: true,
+  quickActions: DEFAULT_QUICK_ACTIONS,
 };
 
 export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
@@ -99,6 +123,34 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
             validatedData.hapticsEnabled = parsedData.hapticsEnabled;
           }
 
+          // Validate quick actions
+          if (Array.isArray(parsedData.quickActions)) {
+            const validLabelKeys: QuickActionLabelKey[] = [
+              "quickActionGlass",
+              "quickActionBottle",
+              "quickActionCan",
+              "quickActionCustom",
+            ];
+            const validQuickActions = parsedData.quickActions
+              .filter(
+                (action: any) =>
+                  typeof action === 'object' &&
+                  action !== null &&
+                  typeof action.id === 'string' &&
+                  typeof action.amount === 'number' &&
+                  typeof action.labelKey === 'string' &&
+                  validLabelKeys.includes(action.labelKey) &&
+                  typeof action.enabled === 'boolean'
+              )
+              .map((action: QuickAction) => ({
+                ...action,
+                amount: Math.min(action.amount, MAX_QUICK_ACTION_AMOUNT),
+              }));
+            if (validQuickActions.length > 0) {
+              validatedData.quickActions = validQuickActions;
+            }
+          }
+
           set(validatedData);
         } else {
           logWarning('Invalid setup data structure, reinitializing', {
@@ -138,6 +190,7 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
     dateFormat: get()[SetupOptions.DATE_FORMAT],
     languageCode: get()[SetupOptions.LANGUAGE_CODE],
     hapticsEnabled: get()[SetupOptions.HAPTICS_ENABLED],
+    quickActions: get()[SetupOptions.QUICK_ACTIONS],
   }),
   setGlassCapacity: async (capacity: string) => {
     // Sanitize and persist to storage
@@ -163,7 +216,7 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
       [SetupOptions.MINIMUM_WATER]: water,
     }));
   },
-  setOption: async (option: SetupOptions, value: number | string | {} | boolean) => {
+  setOption: async (option: SetupOptions, value: number | string | {} | boolean | QuickAction[]) => {
     set((state) => ({
       ...state,
       [option]: value,
@@ -263,5 +316,15 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
       });
       return 0;
     }
+  },
+  setQuickActions: async (quickActions: QuickAction[]) => {
+    await get().setOption(SetupOptions.QUICK_ACTIONS, quickActions);
+  },
+  updateQuickAction: async (id: string, updates: Partial<QuickAction>) => {
+    const currentActions = get()[SetupOptions.QUICK_ACTIONS];
+    const updatedActions = currentActions.map((action) =>
+      action.id === id ? { ...action, ...updates } : action
+    );
+    await get().setQuickActions(updatedActions);
   },
 }));

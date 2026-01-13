@@ -45,5 +45,18 @@
   "trendStable": "Stabilny",
   "advancedReports": "Zaawansowane raporty",
   "monthlyReport": "Raport miesięczny",
-  "weeklyReport": "Raport tygodniowy"
+  "weeklyReport": "Raport tygodniowy",
+  "quickActions": "Szybkie akcje",
+  "quickActionGlass": "Szklanka",
+  "quickActionBottle": "Butelka",
+  "quickActionCan": "Puszka",
+  "quickActionCustom": "Niestandardowa",
+  "quickActionAccessibilityLabel": "Dodaj {{amount}} mililitrów, {{label}}",
+  "quickActionAccessibilityHint": "Dotknij dwukrotnie, aby dodać {{amount}} mililitrów wody",
+  "addQuickActionAccessibilityLabel": "Dodaj nową szybką akcję",
+  "editQuickActionAccessibilityLabel": "Szybka akcja {{amount}} mililitrów",
+  "editQuickActionAccessibilityHint": "Dotknij dwukrotnie, aby edytować ilość",
+  "deleteQuickActionAccessibilityLabel": "Usuń szybką akcję {{amount}} mililitrów",
+  "saveQuickActionAccessibilityLabel": "Zapisz zmiany",
+  "cancelEditAccessibilityLabel": "Anuluj edycję"
 }

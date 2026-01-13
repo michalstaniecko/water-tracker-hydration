@@ -22,6 +22,11 @@ export type PickerOption = {
 // Backup settings
 export const AUTO_BACKUP_RETENTION_DAYS = 7;
 
+// Quick Actions settings
+export const MAX_QUICK_ACTIONS = 6;
+export const MAX_QUICK_ACTION_AMOUNT = 5000;
+export const DEFAULT_QUICK_ACTION_AMOUNT = 200;
+
 /**
  * Generates an array of glass capacity options for the picker.
  * Options range from MIN_GLASS_CAPACITY to MAX_GLASS_CAPACITY with GLASS_STEP increments.

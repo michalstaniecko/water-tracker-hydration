@@ -27,6 +27,13 @@ export default function SetupLayout() {
           headerBackTitle: t("back"),
         }}
       />
+      <Stack.Screen
+        name="quick-actions"
+        options={{
+          title: t("quickActions"),
+          headerBackTitle: t("back"),
+        }}
+      />
     </Stack>
   );
 }

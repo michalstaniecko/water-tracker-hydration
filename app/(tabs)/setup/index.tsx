@@ -16,6 +16,12 @@ export default function SettingsMenu() {
       onPress: () => router.push("/(tabs)/setup/general"),
     },
     {
+      id: "quick-actions",
+      title: t("quickActions"),
+      icon: "bolt",
+      onPress: () => router.push("/(tabs)/setup/quick-actions"),
+    },
+    {
       id: "backup",
       title: t("backup"),
       icon: "download",
