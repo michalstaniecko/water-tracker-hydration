@@ -11,6 +11,8 @@ export default function RemoveWater() {
   const { impactLight } = useHaptics();
 
   const handleRemoveWater = () => {
+    // Only trigger haptic feedback when removal will actually occur
+    // This check ensures feedback is only given for successful actions
     if (Number(water) > 0) {
       impactLight();
       removeWater();

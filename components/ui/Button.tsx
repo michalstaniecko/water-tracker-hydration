@@ -5,6 +5,12 @@ type ButtonProps = {
   text: string;
   onPress?: () => void;
   disabled?: boolean;
+  /**
+   * Enable haptic feedback on button press.
+   * - `true`: Uses "impactMedium" feedback
+   * - `HapticType`: Uses the specified feedback type (e.g., "impactLight", "notificationSuccess")
+   * - `false` or omitted: No haptic feedback
+   */
   haptic?: HapticType | boolean;
 };
 export default function Button({
