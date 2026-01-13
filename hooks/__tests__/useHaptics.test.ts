@@ -1,6 +1,12 @@
 import * as Haptics from "expo-haptics";
 import { Platform } from "react-native";
-import { triggerHapticFeedback, HapticType } from "../useHaptics";
+import {
+  triggerHapticFeedback,
+  useHaptics,
+  HapticType,
+  IS_HAPTICS_SUPPORTED,
+} from "../useHaptics";
+import { useSetupStore } from "@/stores/setup";
 
 // Mock expo-haptics
 jest.mock("expo-haptics", () => ({
@@ -17,6 +23,16 @@ jest.mock("expo-haptics", () => ({
     Warning: "warning",
     Error: "error",
   },
+}));
+
+// Mock the setup store
+jest.mock("@/stores/setup", () => ({
+  useSetupStore: jest.fn(),
+}));
+
+// Mock error logging
+jest.mock("@/utils/errorLogging", () => ({
+  logWarning: jest.fn(),
 }));
 
 describe("triggerHapticFeedback", () => {
@@ -206,5 +222,279 @@ describe("triggerHapticFeedback", () => {
         }
       }
     });
+  });
+});
+
+describe("useHaptics hook", () => {
+  const mockUseSetupStore = useSetupStore as jest.MockedFunction<
+    typeof useSetupStore
+  >;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    Platform.OS = "ios";
+    // Default: haptics enabled
+    mockUseSetupStore.mockReturnValue({ hapticsEnabled: true } as ReturnType<
+      typeof useSetupStore
+    >);
+  });
+
+  describe("returned methods", () => {
+    it("should return all expected methods and properties", () => {
+      const result = useHaptics();
+
+      expect(result.triggerHaptic).toBeDefined();
+      expect(typeof result.triggerHaptic).toBe("function");
+
+      expect(result.impactLight).toBeDefined();
+      expect(typeof result.impactLight).toBe("function");
+
+      expect(result.impactMedium).toBeDefined();
+      expect(typeof result.impactMedium).toBe("function");
+
+      expect(result.impactHeavy).toBeDefined();
+      expect(typeof result.impactHeavy).toBe("function");
+
+      expect(result.notificationSuccess).toBeDefined();
+      expect(typeof result.notificationSuccess).toBe("function");
+
+      expect(result.notificationWarning).toBeDefined();
+      expect(typeof result.notificationWarning).toBe("function");
+
+      expect(result.notificationError).toBeDefined();
+      expect(typeof result.notificationError).toBe("function");
+
+      expect(result.selection).toBeDefined();
+      expect(typeof result.selection).toBe("function");
+
+      expect(result.isHapticsSupported).toBeDefined();
+      expect(typeof result.isHapticsSupported).toBe("boolean");
+
+      expect(result.isEnabled).toBeDefined();
+      expect(typeof result.isEnabled).toBe("boolean");
+    });
+
+    it("should return isEnabled as true when haptics are enabled in store", () => {
+      mockUseSetupStore.mockReturnValue({ hapticsEnabled: true } as ReturnType<
+        typeof useSetupStore
+      >);
+      const result = useHaptics();
+      expect(result.isEnabled).toBe(true);
+    });
+
+    it("should return isEnabled as false when haptics are disabled in store", () => {
+      mockUseSetupStore.mockReturnValue({ hapticsEnabled: false } as ReturnType<
+        typeof useSetupStore
+      >);
+      const result = useHaptics();
+      expect(result.isEnabled).toBe(false);
+    });
+
+    it("should return isHapticsSupported correctly based on platform", () => {
+      const result = useHaptics();
+      // Platform is 'ios' in beforeEach, so should be supported
+      expect(result.isHapticsSupported).toBe(IS_HAPTICS_SUPPORTED);
+    });
+  });
+
+  describe("triggerHaptic method", () => {
+    it("should trigger haptic when enabled", async () => {
+      mockUseSetupStore.mockReturnValue({ hapticsEnabled: true } as ReturnType<
+        typeof useSetupStore
+      >);
+      const { triggerHaptic } = useHaptics();
+
+      await triggerHaptic("impactMedium");
+
+      expect(Haptics.impactAsync).toHaveBeenCalledWith(
+        Haptics.ImpactFeedbackStyle.Medium
+      );
+    });
+
+    it("should not trigger haptic when disabled in store", async () => {
+      mockUseSetupStore.mockReturnValue({ hapticsEnabled: false } as ReturnType<
+        typeof useSetupStore
+      >);
+      const { triggerHaptic } = useHaptics();
+
+      await triggerHaptic("impactMedium");
+
+      expect(Haptics.impactAsync).not.toHaveBeenCalled();
+    });
+
+    it("should handle all haptic types correctly", async () => {
+      mockUseSetupStore.mockReturnValue({ hapticsEnabled: true } as ReturnType<
+        typeof useSetupStore
+      >);
+      const { triggerHaptic } = useHaptics();
+
+      const hapticTypes: HapticType[] = [
+        "impactLight",
+        "impactMedium",
+        "impactHeavy",
+        "notificationSuccess",
+        "notificationWarning",
+        "notificationError",
+        "selection",
+      ];
+
+      for (const type of hapticTypes) {
+        jest.clearAllMocks();
+        await triggerHaptic(type);
+
+        if (type.startsWith("impact")) {
+          expect(Haptics.impactAsync).toHaveBeenCalled();
+        } else if (type.startsWith("notification")) {
+          expect(Haptics.notificationAsync).toHaveBeenCalled();
+        } else if (type === "selection") {
+          expect(Haptics.selectionAsync).toHaveBeenCalled();
+        }
+      }
+    });
+  });
+
+  describe("convenience methods", () => {
+    beforeEach(() => {
+      mockUseSetupStore.mockReturnValue({ hapticsEnabled: true } as ReturnType<
+        typeof useSetupStore
+      >);
+    });
+
+    it("impactLight should trigger light impact haptic", async () => {
+      const { impactLight } = useHaptics();
+      await impactLight();
+      expect(Haptics.impactAsync).toHaveBeenCalledWith(
+        Haptics.ImpactFeedbackStyle.Light
+      );
+    });
+
+    it("impactMedium should trigger medium impact haptic", async () => {
+      const { impactMedium } = useHaptics();
+      await impactMedium();
+      expect(Haptics.impactAsync).toHaveBeenCalledWith(
+        Haptics.ImpactFeedbackStyle.Medium
+      );
+    });
+
+    it("impactHeavy should trigger heavy impact haptic", async () => {
+      const { impactHeavy } = useHaptics();
+      await impactHeavy();
+      expect(Haptics.impactAsync).toHaveBeenCalledWith(
+        Haptics.ImpactFeedbackStyle.Heavy
+      );
+    });
+
+    it("notificationSuccess should trigger success notification haptic", async () => {
+      const { notificationSuccess } = useHaptics();
+      await notificationSuccess();
+      expect(Haptics.notificationAsync).toHaveBeenCalledWith(
+        Haptics.NotificationFeedbackType.Success
+      );
+    });
+
+    it("notificationWarning should trigger warning notification haptic", async () => {
+      const { notificationWarning } = useHaptics();
+      await notificationWarning();
+      expect(Haptics.notificationAsync).toHaveBeenCalledWith(
+        Haptics.NotificationFeedbackType.Warning
+      );
+    });
+
+    it("notificationError should trigger error notification haptic", async () => {
+      const { notificationError } = useHaptics();
+      await notificationError();
+      expect(Haptics.notificationAsync).toHaveBeenCalledWith(
+        Haptics.NotificationFeedbackType.Error
+      );
+    });
+
+    it("selection should trigger selection haptic", async () => {
+      const { selection } = useHaptics();
+      await selection();
+      expect(Haptics.selectionAsync).toHaveBeenCalled();
+    });
+  });
+
+  describe("convenience methods when disabled", () => {
+    beforeEach(() => {
+      mockUseSetupStore.mockReturnValue({ hapticsEnabled: false } as ReturnType<
+        typeof useSetupStore
+      >);
+    });
+
+    it("should not trigger any haptics when disabled", async () => {
+      const {
+        impactLight,
+        impactMedium,
+        impactHeavy,
+        notificationSuccess,
+        notificationWarning,
+        notificationError,
+        selection,
+      } = useHaptics();
+
+      await impactLight();
+      await impactMedium();
+      await impactHeavy();
+      await notificationSuccess();
+      await notificationWarning();
+      await notificationError();
+      await selection();
+
+      expect(Haptics.impactAsync).not.toHaveBeenCalled();
+      expect(Haptics.notificationAsync).not.toHaveBeenCalled();
+      expect(Haptics.selectionAsync).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("error handling in hook", () => {
+    beforeEach(() => {
+      mockUseSetupStore.mockReturnValue({ hapticsEnabled: true } as ReturnType<
+        typeof useSetupStore
+      >);
+    });
+
+    it("should silently fail when haptics throw an error", async () => {
+      (Haptics.impactAsync as jest.Mock).mockRejectedValue(
+        new Error("Haptics error")
+      );
+
+      const { impactMedium } = useHaptics();
+
+      // Should not throw
+      await expect(impactMedium()).resolves.not.toThrow();
+    });
+
+    it("should silently fail for notification haptics errors", async () => {
+      (Haptics.notificationAsync as jest.Mock).mockRejectedValue(
+        new Error("Notification haptics error")
+      );
+
+      const { notificationSuccess } = useHaptics();
+
+      await expect(notificationSuccess()).resolves.not.toThrow();
+    });
+
+    it("should silently fail for selection haptics errors", async () => {
+      (Haptics.selectionAsync as jest.Mock).mockRejectedValue(
+        new Error("Selection haptics error")
+      );
+
+      const { selection } = useHaptics();
+
+      await expect(selection()).resolves.not.toThrow();
+    });
+  });
+});
+
+describe("IS_HAPTICS_SUPPORTED constant", () => {
+  it("should be exported and be a boolean", () => {
+    expect(typeof IS_HAPTICS_SUPPORTED).toBe("boolean");
+  });
+
+  it("should be true for iOS platform", () => {
+    // The constant is evaluated at module load time
+    // In test environment, Platform.OS is 'ios' by default
+    expect(IS_HAPTICS_SUPPORTED).toBe(true);
   });
 });

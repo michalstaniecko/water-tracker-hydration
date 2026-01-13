@@ -1,6 +1,7 @@
 import * as Haptics from "expo-haptics";
 import { Platform } from "react-native";
 import { useSetupStore } from "@/stores/setup";
+import { logWarning } from "@/utils/errorLogging";
 
 export type HapticType =
   | "impactLight"
@@ -12,7 +13,7 @@ export type HapticType =
   | "selection";
 
 /** Whether the current platform supports haptic feedback */
-const IS_HAPTICS_SUPPORTED = Platform.OS === "ios" || Platform.OS === "android";
+export const IS_HAPTICS_SUPPORTED = Platform.OS === "ios" || Platform.OS === "android";
 
 /**
  * Core function that executes the haptic feedback
@@ -67,8 +68,16 @@ export function useHaptics() {
 
     try {
       await executeHaptic(type);
-    } catch {
-      // Silently fail - haptics is not critical functionality
+    } catch (error) {
+      // Silently fail in production - haptics is not critical functionality
+      // Log warning in dev mode for debugging
+      if (__DEV__) {
+        logWarning(`Haptic feedback failed: ${type}`, {
+          operation: "triggerHaptic",
+          component: "useHaptics",
+          data: { type, error: error instanceof Error ? error.message : String(error) },
+        });
+      }
     }
   };
 
@@ -102,7 +111,15 @@ export async function triggerHapticFeedback(
 
   try {
     await executeHaptic(type);
-  } catch {
-    // Silently fail - haptics is not critical functionality
+  } catch (error) {
+    // Silently fail in production - haptics is not critical functionality
+    // Log warning in dev mode for debugging
+    if (__DEV__) {
+      logWarning(`Haptic feedback failed: ${type}`, {
+        operation: "triggerHapticFeedback",
+        component: "useHaptics",
+        data: { type, error: error instanceof Error ? error.message : String(error) },
+      });
+    }
   }
 }

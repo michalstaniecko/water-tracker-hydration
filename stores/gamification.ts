@@ -247,9 +247,6 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
           };
           hasChanges = true;
 
-          // Trigger haptic feedback for achievement unlock
-          triggerHapticFeedback("notificationSuccess", hapticsEnabled);
-
           // Add notification for unlocked achievement
           get().addNotification({
             type: "achievement",
@@ -262,6 +259,9 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
       });
 
       if (hasChanges) {
+        // Trigger haptic feedback once for all unlocked achievements
+        // (avoids multiple rapid haptics when unlocking several at once)
+        triggerHapticFeedback("notificationSuccess", hapticsEnabled);
         set({ achievements: updatedAchievements, lastChecked: now });
         await get().updateStorage();
       }
