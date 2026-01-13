@@ -52,14 +52,19 @@ class ErrorBoundaryComponent extends Component<
         return this.props.fallback;
       }
 
+      // Safely access translations with fallback for cases where i18n is not yet initialized
+      const errorTitle =
+        t?.("errors:somethingWentWrong") || "Something went wrong";
+      const errorMessage =
+        t?.("errors:componentError") ||
+        "An error occurred in the component. Please try again later.";
+
       return (
         <View className="flex-1 justify-center items-center p-4">
           <Text className="text-red-500 text-lg font-semibold mb-2">
-            {t("errors:somethingWentWrong")}
+            {errorTitle}
           </Text>
-          <Text className="text-gray-600 text-center">
-            {t("errors:componentError")}
-          </Text>
+          <Text className="text-gray-600 text-center">{errorMessage}</Text>
         </View>
       );
     }

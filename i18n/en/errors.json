@@ -11,5 +11,7 @@
   "fileWriteError": "Failed to write file",
   "invalidFileFormat": "Invalid file format",
   "networkError": "Network error. Please check your connection.",
-  "unknownError": "An unknown error occurred"
+  "unknownError": "An unknown error occurred",
+  "pdfExportSuccess": "PDF exported successfully!",
+  "pdfExportFailed": "Failed to export PDF"
 }

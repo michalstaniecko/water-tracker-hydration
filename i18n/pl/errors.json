@@ -11,5 +11,7 @@
   "fileWriteError": "Nie udało się zapisać pliku",
   "invalidFileFormat": "Nieprawidłowy format pliku",
   "networkError": "Błąd sieci. Sprawdź połączenie.",
-  "unknownError": "Wystąpił nieznany błąd"
+  "unknownError": "Wystąpił nieznany błąd",
+  "pdfExportSuccess": "PDF wyeksportowany pomyślnie!",
+  "pdfExportFailed": "Nie udało się wyeksportować PDF"
 }

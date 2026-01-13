@@ -83,12 +83,12 @@ export default function Statistics() {
   //         : await exportMonthlyReport(stats, parseInt(minimumWater));
   //
   //     if (success) {
-  //       Alert.alert(t("pdfExportSuccess"), "");
+  //       Alert.alert(t("errors:pdfExportSuccess"), "");
   //     } else {
-  //       Alert.alert(t("pdfExportFailed"), "");
+  //       Alert.alert(t("errors:pdfExportFailed"), "");
   //     }
   //   } catch {
-  //     Alert.alert(t("pdfExportFailed"), "");
+  //     Alert.alert(t("errors:pdfExportFailed"), "");
   //   } finally {
   //     setIsExporting(false);
   //   }
