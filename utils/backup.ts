@@ -4,6 +4,7 @@ import { sanitizeNonNegativeNumber } from "./validation";
 import { HistoryRows } from "@/stores/water";
 import dayjs from "@/plugins/dayjs";
 import { DEFAULT_DATE_FORMAT } from "@/config/date";
+import { AUTO_BACKUP_RETENTION_DAYS } from "@/constants/app";
 
 // Type for water history data (non-null version)
 export type WaterHistoryData = {
@@ -323,7 +324,7 @@ export async function createAutoBackup(): Promise<boolean> {
     const backupKey = `autoBackup_${new Date().toISOString().split("T")[0]}`;
     await AsyncStorage.setItem(backupKey, JSON.stringify(backup));
 
-    // Keep only last 7 auto backups
+    // Keep only last AUTO_BACKUP_RETENTION_DAYS auto backups
     await cleanOldAutoBackups();
 
     return true;
@@ -337,7 +338,7 @@ export async function createAutoBackup(): Promise<boolean> {
 }
 
 /**
- * Removes old automatic backups, keeping only the last 7
+ * Removes old automatic backups, keeping only the last AUTO_BACKUP_RETENTION_DAYS
  */
 async function cleanOldAutoBackups(): Promise<void> {
   try {
@@ -347,9 +348,9 @@ async function cleanOldAutoBackups(): Promise<void> {
       .sort()
       .reverse();
 
-    // Remove all but the last 7 backups
-    if (backupKeys.length > 7) {
-      const keysToRemove = backupKeys.slice(7);
+    // Remove all but the last AUTO_BACKUP_RETENTION_DAYS backups
+    if (backupKeys.length > AUTO_BACKUP_RETENTION_DAYS) {
+      const keysToRemove = backupKeys.slice(AUTO_BACKUP_RETENTION_DAYS);
       await AsyncStorage.multiRemove(keysToRemove);
     }
   } catch (error) {

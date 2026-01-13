@@ -14,6 +14,7 @@ import { useOnboardingStore, Status } from "@/stores/onboarding";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { sanitizePositiveNumber } from "@/utils/validation";
 import { IS_HAPTICS_SUPPORTED } from "@/hooks/useHaptics";
+import { DEFAULT_GLASS_CAPACITY, DEFAULT_DAILY_GOAL } from "@/constants/app";
 
 export default function GeneralSettings() {
   const { t } = useTranslation("setup");
@@ -49,13 +50,13 @@ export default function GeneralSettings() {
 
   const handleGlassCapacityBlur = (value: string) => {
     // Sanitize and persist on blur
-    const sanitized = sanitizePositiveNumber(value, "250");
+    const sanitized = sanitizePositiveNumber(value, String(DEFAULT_GLASS_CAPACITY));
     setupStore.setGlassCapacity(sanitized);
   };
 
   const handleMinimumWaterBlur = (value: string) => {
     // Sanitize and persist on blur
-    const sanitized = sanitizePositiveNumber(value, "2000");
+    const sanitized = sanitizePositiveNumber(value, String(DEFAULT_DAILY_GOAL));
     setupStore.setMinimumWater(sanitized);
   };
 

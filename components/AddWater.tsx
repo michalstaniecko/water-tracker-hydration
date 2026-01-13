@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PickerWheel from "@/components/ui/PickerWheel";
 import Modal, { ModalHeader } from "@/components/ui/Modal";
 import { useHaptics } from "@/hooks/useHaptics";
+import { GLASS_CAPACITY_OPTIONS } from "@/constants/app";
 
 export default function AddWater() {
   const { t } = useTranslation();
@@ -52,12 +53,6 @@ export default function AddWater() {
     </>
   );
 }
-
-const data = Array.from({ length: 19 }, (_, i) => ({
-  key: `item-${i}`,
-  value: `${50 + i * 25}`,
-  label: `${50 + i * 25} ml`,
-}));
 
 const CapacityPicker = () => {
   const { t } = useTranslation();
@@ -99,7 +94,7 @@ const CapacityPicker = () => {
       <Modal visible={visible} onDismiss={setVisible} closeText={t("close")}>
         <ModalHeader title={t("glassCapacityInMl", { ns: "setup" })} />
         <PickerWheel
-          options={data}
+          options={GLASS_CAPACITY_OPTIONS}
           value={glassCapacity}
           onValueChange={handleSelect}
         />
