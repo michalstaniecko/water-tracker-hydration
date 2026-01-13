@@ -13,6 +13,7 @@ import InputTime from "@/components/ui/InputTime";
 import { useOnboardingStore, Status } from "@/stores/onboarding";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { sanitizePositiveNumber } from "@/utils/validation";
+import { IS_HAPTICS_SUPPORTED } from "@/hooks/useHaptics";
 
 export default function GeneralSettings() {
   const { t } = useTranslation("setup");
@@ -132,6 +133,27 @@ export default function GeneralSettings() {
               value={onboarding.status}
             />
           </View>
+          {IS_HAPTICS_SUPPORTED && (
+            <View>
+              <ModalPicker
+                label={t("hapticFeedback")}
+                options={[
+                  {
+                    label: t("on"),
+                    value: "on",
+                  },
+                  {
+                    label: t("off"),
+                    value: "off",
+                  },
+                ]}
+                onSelect={(value) =>
+                  setupStore.setHapticsEnabled(value === "on")
+                }
+                value={setupStore.hapticsEnabled ? "on" : "off"}
+              />
+            </View>
+          )}
         </ScrollView>
       </TouchableWithoutFeedback>
     </ErrorBoundary>

@@ -12,6 +12,7 @@ export enum SetupOptions {
   DAY = "day",
   DATE_FORMAT = "dateFormat",
   LANGUAGE_CODE = "languageCode",
+  HAPTICS_ENABLED = "hapticsEnabled",
 }
 
 type SetupState = {
@@ -23,6 +24,7 @@ type SetupState = {
   };
   [SetupOptions.DATE_FORMAT]: string;
   [SetupOptions.LANGUAGE_CODE]?: string;
+  [SetupOptions.HAPTICS_ENABLED]: boolean;
 };
 
 type SetupActions = {
@@ -31,8 +33,9 @@ type SetupActions = {
   setGlassCapacityTemp: (capacity: string) => void;
   setMinimumWaterTemp: (water: string) => void;
   setLanguageCode: (languageCode: string) => Promise<void>;
+  setHapticsEnabled: (enabled: boolean) => Promise<void>;
   getOptions: () => SetupState;
-  setOption: (option: SetupOptions, value: number | string | {}) => Promise<void>;
+  setOption: (option: SetupOptions, value: number | string | {} | boolean) => Promise<void>;
   reset: () => Promise<void>;
   fetchOrInitData: () => Promise<void>;
   getDayProgress: () => number;
@@ -49,6 +52,7 @@ const initialState: SetupState = {
   },
   dateFormat: DEFAULT_DATE_FORMAT,
   languageCode: Localization.getLocales()[0].languageCode || "en",
+  hapticsEnabled: true,
 };
 
 export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
@@ -88,7 +92,12 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
           if (parsedData.languageCode && typeof parsedData.languageCode === 'string') {
             validatedData.languageCode = parsedData.languageCode;
           }
-          
+
+          // Validate haptics setting (default to true if not set)
+          if (typeof parsedData.hapticsEnabled === 'boolean') {
+            validatedData.hapticsEnabled = parsedData.hapticsEnabled;
+          }
+
           set(validatedData);
         } else {
           logWarning('Invalid setup data structure, reinitializing', {
@@ -127,6 +136,7 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
     day: get().day,
     dateFormat: get()[SetupOptions.DATE_FORMAT],
     languageCode: get()[SetupOptions.LANGUAGE_CODE],
+    hapticsEnabled: get()[SetupOptions.HAPTICS_ENABLED],
   }),
   setGlassCapacity: async (capacity: string) => {
     // Sanitize and persist to storage
@@ -152,7 +162,7 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
       [SetupOptions.MINIMUM_WATER]: water,
     }));
   },
-  setOption: async (option: SetupOptions, value: number | string | {}) => {
+  setOption: async (option: SetupOptions, value: number | string | {} | boolean) => {
     set((state) => ({
       ...state,
       [option]: value,
@@ -170,6 +180,9 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
   },
   setLanguageCode: async (languageCode: string) => {
     await get().setOption(SetupOptions.LANGUAGE_CODE, languageCode);
+  },
+  setHapticsEnabled: async (enabled: boolean) => {
+    await get().setOption(SetupOptions.HAPTICS_ENABLED, enabled);
   },
   reset: async () => {
     set(initialState);

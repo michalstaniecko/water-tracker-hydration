@@ -8,6 +8,7 @@
   "on": "Włączone",
   "off": "Wyłączone",
   "enableOnboarding": "Włącz onboarding",
+  "hapticFeedback": "Sprzężenie zwrotne (wibracje)",
   "backupAndSync": "Kopia zapasowa i synchronizacja",
   "exportDataJSON": "Eksportuj dane (JSON)",
   "exportDataCSV": "Eksportuj dane (CSV)",

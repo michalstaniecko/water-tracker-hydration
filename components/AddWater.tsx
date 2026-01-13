@@ -13,11 +13,18 @@ import { useCallback, useRef, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PickerWheel from "@/components/ui/PickerWheel";
 import Modal, { ModalHeader } from "@/components/ui/Modal";
+import { useHaptics } from "@/hooks/useHaptics";
 
 export default function AddWater() {
   const { t } = useTranslation();
   const { addWater } = useWater();
   const { glassCapacity } = useSetupStore();
+  const { impactMedium } = useHaptics();
+
+  const handleAddWater = () => {
+    impactMedium();
+    addWater();
+  };
 
   return (
     <>
@@ -27,7 +34,7 @@ export default function AddWater() {
         }
       >
         <Pressable
-          onPress={addWater}
+          onPress={handleAddWater}
           className={
             "flex-1 active:opacity-50 active:bg-blue-400 transition-all"
           }
