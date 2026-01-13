@@ -3,21 +3,26 @@ import { useSetupStore } from "@/stores/setup";
 import { useWaterStore } from "@/stores/water";
 import { useGamificationStore } from "@/stores/gamification";
 import { useTranslation } from "react-i18next";
-import * as Haptics from "expo-haptics";
+import { useHaptics } from "@/hooks/useHaptics";
 import { logError } from "@/utils/errorLogging";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useMemo } from "react";
 
 export default function QuickActions() {
   const { t } = useTranslation();
   const { quickActions } = useSetupStore();
   const waterStore = useWaterStore();
   const gamificationStore = useGamificationStore();
+  const { impactMedium } = useHaptics();
 
-  const enabledActions = quickActions.filter((action) => action.enabled);
+  const enabledActions = useMemo(
+    () => quickActions.filter((action) => action.enabled),
+    [quickActions],
+  );
 
   const handleQuickAction = async (amount: number) => {
     try {
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      impactMedium();
       const currentWater = waterStore.getTodayWater();
       const newCurrentWater = Number(currentWater) + amount;
       await waterStore.setTodayWater(newCurrentWater.toString());
@@ -45,6 +50,14 @@ export default function QuickActions() {
             key={action.id}
             onPress={() => handleQuickAction(action.amount)}
             className="flex-1 bg-blue-500 rounded-lg p-3 active:opacity-70 active:bg-blue-600"
+            accessibilityRole="button"
+            accessibilityLabel={t("quickActionAccessibilityLabel", {
+              amount: action.amount,
+              label: t(action.labelKey),
+            })}
+            accessibilityHint={t("quickActionAccessibilityHint", {
+              amount: action.amount,
+            })}
           >
             <View className="items-center">
               <FontAwesome name="plus-circle" size={20} color="#ffffff" />

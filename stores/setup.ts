@@ -5,7 +5,7 @@ import { DEFAULT_DATE_FORMAT } from "@/config/date";
 import * as Localization from "expo-localization";
 import { sanitizePositiveNumber, isValidTimeFormat } from "@/utils/validation";
 import { logError, logWarning } from "@/utils/errorLogging";
-import { DEFAULT_DAILY_GOAL, DEFAULT_GLASS_CAPACITY } from "@/constants/app";
+import { DEFAULT_DAILY_GOAL, DEFAULT_GLASS_CAPACITY, MAX_QUICK_ACTION_AMOUNT } from "@/constants/app";
 
 export enum SetupOptions {
   GLASS_CAPACITY = "glassCapacity",
@@ -17,10 +17,16 @@ export enum SetupOptions {
   QUICK_ACTIONS = "quickActions",
 }
 
+export type QuickActionLabelKey =
+  | "quickActionGlass"
+  | "quickActionBottle"
+  | "quickActionCan"
+  | "quickActionCustom";
+
 export type QuickAction = {
   id: string;
   amount: number;
-  labelKey: string;
+  labelKey: QuickActionLabelKey;
   enabled: boolean;
 };
 
@@ -119,15 +125,27 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
 
           // Validate quick actions
           if (Array.isArray(parsedData.quickActions)) {
-            const validQuickActions = parsedData.quickActions.filter(
-              (action: any) =>
-                typeof action === 'object' &&
-                action !== null &&
-                typeof action.id === 'string' &&
-                typeof action.amount === 'number' &&
-                typeof action.labelKey === 'string' &&
-                typeof action.enabled === 'boolean'
-            );
+            const validLabelKeys: QuickActionLabelKey[] = [
+              "quickActionGlass",
+              "quickActionBottle",
+              "quickActionCan",
+              "quickActionCustom",
+            ];
+            const validQuickActions = parsedData.quickActions
+              .filter(
+                (action: any) =>
+                  typeof action === 'object' &&
+                  action !== null &&
+                  typeof action.id === 'string' &&
+                  typeof action.amount === 'number' &&
+                  typeof action.labelKey === 'string' &&
+                  validLabelKeys.includes(action.labelKey) &&
+                  typeof action.enabled === 'boolean'
+              )
+              .map((action: QuickAction) => ({
+                ...action,
+                amount: Math.min(action.amount, MAX_QUICK_ACTION_AMOUNT),
+              }));
             if (validQuickActions.length > 0) {
               validatedData.quickActions = validQuickActions;
             }

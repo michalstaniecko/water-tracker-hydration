@@ -22,5 +22,9 @@
   "back": "Back",
   "quickActions": "Quick Actions",
   "quickActionsDescription": "Configure quick action buttons for adding water with predefined amounts.",
-  "addQuickAction": "Add Quick Action"
+  "addQuickAction": "Add Quick Action",
+  "confirmDelete": "Confirm Delete",
+  "confirmDeleteQuickAction": "Are you sure you want to delete this quick action?",
+  "cancel": "Cancel",
+  "delete": "Delete"
 }

@@ -21,6 +21,10 @@
   "backup": "Kopia zapasowa",
   "back": "Wstecz",
   "quickActions": "Szybkie akcje",
-  "quickActionsDescription": "Skonfiguruj przyciski szybkich akcji do dodawania wody z predefiniowanymi ilosciami.",
-  "addQuickAction": "Dodaj szybka akcje"
+  "quickActionsDescription": "Skonfiguruj przyciski szybkich akcji do dodawania wody z predefiniowanymi ilościami.",
+  "addQuickAction": "Dodaj szybką akcję",
+  "confirmDelete": "Potwierdź usunięcie",
+  "confirmDeleteQuickAction": "Czy na pewno chcesz usunąć tę szybką akcję?",
+  "cancel": "Anuluj",
+  "delete": "Usuń"
 }

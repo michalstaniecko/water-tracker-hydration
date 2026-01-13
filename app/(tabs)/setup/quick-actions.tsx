@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ScrollView, Switch } from "react-native";
+import { View, Text, Pressable, ScrollView, Switch, Alert } from "react-native";
 import { useSetupStore, QuickAction } from "@/stores/setup";
 import { useTranslation } from "react-i18next";
 import Input from "@/components/ui/Input";
@@ -6,6 +6,12 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { useState } from "react";
 import { sanitizePositiveNumber } from "@/utils/validation";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { logError } from "@/utils/errorLogging";
+import {
+  MAX_QUICK_ACTIONS,
+  MAX_QUICK_ACTION_AMOUNT,
+  DEFAULT_QUICK_ACTION_AMOUNT,
+} from "@/constants/app";
 
 export default function QuickActionsSettings() {
   const { t } = useTranslation("setup");
@@ -13,8 +19,18 @@ export default function QuickActionsSettings() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>("");
 
+  const isAtMaxActions = quickActions.length >= MAX_QUICK_ACTIONS;
+
   const handleToggle = async (id: string, enabled: boolean) => {
-    await updateQuickAction(id, { enabled });
+    try {
+      await updateQuickAction(id, { enabled });
+    } catch (error) {
+      logError(error, {
+        operation: "handleToggle",
+        component: "QuickActionsSettings",
+        data: { id, enabled },
+      });
+    }
   };
 
   const handleStartEdit = (action: QuickAction) => {
@@ -23,11 +39,19 @@ export default function QuickActionsSettings() {
   };
 
   const handleSaveEdit = async (id: string) => {
-    const sanitized = sanitizePositiveNumber(editValue, "250");
-    const amount = parseInt(sanitized, 10);
-    await updateQuickAction(id, { amount });
-    setEditingId(null);
-    setEditValue("");
+    try {
+      const sanitized = sanitizePositiveNumber(editValue, "250");
+      const amount = Math.min(parseInt(sanitized, 10), MAX_QUICK_ACTION_AMOUNT);
+      await updateQuickAction(id, { amount });
+      setEditingId(null);
+      setEditValue("");
+    } catch (error) {
+      logError(error, {
+        operation: "handleSaveEdit",
+        component: "QuickActionsSettings",
+        data: { id, editValue },
+      });
+    }
   };
 
   const handleCancelEdit = () => {
@@ -36,19 +60,48 @@ export default function QuickActionsSettings() {
   };
 
   const handleAddAction = async () => {
-    const newId = `custom-${Date.now()}`;
-    const newAction: QuickAction = {
-      id: newId,
-      amount: 200,
-      labelKey: "quickActionCustom",
-      enabled: true,
-    };
-    await setQuickActions([...quickActions, newAction]);
+    if (isAtMaxActions) return;
+
+    try {
+      const newId = `custom-${Date.now()}`;
+      const newAction: QuickAction = {
+        id: newId,
+        amount: DEFAULT_QUICK_ACTION_AMOUNT,
+        labelKey: "quickActionCustom",
+        enabled: true,
+      };
+      await setQuickActions([...quickActions, newAction]);
+    } catch (error) {
+      logError(error, {
+        operation: "handleAddAction",
+        component: "QuickActionsSettings",
+      });
+    }
   };
 
-  const handleRemoveAction = async (id: string) => {
-    const filtered = quickActions.filter((action) => action.id !== id);
-    await setQuickActions(filtered);
+  const handleRemoveAction = (id: string) => {
+    Alert.alert(t("confirmDelete"), t("confirmDeleteQuickAction"), [
+      {
+        text: t("cancel"),
+        style: "cancel",
+      },
+      {
+        text: t("delete"),
+        style: "destructive",
+        onPress: async () => {
+          try {
+            const filtered = quickActions.filter((action) => action.id !== id);
+            await setQuickActions(filtered);
+          } catch (error) {
+            logError(error, {
+              operation: "handleRemoveAction",
+              component: "QuickActionsSettings",
+              data: { id },
+            });
+          }
+        },
+      },
+    ]);
   };
 
   return (
@@ -76,18 +129,36 @@ export default function QuickActionsSettings() {
                   <Pressable
                     onPress={() => handleSaveEdit(action.id)}
                     className="bg-green-500 p-2 rounded"
+                    accessibilityRole="button"
+                    accessibilityLabel={t("saveQuickActionAccessibilityLabel", {
+                      ns: "translation",
+                    })}
                   >
                     <FontAwesome name="check" size={16} color="#ffffff" />
                   </Pressable>
                   <Pressable
                     onPress={handleCancelEdit}
                     className="bg-gray-400 p-2 rounded"
+                    accessibilityRole="button"
+                    accessibilityLabel={t("cancelEditAccessibilityLabel", {
+                      ns: "translation",
+                    })}
                   >
                     <FontAwesome name="times" size={16} color="#ffffff" />
                   </Pressable>
                 </View>
               ) : (
-                <Pressable onPress={() => handleStartEdit(action)}>
+                <Pressable
+                  onPress={() => handleStartEdit(action)}
+                  accessibilityRole="button"
+                  accessibilityLabel={t("editQuickActionAccessibilityLabel", {
+                    ns: "translation",
+                    amount: action.amount,
+                  })}
+                  accessibilityHint={t("editQuickActionAccessibilityHint", {
+                    ns: "translation",
+                  })}
+                >
                   <Text className="text-lg font-semibold text-gray-900">
                     {action.amount}ml
                   </Text>
@@ -103,6 +174,11 @@ export default function QuickActionsSettings() {
                 <Pressable
                   onPress={() => handleRemoveAction(action.id)}
                   className="p-2"
+                  accessibilityRole="button"
+                  accessibilityLabel={t("deleteQuickActionAccessibilityLabel", {
+                    ns: "translation",
+                    amount: action.amount,
+                  })}
                 >
                   <FontAwesome name="trash" size={18} color="#ef4444" />
                 </Pressable>
@@ -119,7 +195,15 @@ export default function QuickActionsSettings() {
 
         <Pressable
           onPress={handleAddAction}
-          className="bg-blue-500 rounded-lg p-4 flex-row items-center justify-center gap-2 active:opacity-70"
+          disabled={isAtMaxActions}
+          className={`bg-blue-500 rounded-lg p-4 flex-row items-center justify-center gap-2 active:opacity-70 ${
+            isAtMaxActions ? "opacity-50" : ""
+          }`}
+          accessibilityRole="button"
+          accessibilityLabel={t("addQuickActionAccessibilityLabel", {
+            ns: "translation",
+          })}
+          accessibilityState={{ disabled: isAtMaxActions }}
         >
           <FontAwesome name="plus" size={16} color="#ffffff" />
           <Text className="text-white font-semibold">
