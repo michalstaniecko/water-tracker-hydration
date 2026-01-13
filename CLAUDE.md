@@ -75,3 +75,19 @@ GitHub Actions workflow (`.github/workflows/ci.yml`):
 1. Lint job - runs on push/PR to main/develop
 2. Test job - unit tests with coverage
 3. Integration job - runs after lint/test pass
+
+## Code Review
+
+When code review is requested, use the `code-reviewer` agent via the Task tool:
+
+```
+Task tool with subagent_type: "code-reviewer"
+```
+
+The code-reviewer agent specializes in:
+- Code quality analysis
+- Security vulnerability detection
+- Best practices validation
+- Static analysis and design patterns
+- Performance optimization suggestions
+- Maintainability assessment and technical debt identification
