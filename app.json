@@ -2,10 +2,10 @@
   "expo": {
     "name": "Water Tracker Hydration",
     "slug": "water-tracker-hydration",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "hydration.ihumbak.website",
+    "scheme": "hydration",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -60,6 +60,35 @@
         "expo-notifications",
         {
           "color": "#3b82f6"
+        }
+      ],
+      [
+        "@bittingz/expo-widgets",
+        {
+          "ios": {
+            "src": "./widgets/ios",
+            "devTeamId": "YOUR_APPLE_TEAM_ID",
+            "mode": "production",
+            "entitlements": {
+              "com.apple.security.application-groups": [
+                "group.website.ihumbak.hydration.expowidgets"
+              ]
+            },
+            "xcode": {
+              "configOverrides": {
+                "SWIFT_VERSION": "5.0"
+              }
+            }
+          },
+          "android": {
+            "src": "./widgets/android",
+            "widgets": [
+              {
+                "name": "HydrationWidget",
+                "resourceName": "@xml/hydration_widget_info"
+              }
+            ]
+          }
         }
       ]
     ],

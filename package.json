@@ -14,6 +14,7 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "@bittingz/expo-widgets": "^3.0.2",
     "@expo/vector-icons": "^14.0.2",
     "@gorhom/bottom-sheet": "^5.1.4",
     "@react-native-async-storage/async-storage": "2.1.2",

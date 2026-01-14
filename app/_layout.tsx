@@ -22,6 +22,12 @@ import {
 } from "@/services/notificationService";
 import { NOTIFICATION_ACTION_OPEN_HOME } from "@/constants/notifications";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import * as Linking from "expo-linking";
+import {
+  initializeWidgetData,
+  handleWidgetAddWater,
+  syncFromWidget,
+} from "@/services/widgetService";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -103,6 +109,8 @@ export default function RootLayout() {
         ) {
           fetchOrInitWaterData();
           checkAndUnlockAchievements();
+          // Sync any changes made from widget while app was in background
+          syncFromWidget();
 
           // Correct notification counter and reschedule when app becomes active
           // Use getState() to get fresh values instead of stale closure values
@@ -141,8 +149,35 @@ export default function RootLayout() {
     // Create automatic backup on app start (once per day)
     createAutomaticBackup();
 
+    // Initialize widget data after stores are loaded
+    initializeWidgetData();
+
+    // Handle deep links from widget
+    const handleDeepLink = async (event: { url: string }) => {
+      const { queryParams } = Linking.parse(event.url);
+
+      if (queryParams?.action === "addwater" && queryParams?.amount) {
+        const amount = parseInt(queryParams.amount as string, 10);
+        if (!isNaN(amount) && amount > 0) {
+          await handleWidgetAddWater(amount);
+          checkAndUnlockAchievements();
+        }
+      }
+    };
+
+    // Listen for deep links while app is running
+    const linkingSubscription = Linking.addEventListener("url", handleDeepLink);
+
+    // Handle deep link that opened the app
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        handleDeepLink({ url });
+      }
+    });
+
     return () => {
       subscription.remove();
+      linkingSubscription.remove();
     };
   }, [
     fetchOrInitSetup,
