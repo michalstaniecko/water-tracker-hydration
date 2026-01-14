@@ -17,3 +17,6 @@ export const NOTIFICATIONS_STORAGE_KEY = "notificationsData";
 // Notification channel ID for Android
 export const NOTIFICATION_CHANNEL_ID = "water-reminders";
 export const NOTIFICATION_CHANNEL_NAME = "Water Reminders";
+
+// Deep link action when notification is tapped
+export const NOTIFICATION_ACTION_OPEN_HOME = "open_home";

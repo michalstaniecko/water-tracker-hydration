@@ -15,7 +15,11 @@ import { useOnboardingStore } from "@/stores/onboarding";
 import { useGamificationStore } from "@/stores/gamification";
 import { useBackupStore } from "@/stores/backup";
 import { useNotificationsStore } from "@/stores/notifications";
-import { addNotificationResponseListener } from "@/services/notificationService";
+import {
+  addNotificationResponseListener,
+  getNotificationContent,
+} from "@/services/notificationService";
+import { NOTIFICATION_ACTION_OPEN_HOME } from "@/constants/notifications";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -36,12 +40,8 @@ export default function RootLayout() {
     checkAndUnlockAchievements,
   } = useGamificationStore();
   const { createAutomaticBackup } = useBackupStore();
-  const {
-    fetchOrInitData: fetchOrInitNotifications,
-    scheduleReminders,
-    enabled: notificationsEnabled,
-    permissionStatus,
-  } = useNotificationsStore();
+  const { fetchOrInitData: fetchOrInitNotifications, scheduleReminders } =
+    useNotificationsStore();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -57,7 +57,7 @@ export default function RootLayout() {
   useEffect(() => {
     const subscription = addNotificationResponseListener((response) => {
       const data = response.notification.request.content.data;
-      if (data?.action === "open_home") {
+      if (data?.action === NOTIFICATION_ACTION_OPEN_HOME) {
         router.push("/(tabs)/");
       }
     });
@@ -67,12 +67,12 @@ export default function RootLayout() {
 
   // Reschedule notifications when activity hours change
   useEffect(() => {
-    if (notificationsEnabled && permissionStatus === "granted") {
-      const title = i18n.t("reminderTitle", { ns: "notifications" });
-      const body = i18n.t("reminderBody", { ns: "notifications" });
+    const { enabled, permissionStatus } = useNotificationsStore.getState();
+    if (enabled && permissionStatus === "granted") {
+      const { title, body } = getNotificationContent();
       scheduleReminders(day.startHour, day.endHour, title, body);
     }
-  }, [day.startHour, day.endHour, notificationsEnabled, permissionStatus]);
+  }, [day.startHour, day.endHour, scheduleReminders]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
@@ -84,10 +84,20 @@ export default function RootLayout() {
         checkAndUnlockAchievements();
 
         // Reschedule notifications when app becomes active
-        if (notificationsEnabled && permissionStatus === "granted") {
-          const title = i18n.t("reminderTitle", { ns: "notifications" });
-          const body = i18n.t("reminderBody", { ns: "notifications" });
-          scheduleReminders(day.startHour, day.endHour, title, body);
+        // Use getState() to get fresh values instead of stale closure values
+        const notificationsState = useNotificationsStore.getState();
+        const setupState = useSetupStore.getState();
+        if (
+          notificationsState.enabled &&
+          notificationsState.permissionStatus === "granted"
+        ) {
+          const { title, body } = getNotificationContent();
+          notificationsState.scheduleReminders(
+            setupState.day.startHour,
+            setupState.day.endHour,
+            title,
+            body,
+          );
         }
       }
       appState.current = nextAppState;
@@ -104,7 +114,15 @@ export default function RootLayout() {
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, [
+    fetchOrInitSetup,
+    fetchOrInitWaterData,
+    fetchOrInitOnboarding,
+    fetchOrInitGamification,
+    fetchOrInitNotifications,
+    checkAndUnlockAchievements,
+    createAutomaticBackup,
+  ]);
 
   useEffect(() => {
     if (loaded) {

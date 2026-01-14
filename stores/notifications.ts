@@ -21,26 +21,78 @@ import {
   ReminderInterval,
 } from "@/constants/notifications";
 
+/**
+ * State shape for the notifications store
+ */
 type NotificationsState = {
+  /** Whether push notification reminders are enabled */
   enabled: boolean;
+  /** Interval between reminders in minutes (60, 120, or 180) */
   intervalMinutes: ReminderInterval;
+  /** Current notification permission status from the OS */
   permissionStatus: PermissionStatus;
+  /** ISO timestamp of when notifications were last scheduled, or null if never */
   lastScheduledTime: string | null;
 };
 
+/**
+ * Actions available on the notifications store
+ */
 type NotificationsActions = {
+  /**
+   * Initializes the store by loading persisted data from AsyncStorage
+   * and setting up the Android notification channel.
+   * Should be called on app startup.
+   */
   fetchOrInitData: () => Promise<void>;
+  /**
+   * Enables or disables push notification reminders.
+   * When disabled, cancels all scheduled notifications.
+   * @param enabled - Whether reminders should be enabled
+   */
   setEnabled: (enabled: boolean) => Promise<void>;
+  /**
+   * Sets the interval between reminder notifications.
+   * Does not automatically reschedule notifications - call scheduleReminders after.
+   * @param intervalMinutes - The interval in minutes (must be a valid ReminderInterval)
+   */
   setInterval: (intervalMinutes: ReminderInterval) => Promise<void>;
+  /**
+   * Requests notification permissions from the OS.
+   * Updates the permissionStatus state with the result.
+   * @returns The resulting permission status
+   */
   requestPermissions: () => Promise<PermissionStatus>;
+  /**
+   * Checks the current notification permission status without prompting.
+   * Updates the permissionStatus state with the result.
+   * @returns The current permission status
+   */
   checkPermissions: () => Promise<PermissionStatus>;
+  /**
+   * Schedules reminder notifications within the specified activity hours.
+   * Only schedules if enabled is true and permissionStatus is "granted".
+   * Cancels any existing notifications before scheduling new ones.
+   * @param startHour - Start of activity hours in "HH:mm" format
+   * @param endHour - End of activity hours in "HH:mm" format
+   * @param title - Notification title text
+   * @param body - Notification body text
+   */
   scheduleReminders: (
     startHour: string,
     endHour: string,
     title: string,
     body: string
   ) => Promise<void>;
+  /**
+   * Cancels all scheduled reminder notifications.
+   * Resets lastScheduledTime to null.
+   */
   cancelReminders: () => Promise<void>;
+  /**
+   * Resets the store to initial state.
+   * Cancels all notifications and clears persisted data.
+   */
   reset: () => Promise<void>;
 };
 

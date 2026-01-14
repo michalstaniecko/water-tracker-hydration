@@ -10,7 +10,9 @@ import { isValidTimeFormat } from "@/utils/validation";
 import {
   NOTIFICATION_CHANNEL_ID,
   NOTIFICATION_CHANNEL_NAME,
+  NOTIFICATION_ACTION_OPEN_HOME,
 } from "@/constants/notifications";
+import i18n from "@/plugins/i18n";
 
 // Configure notification handler
 Notifications.setNotificationHandler({
@@ -29,6 +31,17 @@ export interface NotificationScheduleParams {
   endHour: string; // "HH:mm" format
   title: string;
   body: string;
+}
+
+/**
+ * Gets the localized notification content (title and body) for reminder notifications.
+ * This helper centralizes notification content retrieval to avoid duplication.
+ */
+export function getNotificationContent(): { title: string; body: string } {
+  return {
+    title: i18n.t("reminderTitle", { ns: "notifications" }),
+    body: i18n.t("reminderBody", { ns: "notifications" }),
+  };
 }
 
 /**
@@ -125,6 +138,16 @@ export function calculateNotificationTimes(
   const startMinutes = startH * 60 + startM;
   const endMinutes = endH * 60 + endM;
 
+  // Handle overnight schedule edge case (e.g., endHour < startHour like 22:00 to 06:00)
+  if (endMinutes <= startMinutes) {
+    logWarning("Overnight schedule detected - end hour is before or equal to start hour. Notifications will not be scheduled for overnight periods.", {
+      operation: "calculateNotificationTimes",
+      component: "NotificationService",
+      data: { startHour, endHour, startMinutes, endMinutes },
+    });
+    return [];
+  }
+
   // Calculate notification times for today and tomorrow
   for (let dayOffset = 0; dayOffset < 2; dayOffset++) {
     const baseDate = now.add(dayOffset, "day").startOf("day");
@@ -185,7 +208,7 @@ export async function scheduleNotifications(
         content: {
           title: params.title,
           body: params.body,
-          data: { action: "open_home" },
+          data: { action: NOTIFICATION_ACTION_OPEN_HOME },
           sound: true,
           ...(Platform.OS === "android" && {
             channelId: NOTIFICATION_CHANNEL_ID,
