@@ -1,6 +1,9 @@
 {
   "achievements": "Achievements",
   "notifications": "Notifications",
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "unread": "unread",
   "unlockedAchievements": "Unlocked",
   "lockedAchievements": "Locked",
   "achievementUnlocked": "Achievement Unlocked!",

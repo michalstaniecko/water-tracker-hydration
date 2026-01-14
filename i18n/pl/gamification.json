@@ -1,6 +1,9 @@
 {
   "achievements": "Osiągnięcia",
   "notifications": "Powiadomienia",
+  "today": "Dzisiaj",
+  "yesterday": "Wczoraj",
+  "unread": "nieprzeczytanych",
   "unlockedAchievements": "Odblokowane",
   "lockedAchievements": "Zablokowane",
   "achievementUnlocked": "Osiągnięcie odblokowane!",

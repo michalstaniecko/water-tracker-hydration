@@ -6,6 +6,7 @@ import { Banner } from "@/components/ads/Banner";
 import { useSetupStore } from "@/stores/setup";
 import { useTranslation } from "react-i18next";
 import { colors } from "@/constants/colors";
+import NotificationBellIcon from "@/components/NotificationBellIcon";
 
 export default function TabLayout() {
   const { t } = useTranslation("tabs");
@@ -35,6 +36,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <FontAwesome size={28} name={"home"} color={color} />
             ),
+            headerRight: () => <NotificationBellIcon />,
           }}
         />
         <Tabs.Screen
@@ -62,6 +64,13 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <FontAwesome size={28} name={"cog"} color={color} />
             ),
+          }}
+        />
+        <Tabs.Screen
+          name={"notifications"}
+          options={{
+            href: null,
+            title: t("notifications"),
           }}
         />
         <Tabs.Screen

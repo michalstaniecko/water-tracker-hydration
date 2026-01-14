@@ -53,6 +53,7 @@ type GamificationStore = {
     notification: Omit<Notification, "id" | "timestamp" | "read">,
   ) => Promise<void>;
   markNotificationAsRead: (id: string) => Promise<void>;
+  markAllNotificationsAsRead: () => Promise<void>;
   getUnreadNotifications: () => Notification[];
   clearNotifications: () => Promise<void>;
   updateStorage: () => Promise<void>;
@@ -313,6 +314,22 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
     } catch (error) {
       logError(error, {
         operation: "markNotificationAsRead",
+        component: "GamificationStore",
+      });
+    }
+  },
+
+  markAllNotificationsAsRead: async () => {
+    try {
+      const notifications = get().notifications.map((notif) => ({
+        ...notif,
+        read: true,
+      }));
+      set({ notifications });
+      await get().updateStorage();
+    } catch (error) {
+      logError(error, {
+        operation: "markAllNotificationsAsRead",
         component: "GamificationStore",
       });
     }
