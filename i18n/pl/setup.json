@@ -26,5 +26,17 @@
   "confirmDelete": "Potwierdź usunięcie",
   "confirmDeleteQuickAction": "Czy na pewno chcesz usunąć tę szybką akcję?",
   "cancel": "Anuluj",
-  "delete": "Usuń"
+  "delete": "Usuń",
+  "reminders": "Przypomnienia",
+  "enableReminders": "Włącz przypomnienia",
+  "reminderInterval": "Częstotliwość przypomnień",
+  "every1Hour": "Co 1 godzinę",
+  "every2Hours": "Co 2 godziny",
+  "every3Hours": "Co 3 godziny",
+  "activityHours": "Godziny aktywności",
+  "activityHoursDescription": "Przypomnienia będą wysyłane tylko w godzinach Twojej aktywności. Możesz je zmienić w ustawieniach ogólnych.",
+  "permissionRequired": "Wymagane uprawnienia",
+  "permissionDeniedMessage": "Powiadomienia są wyłączone. Włącz je w ustawieniach urządzenia, aby otrzymywać przypomnienia o piciu wody.",
+  "permissionDenied": "Uprawnienia do powiadomień zostały odrzucone. Włącz je w ustawieniach urządzenia.",
+  "openSettings": "Otwórz ustawienia"
 }

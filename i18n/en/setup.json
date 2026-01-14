@@ -26,5 +26,17 @@
   "confirmDelete": "Confirm Delete",
   "confirmDeleteQuickAction": "Are you sure you want to delete this quick action?",
   "cancel": "Cancel",
-  "delete": "Delete"
+  "delete": "Delete",
+  "reminders": "Reminders",
+  "enableReminders": "Enable reminders",
+  "reminderInterval": "Reminder interval",
+  "every1Hour": "Every 1 hour",
+  "every2Hours": "Every 2 hours",
+  "every3Hours": "Every 3 hours",
+  "activityHours": "Activity hours",
+  "activityHoursDescription": "Reminders will only be sent during your activity hours. You can change these in General settings.",
+  "permissionRequired": "Permission Required",
+  "permissionDeniedMessage": "Notifications are disabled. Please enable them in your device settings to receive water reminders.",
+  "permissionDenied": "Notification permissions are denied. Please enable them in your device settings.",
+  "openSettings": "Open Settings"
 }

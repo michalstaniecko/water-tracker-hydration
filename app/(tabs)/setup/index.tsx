@@ -16,6 +16,12 @@ export default function SettingsMenu() {
       onPress: () => router.push("/(tabs)/setup/general"),
     },
     {
+      id: "reminders",
+      title: t("reminders"),
+      icon: "bell",
+      onPress: () => router.push("/(tabs)/setup/reminders"),
+    },
+    {
       id: "quick-actions",
       title: t("quickActions"),
       icon: "bolt",

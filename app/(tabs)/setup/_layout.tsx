@@ -34,6 +34,13 @@ export default function SetupLayout() {
           headerBackTitle: t("back"),
         }}
       />
+      <Stack.Screen
+        name="reminders"
+        options={{
+          title: t("reminders"),
+          headerBackTitle: t("back"),
+        }}
+      />
     </Stack>
   );
 }
