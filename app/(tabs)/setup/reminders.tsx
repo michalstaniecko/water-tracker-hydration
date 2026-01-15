@@ -1,5 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
-import { ScrollView, View, Text, Alert, Linking, Platform } from "react-native";
+import {
+  ScrollView,
+  View,
+  Text,
+  Alert,
+  Linking,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNotificationsStore } from "@/stores/notifications";
 import { useSetupStore } from "@/stores/setup";
@@ -21,8 +29,17 @@ function isValidReminderInterval(value: number): value is ReminderInterval {
 export default function RemindersSettings() {
   const { t } = useTranslation("setup");
 
-  const notificationsStore = useNotificationsStore();
-  const { fetchOrInitData } = notificationsStore;
+  // Destructure specific state and actions to avoid useCallback recreation on every state change
+  const {
+    enabled,
+    intervalMinutes,
+    permissionStatus,
+    fetchOrInitData,
+    requestPermissions,
+    setEnabled,
+    setInterval,
+    scheduleReminders,
+  } = useNotificationsStore();
   const setupStore = useSetupStore();
 
   const [isInitialized, setIsInitialized] = useState(false);
@@ -46,7 +63,7 @@ export default function RemindersSettings() {
         setIsLoading(true);
         try {
           // Request permissions if not granted
-          const status = await notificationsStore.requestPermissions();
+          const status = await requestPermissions();
 
           if (status !== "granted") {
             // Show alert to open settings
@@ -66,11 +83,11 @@ export default function RemindersSettings() {
             return;
           }
 
-          await notificationsStore.setEnabled(true);
+          await setEnabled(true);
 
           // Schedule notifications
           const { title, body } = getNotificationContent();
-          await notificationsStore.scheduleReminders(
+          await scheduleReminders(
             setupStore.day.startHour,
             setupStore.day.endHour,
             title,
@@ -82,7 +99,7 @@ export default function RemindersSettings() {
       } else {
         setIsLoading(true);
         try {
-          await notificationsStore.setEnabled(false);
+          await setEnabled(false);
         } finally {
           setIsLoading(false);
         }
@@ -90,7 +107,9 @@ export default function RemindersSettings() {
     },
     [
       isLoading,
-      notificationsStore,
+      requestPermissions,
+      setEnabled,
+      scheduleReminders,
       setupStore.day.startHour,
       setupStore.day.endHour,
       t,
@@ -110,11 +129,11 @@ export default function RemindersSettings() {
 
       setIsLoading(true);
       try {
-        await notificationsStore.setInterval(parsedValue);
+        await setInterval(parsedValue);
 
         // Reschedule reminders - scheduleReminders internally checks if enabled and permissions granted
         const { title, body } = getNotificationContent();
-        await notificationsStore.scheduleReminders(
+        await scheduleReminders(
           setupStore.day.startHour,
           setupStore.day.endHour,
           title,
@@ -126,7 +145,8 @@ export default function RemindersSettings() {
     },
     [
       isLoading,
-      notificationsStore,
+      setInterval,
+      scheduleReminders,
       setupStore.day.startHour,
       setupStore.day.endHour,
     ],
@@ -147,7 +167,11 @@ export default function RemindersSettings() {
   ];
 
   if (!isInitialized) {
-    return null;
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   return (
@@ -161,7 +185,7 @@ export default function RemindersSettings() {
         <View
           accessible={true}
           accessibilityRole="button"
-          accessibilityLabel={`${t("enableReminders")}: ${notificationsStore.enabled ? t("on") : t("off")}`}
+          accessibilityLabel={`${t("enableReminders")}: ${enabled ? t("on") : t("off")}`}
           accessibilityHint={t("enableRemindersHint")}
           accessibilityState={{ disabled: isLoading }}
         >
@@ -169,16 +193,16 @@ export default function RemindersSettings() {
             label={t("enableReminders")}
             options={enableOptions}
             onSelect={handleEnableToggle}
-            value={notificationsStore.enabled ? "on" : "off"}
+            value={enabled ? "on" : "off"}
           />
         </View>
 
         {/* Interval Selection */}
-        {notificationsStore.enabled && (
+        {enabled && (
           <View
             accessible={true}
             accessibilityRole="button"
-            accessibilityLabel={`${t("reminderInterval")}: ${intervalOptions.find((opt) => opt.value === String(notificationsStore.intervalMinutes))?.label}`}
+            accessibilityLabel={`${t("reminderInterval")}: ${intervalOptions.find((opt) => opt.value === String(intervalMinutes))?.label}`}
             accessibilityHint={t("reminderIntervalHint")}
             accessibilityState={{ disabled: isLoading }}
           >
@@ -186,7 +210,7 @@ export default function RemindersSettings() {
               label={t("reminderInterval")}
               options={intervalOptions}
               onSelect={handleIntervalChange}
-              value={String(notificationsStore.intervalMinutes)}
+              value={String(intervalMinutes)}
             />
           </View>
         )}
@@ -210,7 +234,7 @@ export default function RemindersSettings() {
         </View>
 
         {/* Permission Status Warning */}
-        {notificationsStore.permissionStatus === "denied" && (
+        {permissionStatus === "denied" && (
           <View
             className="bg-yellow-100 rounded-lg p-4"
             accessible={true}

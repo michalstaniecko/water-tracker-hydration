@@ -38,5 +38,8 @@
   "permissionRequired": "Permission Required",
   "permissionDeniedMessage": "Notifications are disabled. Please enable them in your device settings to receive water reminders.",
   "permissionDenied": "Notification permissions are denied. Please enable them in your device settings.",
-  "openSettings": "Open Settings"
+  "openSettings": "Open Settings",
+  "remindersSettingsScreen": "Reminders settings",
+  "enableRemindersHint": "Double tap to toggle water reminders on or off",
+  "reminderIntervalHint": "Double tap to change how often you receive reminders"
 }

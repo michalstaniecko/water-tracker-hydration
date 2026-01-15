@@ -1,7 +1,7 @@
 import { useFonts } from "expo-font";
 import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "react-native-reanimated";
 import "../global.css";
 import { useWaterStore } from "@/stores/water";
@@ -28,6 +28,9 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const router = useRouter();
   const appState = useRef(AppState.currentState);
+  const isInitialActivityHoursMount = useRef(true);
+  const [isNotificationsInitialized, setIsNotificationsInitialized] =
+    useState(false);
   const { fetchOrInitData: fetchOrInitWaterData } = useWaterStore();
   const {
     fetchOrInitData: fetchOrInitSetup,
@@ -65,8 +68,12 @@ export default function RootLayout() {
     return () => subscription.remove();
   }, [router]);
 
-  // Reschedule notifications when activity hours change
+  // Reschedule notifications when activity hours change (skip initial mount)
   useEffect(() => {
+    if (isInitialActivityHoursMount.current) {
+      isInitialActivityHoursMount.current = false;
+      return;
+    }
     const { enabled, permissionStatus } = useNotificationsStore.getState();
     if (enabled && permissionStatus === "granted") {
       const { title, body } = getNotificationContent();
@@ -85,19 +92,22 @@ export default function RootLayout() {
 
         // Reschedule notifications when app becomes active
         // Use getState() to get fresh values instead of stale closure values
-        const notificationsState = useNotificationsStore.getState();
-        const setupState = useSetupStore.getState();
-        if (
-          notificationsState.enabled &&
-          notificationsState.permissionStatus === "granted"
-        ) {
-          const { title, body } = getNotificationContent();
-          notificationsState.scheduleReminders(
-            setupState.day.startHour,
-            setupState.day.endHour,
-            title,
-            body,
-          );
+        // Only reschedule if notifications store has been initialized
+        if (isNotificationsInitialized) {
+          const notificationsState = useNotificationsStore.getState();
+          const setupState = useSetupStore.getState();
+          if (
+            notificationsState.enabled &&
+            notificationsState.permissionStatus === "granted"
+          ) {
+            const { title, body } = getNotificationContent();
+            notificationsState.scheduleReminders(
+              setupState.day.startHour,
+              setupState.day.endHour,
+              title,
+              body,
+            );
+          }
         }
       }
       appState.current = nextAppState;
@@ -106,7 +116,9 @@ export default function RootLayout() {
     fetchOrInitWaterData();
     fetchOrInitOnboarding();
     fetchOrInitGamification();
-    fetchOrInitNotifications();
+    fetchOrInitNotifications().then(() => {
+      setIsNotificationsInitialized(true);
+    });
 
     // Create automatic backup on app start (once per day)
     createAutomaticBackup();
@@ -122,6 +134,7 @@ export default function RootLayout() {
     fetchOrInitNotifications,
     checkAndUnlockAchievements,
     createAutomaticBackup,
+    isNotificationsInitialized,
   ]);
 
   useEffect(() => {

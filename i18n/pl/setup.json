@@ -38,5 +38,8 @@
   "permissionRequired": "Wymagane uprawnienia",
   "permissionDeniedMessage": "Powiadomienia są wyłączone. Włącz je w ustawieniach urządzenia, aby otrzymywać przypomnienia o piciu wody.",
   "permissionDenied": "Uprawnienia do powiadomień zostały odrzucone. Włącz je w ustawieniach urządzenia.",
-  "openSettings": "Otwórz ustawienia"
+  "openSettings": "Otwórz ustawienia",
+  "remindersSettingsScreen": "Ustawienia przypomnień",
+  "enableRemindersHint": "Dotknij dwukrotnie, aby włączyć lub wyłączyć przypomnienia o piciu wody",
+  "reminderIntervalHint": "Dotknij dwukrotnie, aby zmienić częstotliwość przypomnień"
 }

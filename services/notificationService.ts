@@ -56,7 +56,13 @@ export async function requestPermissions(): Promise<PermissionStatus> {
       return "granted";
     }
 
-    const { status } = await Notifications.requestPermissionsAsync();
+    const { status } = await Notifications.requestPermissionsAsync({
+      ios: {
+        allowAlert: true,
+        allowSound: true,
+        allowBadge: false,
+      },
+    });
 
     logInfo("Notification permission request result", {
       operation: "requestPermissions",
@@ -98,6 +104,7 @@ export async function setupNotificationChannel(): Promise<void> {
     try {
       await Notifications.setNotificationChannelAsync(NOTIFICATION_CHANNEL_ID, {
         name: NOTIFICATION_CHANNEL_NAME,
+        description: "Reminders to stay hydrated throughout the day",
         importance: Notifications.AndroidImportance.HIGH,
         vibrationPattern: [0, 250, 250, 250],
         lightColor: "#3b82f6",
