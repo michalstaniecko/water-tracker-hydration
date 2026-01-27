@@ -17,6 +17,7 @@ import { useBackupStore } from "@/stores/backup";
 import { useNotificationsStore } from "@/stores/notifications";
 import {
   addNotificationResponseListener,
+  addNotificationReceivedListener,
   getNotificationContent,
 } from "@/services/notificationService";
 import { NOTIFICATION_ACTION_OPEN_HOME } from "@/constants/notifications";
@@ -68,6 +69,18 @@ export default function RootLayout() {
     return () => subscription.remove();
   }, [router]);
 
+  // Track received notifications in foreground to increment counter
+  useEffect(() => {
+    const subscription = addNotificationReceivedListener(() => {
+      const notificationsState = useNotificationsStore.getState();
+      if (notificationsState.enabled) {
+        notificationsState.onNotificationReceived();
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
   // Reschedule notifications when activity hours change (skip initial mount)
   useEffect(() => {
     if (isInitialActivityHoursMount.current) {
@@ -82,36 +95,42 @@ export default function RootLayout() {
   }, [day.startHour, day.endHour, scheduleReminders]);
 
   useEffect(() => {
-    const subscription = AppState.addEventListener("change", (nextAppState) => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === "active"
-      ) {
-        fetchOrInitWaterData();
-        checkAndUnlockAchievements();
+    const subscription = AppState.addEventListener(
+      "change",
+      async (nextAppState) => {
+        if (
+          appState.current.match(/inactive|background/) &&
+          nextAppState === "active"
+        ) {
+          fetchOrInitWaterData();
+          checkAndUnlockAchievements();
 
-        // Reschedule notifications when app becomes active
-        // Use getState() to get fresh values instead of stale closure values
-        // Only reschedule if notifications store has been initialized
-        if (isNotificationsInitialized) {
-          const notificationsState = useNotificationsStore.getState();
-          const setupState = useSetupStore.getState();
-          if (
-            notificationsState.enabled &&
-            notificationsState.permissionStatus === "granted"
-          ) {
-            const { title, body } = getNotificationContent();
-            notificationsState.scheduleReminders(
-              setupState.day.startHour,
-              setupState.day.endHour,
-              title,
-              body,
-            );
+          // Correct notification counter and reschedule when app becomes active
+          // Use getState() to get fresh values instead of stale closure values
+          // Only reschedule if notifications store has been initialized
+          if (isNotificationsInitialized) {
+            const notificationsState = useNotificationsStore.getState();
+            const setupState = useSetupStore.getState();
+            if (
+              notificationsState.enabled &&
+              notificationsState.permissionStatus === "granted"
+            ) {
+              // Correct counter for notifications fired while in background
+              await notificationsState.correctNotificationCount();
+
+              const { title, body } = getNotificationContent();
+              notificationsState.scheduleReminders(
+                setupState.day.startHour,
+                setupState.day.endHour,
+                title,
+                body,
+              );
+            }
           }
         }
-      }
-      appState.current = nextAppState;
-    });
+        appState.current = nextAppState;
+      },
+    );
     fetchOrInitSetup();
     fetchOrInitWaterData();
     fetchOrInitOnboarding();

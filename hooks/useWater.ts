@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useWaterStore } from "@/stores/water";
 import { useSetupStore } from "@/stores/setup";
 import { useGamificationStore } from "@/stores/gamification";
+import { useNotificationsStore } from "@/stores/notifications";
 import { roundBy } from "@/utils/numbers";
 import { logError } from "@/utils/errorLogging";
 
@@ -35,6 +36,18 @@ export function useWater() {
         Number(currentWater) + Number(setupStore.glassCapacity);
       await waterStore.setTodayWater(newCurrentWater.toString());
       gamificationStore.checkAndUnlockAchievements();
+
+      // Reschedule notifications anchored to this drink
+      const notificationsState = useNotificationsStore.getState();
+      if (
+        notificationsState.enabled &&
+        notificationsState.permissionStatus === "granted"
+      ) {
+        await notificationsState.onWaterDrunk(
+          setupStore.day.startHour,
+          setupStore.day.endHour,
+        );
+      }
     } catch (error) {
       logError(error, {
         operation: "addWater",

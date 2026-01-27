@@ -9,8 +9,10 @@ import {
   requestPermissions as requestNotificationPermissions,
   getPermissionStatus,
   scheduleNotifications,
+  scheduleSmartNotifications,
   cancelAllNotifications,
   setupNotificationChannel,
+  getScheduledNotifications,
   PermissionStatus,
 } from "@/services/notificationService";
 import {
@@ -19,6 +21,9 @@ import {
   DEFAULT_REMINDERS_ENABLED,
   REMINDER_INTERVALS,
   ReminderInterval,
+  MAX_NOTIFICATION_OPTIONS,
+  MaxNotificationOption,
+  DEFAULT_MAX_NOTIFICATIONS,
 } from "@/constants/notifications";
 
 /**
@@ -33,6 +38,14 @@ type NotificationsState = {
   permissionStatus: PermissionStatus;
   /** ISO timestamp of when notifications were last scheduled, or null if never */
   lastScheduledTime: string | null;
+  /** ISO timestamp of the last time user drank water, or null */
+  lastDrinkTimestamp: string | null;
+  /** Number of notifications fired since last drink */
+  notificationsSinceLastDrink: number;
+  /** Maximum notifications before next drink (0 = unlimited) */
+  maxNotifications: MaxNotificationOption;
+  /** Number of notifications scheduled in the last batch */
+  scheduledCount: number;
 };
 
 /**
@@ -94,6 +107,25 @@ type NotificationsActions = {
    * Cancels all notifications and clears persisted data.
    */
   reset: () => Promise<void>;
+  /**
+   * Called when the user drinks water.
+   * Resets the notification counter, saves timestamp, and reschedules.
+   */
+  onWaterDrunk: (startHour: string, endHour: string) => Promise<void>;
+  /**
+   * Called when a notification is received in the foreground.
+   * Increments the notificationsSinceLastDrink counter.
+   */
+  onNotificationReceived: () => void;
+  /**
+   * Sets the maximum notifications before next drink.
+   */
+  setMaxNotifications: (max: MaxNotificationOption) => Promise<void>;
+  /**
+   * Corrects the notification counter based on scheduled notifications
+   * remaining (used when returning from background).
+   */
+  correctNotificationCount: () => Promise<void>;
 };
 
 const initialState: NotificationsState = {
@@ -101,7 +133,36 @@ const initialState: NotificationsState = {
   intervalMinutes: DEFAULT_REMINDER_INTERVAL,
   permissionStatus: "undetermined",
   lastScheduledTime: null,
+  lastDrinkTimestamp: null,
+  notificationsSinceLastDrink: 0,
+  maxNotifications: DEFAULT_MAX_NOTIFICATIONS,
+  scheduledCount: 0,
 };
+
+/**
+ * Builds the persistable state object from the current store state.
+ * Excludes permissionStatus since it's fetched from OS on init.
+ */
+function getStateToPersist(
+  state: NotificationsState
+): Omit<NotificationsState, "permissionStatus"> {
+  return {
+    enabled: state.enabled,
+    intervalMinutes: state.intervalMinutes,
+    lastScheduledTime: state.lastScheduledTime,
+    lastDrinkTimestamp: state.lastDrinkTimestamp,
+    notificationsSinceLastDrink: state.notificationsSinceLastDrink,
+    maxNotifications: state.maxNotifications,
+    scheduledCount: state.scheduledCount,
+  };
+}
+
+async function persistState(state: NotificationsState): Promise<void> {
+  await AsyncStorage.setItem(
+    NOTIFICATIONS_STORAGE_KEY,
+    JSON.stringify(getStateToPersist(state))
+  );
+}
 
 export const useNotificationsStore = create<
   NotificationsState & NotificationsActions
@@ -144,6 +205,38 @@ export const useNotificationsStore = create<
             validatedData.lastScheduledTime = parsedData.lastScheduledTime;
           }
 
+          // Validate lastDrinkTimestamp (backward compat)
+          if (typeof parsedData.lastDrinkTimestamp === "string") {
+            validatedData.lastDrinkTimestamp = parsedData.lastDrinkTimestamp;
+          }
+
+          // Validate notificationsSinceLastDrink (backward compat)
+          if (
+            typeof parsedData.notificationsSinceLastDrink === "number" &&
+            parsedData.notificationsSinceLastDrink >= 0
+          ) {
+            validatedData.notificationsSinceLastDrink =
+              parsedData.notificationsSinceLastDrink;
+          }
+
+          // Validate maxNotifications (backward compat)
+          if (
+            typeof parsedData.maxNotifications === "number" &&
+            MAX_NOTIFICATION_OPTIONS.includes(
+              parsedData.maxNotifications as MaxNotificationOption
+            )
+          ) {
+            validatedData.maxNotifications = parsedData.maxNotifications;
+          }
+
+          // Validate scheduledCount (backward compat)
+          if (
+            typeof parsedData.scheduledCount === "number" &&
+            parsedData.scheduledCount >= 0
+          ) {
+            validatedData.scheduledCount = parsedData.scheduledCount;
+          }
+
           set({ ...validatedData, permissionStatus });
         } else {
           logWarning("Invalid notifications data structure, reinitializing", {
@@ -152,14 +245,14 @@ export const useNotificationsStore = create<
           });
           await AsyncStorage.setItem(
             NOTIFICATIONS_STORAGE_KEY,
-            JSON.stringify(initialState)
+            JSON.stringify(getStateToPersist(initialState))
           );
           set({ ...initialState, permissionStatus });
         }
       } else {
         await AsyncStorage.setItem(
           NOTIFICATIONS_STORAGE_KEY,
-          JSON.stringify(initialState)
+          JSON.stringify(getStateToPersist(initialState))
         );
         set({ ...initialState, permissionStatus });
       }
@@ -173,7 +266,7 @@ export const useNotificationsStore = create<
       try {
         await AsyncStorage.setItem(
           NOTIFICATIONS_STORAGE_KEY,
-          JSON.stringify(initialState)
+          JSON.stringify(getStateToPersist(initialState))
         );
       } catch (storageError) {
         logError(storageError, {
@@ -189,16 +282,7 @@ export const useNotificationsStore = create<
       set({ enabled });
 
       const currentState = get();
-      const stateToSave = {
-        enabled,
-        intervalMinutes: currentState.intervalMinutes,
-        lastScheduledTime: currentState.lastScheduledTime,
-      };
-
-      await AsyncStorage.setItem(
-        NOTIFICATIONS_STORAGE_KEY,
-        JSON.stringify(stateToSave)
-      );
+      await persistState(currentState);
 
       if (!enabled) {
         await cancelAllNotifications();
@@ -217,16 +301,7 @@ export const useNotificationsStore = create<
       set({ intervalMinutes });
 
       const currentState = get();
-      const stateToSave = {
-        enabled: currentState.enabled,
-        intervalMinutes,
-        lastScheduledTime: currentState.lastScheduledTime,
-      };
-
-      await AsyncStorage.setItem(
-        NOTIFICATIONS_STORAGE_KEY,
-        JSON.stringify(stateToSave)
-      );
+      await persistState(currentState);
     } catch (error) {
       logError(error, {
         operation: "setInterval",
@@ -255,33 +330,37 @@ export const useNotificationsStore = create<
     body: string
   ) => {
     try {
-      const { enabled, intervalMinutes, permissionStatus } = get();
+      const {
+        enabled,
+        intervalMinutes,
+        permissionStatus,
+        lastDrinkTimestamp,
+        notificationsSinceLastDrink,
+        maxNotifications,
+      } = get();
 
       if (!enabled || permissionStatus !== "granted") {
         return;
       }
 
-      await scheduleNotifications({
+      const { count } = await scheduleSmartNotifications({
         intervalMinutes,
         startHour,
         endHour,
+        lastDrinkTimestamp,
+        maxNotifications,
+        notificationsSinceLastDrink,
         title,
         body,
       });
 
-      set({ lastScheduledTime: new Date().toISOString() });
+      set({
+        lastScheduledTime: new Date().toISOString(),
+        scheduledCount: count,
+      });
 
-      // Update storage
       const currentState = get();
-      const stateToSave = {
-        enabled: currentState.enabled,
-        intervalMinutes: currentState.intervalMinutes,
-        lastScheduledTime: currentState.lastScheduledTime,
-      };
-      await AsyncStorage.setItem(
-        NOTIFICATIONS_STORAGE_KEY,
-        JSON.stringify(stateToSave)
-      );
+      await persistState(currentState);
     } catch (error) {
       logError(error, {
         operation: "scheduleReminders",
@@ -293,7 +372,7 @@ export const useNotificationsStore = create<
   cancelReminders: async () => {
     try {
       await cancelAllNotifications();
-      set({ lastScheduledTime: null });
+      set({ lastScheduledTime: null, scheduledCount: 0 });
     } catch (error) {
       logError(error, {
         operation: "cancelReminders",
@@ -308,11 +387,119 @@ export const useNotificationsStore = create<
       set(initialState);
       await AsyncStorage.setItem(
         NOTIFICATIONS_STORAGE_KEY,
-        JSON.stringify(initialState)
+        JSON.stringify(getStateToPersist(initialState))
       );
     } catch (error) {
       logError(error, {
         operation: "reset",
+        component: "NotificationsStore",
+      });
+    }
+  },
+
+  onWaterDrunk: async (startHour: string, endHour: string) => {
+    try {
+      const timestamp = new Date().toISOString();
+      set({
+        lastDrinkTimestamp: timestamp,
+        notificationsSinceLastDrink: 0,
+      });
+
+      const currentState = get();
+      await persistState(currentState);
+
+      // Reschedule with reset counter
+      if (
+        currentState.enabled &&
+        currentState.permissionStatus === "granted"
+      ) {
+        const { getNotificationContent } = await import(
+          "@/services/notificationService"
+        );
+        const { title, body } = getNotificationContent();
+
+        const { count } = await scheduleSmartNotifications({
+          intervalMinutes: currentState.intervalMinutes,
+          startHour,
+          endHour,
+          lastDrinkTimestamp: timestamp,
+          maxNotifications: currentState.maxNotifications,
+          notificationsSinceLastDrink: 0,
+          title,
+          body,
+        });
+
+        set({
+          lastScheduledTime: new Date().toISOString(),
+          scheduledCount: count,
+        });
+
+        const updatedState = get();
+        await persistState(updatedState);
+      }
+    } catch (error) {
+      logError(error, {
+        operation: "onWaterDrunk",
+        component: "NotificationsStore",
+      });
+    }
+  },
+
+  onNotificationReceived: () => {
+    const currentState = get();
+    const newCount = currentState.notificationsSinceLastDrink + 1;
+    set({ notificationsSinceLastDrink: newCount });
+
+    // Persist async (fire and forget)
+    const updatedState = get();
+    persistState(updatedState).catch((error) => {
+      logError(error, {
+        operation: "onNotificationReceived",
+        component: "NotificationsStore",
+      });
+    });
+  },
+
+  setMaxNotifications: async (max: MaxNotificationOption) => {
+    try {
+      set({ maxNotifications: max });
+
+      const currentState = get();
+      await persistState(currentState);
+    } catch (error) {
+      logError(error, {
+        operation: "setMaxNotifications",
+        component: "NotificationsStore",
+        data: { max },
+      });
+    }
+  },
+
+  correctNotificationCount: async () => {
+    try {
+      const currentState = get();
+      if (!currentState.enabled || currentState.scheduledCount === 0) {
+        return;
+      }
+
+      const scheduled = await getScheduledNotifications();
+      const remainingCount = scheduled.length;
+      const fired = currentState.scheduledCount - remainingCount;
+
+      if (fired > 0) {
+        const corrected =
+          currentState.notificationsSinceLastDrink + fired;
+        set({
+          notificationsSinceLastDrink: corrected,
+          scheduledCount: remainingCount,
+        });
+
+        const updatedState = get();
+        await persistState(updatedState);
+      }
+    } catch (error) {
+      logError(error, {
+        operation: "correctNotificationCount",
         component: "NotificationsStore",
       });
     }

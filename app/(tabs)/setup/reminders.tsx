@@ -16,6 +16,8 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import {
   REMINDER_INTERVALS,
   ReminderInterval,
+  MAX_NOTIFICATION_OPTIONS,
+  MaxNotificationOption,
 } from "@/constants/notifications";
 import { getNotificationContent } from "@/services/notificationService";
 
@@ -26,6 +28,10 @@ function isValidReminderInterval(value: number): value is ReminderInterval {
   return REMINDER_INTERVALS.includes(value as ReminderInterval);
 }
 
+function isValidMaxNotification(value: number): value is MaxNotificationOption {
+  return MAX_NOTIFICATION_OPTIONS.includes(value as MaxNotificationOption);
+}
+
 export default function RemindersSettings() {
   const { t } = useTranslation("setup");
 
@@ -34,11 +40,13 @@ export default function RemindersSettings() {
     enabled,
     intervalMinutes,
     permissionStatus,
+    maxNotifications,
     fetchOrInitData,
     requestPermissions,
     setEnabled,
     setInterval,
     scheduleReminders,
+    setMaxNotifications,
   } = useNotificationsStore();
   const setupStore = useSetupStore();
 
@@ -152,6 +160,41 @@ export default function RemindersSettings() {
     ],
   );
 
+  const handleMaxNotificationsChange = useCallback(
+    async (value: string) => {
+      if (isLoading) return;
+
+      const parsedValue = parseInt(value, 10);
+
+      if (!isValidMaxNotification(parsedValue)) {
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        await setMaxNotifications(parsedValue);
+
+        // Reschedule reminders with new limit
+        const { title, body } = getNotificationContent();
+        await scheduleReminders(
+          setupStore.day.startHour,
+          setupStore.day.endHour,
+          title,
+          body,
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [
+      isLoading,
+      setMaxNotifications,
+      scheduleReminders,
+      setupStore.day.startHour,
+      setupStore.day.endHour,
+    ],
+  );
+
   const intervalOptions = REMINDER_INTERVALS.map((interval) => {
     const hours = interval / 60;
     const labelKey = hours === 1 ? "every1Hour" : `every${hours}Hours`;
@@ -160,6 +203,11 @@ export default function RemindersSettings() {
       value: String(interval),
     };
   });
+
+  const maxNotificationOptions = MAX_NOTIFICATION_OPTIONS.map((option) => ({
+    label: option === 0 ? t("unlimited") : String(option),
+    value: String(option),
+  }));
 
   const enableOptions = [
     { label: t("on"), value: "on" },
@@ -211,6 +259,24 @@ export default function RemindersSettings() {
               options={intervalOptions}
               onSelect={handleIntervalChange}
               value={String(intervalMinutes)}
+            />
+          </View>
+        )}
+
+        {/* Max Notifications Selection */}
+        {enabled && (
+          <View
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={`${t("maxNotifications")}: ${maxNotifications === 0 ? t("unlimited") : maxNotifications}`}
+            accessibilityHint={t("maxNotificationsHint")}
+            accessibilityState={{ disabled: isLoading }}
+          >
+            <ModalPicker
+              label={t("maxNotifications")}
+              options={maxNotificationOptions}
+              onSelect={handleMaxNotificationsChange}
+              value={String(maxNotifications)}
             />
           </View>
         )}

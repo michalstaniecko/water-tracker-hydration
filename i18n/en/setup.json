@@ -41,5 +41,8 @@
   "openSettings": "Open Settings",
   "remindersSettingsScreen": "Reminders settings",
   "enableRemindersHint": "Double tap to toggle water reminders on or off",
-  "reminderIntervalHint": "Double tap to change how often you receive reminders"
+  "reminderIntervalHint": "Double tap to change how often you receive reminders",
+  "maxNotifications": "Max reminders before next drink",
+  "maxNotificationsHint": "Double tap to change the maximum number of reminders before your next drink",
+  "unlimited": "Unlimited"
 }

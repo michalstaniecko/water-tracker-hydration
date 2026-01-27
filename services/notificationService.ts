@@ -192,6 +192,190 @@ export function calculateNotificationTimes(
   return times;
 }
 
+export interface SmartScheduleParams {
+  intervalMinutes: number;
+  startHour: string; // "HH:mm" format
+  endHour: string; // "HH:mm" format
+  lastDrinkTimestamp: string | null;
+  maxNotifications: number; // 0 = unlimited
+  notificationsSinceLastDrink: number;
+}
+
+/**
+ * Calculates smart notification times anchored to the last drink timestamp.
+ * Respects activity hours and max notification limits.
+ */
+export function calculateSmartNotificationTimes(
+  params: SmartScheduleParams
+): Date[] {
+  const {
+    intervalMinutes,
+    startHour,
+    endHour,
+    lastDrinkTimestamp,
+    maxNotifications,
+    notificationsSinceLastDrink,
+  } = params;
+
+  if (!isValidTimeFormat(startHour) || !isValidTimeFormat(endHour)) {
+    logWarning("Invalid time format for smart notification scheduling", {
+      operation: "calculateSmartNotificationTimes",
+      component: "NotificationService",
+      data: { startHour, endHour },
+    });
+    return [];
+  }
+
+  const [startH, startM] = startHour.split(":").map(Number);
+  const [endH, endM] = endHour.split(":").map(Number);
+  const startMinutes = startH * 60 + startM;
+  const endMinutes = endH * 60 + endM;
+
+  if (endMinutes <= startMinutes) {
+    logWarning("Overnight schedule not supported for smart notifications", {
+      operation: "calculateSmartNotificationTimes",
+      component: "NotificationService",
+      data: { startHour, endHour },
+    });
+    return [];
+  }
+
+  // Calculate remaining notifications allowed
+  const remaining =
+    maxNotifications === 0
+      ? Infinity
+      : maxNotifications - notificationsSinceLastDrink;
+
+  if (remaining <= 0) {
+    return [];
+  }
+
+  const now = dayjs();
+  const times: Date[] = [];
+
+  // Determine anchor: lastDrinkTimestamp if today, otherwise now
+  let anchor: dayjs.Dayjs;
+  if (lastDrinkTimestamp) {
+    const lastDrink = dayjs(lastDrinkTimestamp);
+    if (lastDrink.isSame(now, "day")) {
+      anchor = lastDrink;
+    } else {
+      anchor = now;
+    }
+  } else {
+    anchor = now;
+  }
+
+  // Generate times for today and tomorrow
+  for (let dayOffset = 0; dayOffset < 2; dayOffset++) {
+    const baseDate = now.add(dayOffset, "day").startOf("day");
+
+    if (dayOffset === 0) {
+      // Today: schedule from anchor + interval increments
+      let step = 1;
+      while (times.length < remaining) {
+        const candidate = anchor.add(step * intervalMinutes, "minute");
+
+        // Stop if candidate is past today
+        if (!candidate.isSame(now, "day")) {
+          break;
+        }
+
+        const candidateMinutes = candidate.hour() * 60 + candidate.minute();
+
+        // Must be within activity hours and in the future
+        if (
+          candidateMinutes >= startMinutes &&
+          candidateMinutes < endMinutes &&
+          candidate.toDate() > new Date()
+        ) {
+          times.push(candidate.toDate());
+        }
+
+        // If candidate is past end hour, stop for today
+        if (candidateMinutes >= endMinutes) {
+          break;
+        }
+
+        step++;
+      }
+    } else {
+      // Tomorrow: start from startHour, continue with interval
+      let currentMinutes = startMinutes;
+
+      while (currentMinutes < endMinutes && times.length < remaining) {
+        const hours = Math.floor(currentMinutes / 60);
+        const minutes = currentMinutes % 60;
+        const notificationTime = baseDate
+          .hour(hours)
+          .minute(minutes)
+          .toDate();
+
+        if (notificationTime > new Date()) {
+          times.push(notificationTime);
+        }
+
+        currentMinutes += intervalMinutes;
+      }
+    }
+  }
+
+  return times;
+}
+
+/**
+ * Schedules smart notifications using the hybrid algorithm.
+ * Returns the count of scheduled notifications.
+ */
+export async function scheduleSmartNotifications(
+  params: SmartScheduleParams & { title: string; body: string }
+): Promise<{ ids: string[]; count: number }> {
+  try {
+    await cancelAllNotifications();
+
+    const times = calculateSmartNotificationTimes(params);
+    const notificationIds: string[] = [];
+
+    for (const time of times) {
+      const id = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: params.title,
+          body: params.body,
+          data: { action: NOTIFICATION_ACTION_OPEN_HOME },
+          sound: true,
+          ...(Platform.OS === "android" && {
+            channelId: NOTIFICATION_CHANNEL_ID,
+          }),
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DATE,
+          date: time,
+        },
+      });
+
+      notificationIds.push(id);
+    }
+
+    logInfo("Smart notifications scheduled", {
+      operation: "scheduleSmartNotifications",
+      component: "NotificationService",
+      data: {
+        count: notificationIds.length,
+        intervalMinutes: params.intervalMinutes,
+        maxNotifications: params.maxNotifications,
+      },
+    });
+
+    return { ids: notificationIds, count: notificationIds.length };
+  } catch (error) {
+    logError(error, {
+      operation: "scheduleSmartNotifications",
+      component: "NotificationService",
+    });
+    return { ids: [], count: 0 };
+  }
+}
+
 /**
  * Schedules recurring notifications within activity hours
  */
