@@ -1,7 +1,7 @@
 import { useFonts } from "expo-font";
 import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import "react-native-reanimated";
 import "../global.css";
 import { useWaterStore } from "@/stores/water";
@@ -30,8 +30,7 @@ export default function RootLayout() {
   const router = useRouter();
   const appState = useRef(AppState.currentState);
   const isInitialActivityHoursMount = useRef(true);
-  const [isNotificationsInitialized, setIsNotificationsInitialized] =
-    useState(false);
+  const isNotificationsInitialized = useRef(false);
   const { fetchOrInitData: fetchOrInitWaterData } = useWaterStore();
   const {
     fetchOrInitData: fetchOrInitSetup,
@@ -108,7 +107,7 @@ export default function RootLayout() {
           // Correct notification counter and reschedule when app becomes active
           // Use getState() to get fresh values instead of stale closure values
           // Only reschedule if notifications store has been initialized
-          if (isNotificationsInitialized) {
+          if (isNotificationsInitialized.current) {
             const notificationsState = useNotificationsStore.getState();
             const setupState = useSetupStore.getState();
             if (
@@ -119,7 +118,7 @@ export default function RootLayout() {
               await notificationsState.correctNotificationCount();
 
               const { title, body } = getNotificationContent();
-              notificationsState.scheduleReminders(
+              await notificationsState.scheduleReminders(
                 setupState.day.startHour,
                 setupState.day.endHour,
                 title,
@@ -136,7 +135,7 @@ export default function RootLayout() {
     fetchOrInitOnboarding();
     fetchOrInitGamification();
     fetchOrInitNotifications().then(() => {
-      setIsNotificationsInitialized(true);
+      isNotificationsInitialized.current = true;
     });
 
     // Create automatic backup on app start (once per day)
@@ -153,7 +152,6 @@ export default function RootLayout() {
     fetchOrInitNotifications,
     checkAndUnlockAchievements,
     createAutomaticBackup,
-    isNotificationsInitialized,
   ]);
 
   useEffect(() => {

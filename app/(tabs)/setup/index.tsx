@@ -44,6 +44,8 @@ export default function SettingsMenu() {
               key={item.id}
               onPress={item.onPress}
               className="bg-gray-50  p-4 rounded-lg flex-row items-center justify-between active:opacity-70"
+              accessibilityRole="button"
+              accessibilityLabel={item.title}
             >
               <View className="flex-row items-center gap-3">
                 <FontAwesome

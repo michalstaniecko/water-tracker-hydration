@@ -13,6 +13,7 @@ import {
   cancelAllNotifications,
   setupNotificationChannel,
   getScheduledNotifications,
+  getNotificationContent,
   PermissionStatus,
 } from "@/services/notificationService";
 import {
@@ -296,6 +297,7 @@ export const useNotificationsStore = create<
     }
   },
 
+  /** Sets the interval. Does NOT reschedule — the caller must call scheduleReminders after. */
   setInterval: async (intervalMinutes: ReminderInterval) => {
     try {
       set({ intervalMinutes });
@@ -373,6 +375,7 @@ export const useNotificationsStore = create<
     try {
       await cancelAllNotifications();
       set({ lastScheduledTime: null, scheduledCount: 0 });
+      await persistState(get());
     } catch (error) {
       logError(error, {
         operation: "cancelReminders",
@@ -413,9 +416,6 @@ export const useNotificationsStore = create<
         currentState.enabled &&
         currentState.permissionStatus === "granted"
       ) {
-        const { getNotificationContent } = await import(
-          "@/services/notificationService"
-        );
         const { title, body } = getNotificationContent();
 
         const { count } = await scheduleSmartNotifications({
@@ -487,6 +487,16 @@ export const useNotificationsStore = create<
       const fired = currentState.scheduledCount - remainingCount;
 
       if (fired > 0) {
+        logWarning("Notification counter drift corrected", {
+          operation: "correctNotificationCount",
+          component: "NotificationsStore",
+          data: {
+            fired,
+            previousCount: currentState.notificationsSinceLastDrink,
+            correctedCount: currentState.notificationsSinceLastDrink + fired,
+          },
+        });
+
         const corrected =
           currentState.notificationsSinceLastDrink + fired;
         set({

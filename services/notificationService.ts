@@ -9,19 +9,24 @@ import { logError, logInfo, logWarning } from "@/utils/errorLogging";
 import { isValidTimeFormat } from "@/utils/validation";
 import {
   NOTIFICATION_CHANNEL_ID,
-  NOTIFICATION_CHANNEL_NAME,
   NOTIFICATION_ACTION_OPEN_HOME,
+  NOTIFICATION_SOUND_ENABLED,
 } from "@/constants/notifications";
 import i18n from "@/plugins/i18n";
 
-// Configure notification handler
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
+/**
+ * Initializes the notification handler. Must be called before scheduling notifications.
+ * Separated from module scope to avoid side effects on import.
+ */
+export function initializeNotificationHandler(): void {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+}
 
 export type PermissionStatus = "granted" | "denied" | "undetermined";
 
@@ -36,6 +41,10 @@ export interface NotificationScheduleParams {
 /**
  * Gets the localized notification content (title and body) for reminder notifications.
  * This helper centralizes notification content retrieval to avoid duplication.
+ *
+ * Note: Content is resolved at schedule time using the current language.
+ * If the user changes language after scheduling, already-scheduled notifications
+ * will still display in the previous language until they are rescheduled.
  */
 export function getNotificationContent(): { title: string; body: string } {
   return {
@@ -100,11 +109,13 @@ export async function getPermissionStatus(): Promise<PermissionStatus> {
  * Sets up Android notification channel
  */
 export async function setupNotificationChannel(): Promise<void> {
+  initializeNotificationHandler();
+
   if (Platform.OS === "android") {
     try {
       await Notifications.setNotificationChannelAsync(NOTIFICATION_CHANNEL_ID, {
-        name: NOTIFICATION_CHANNEL_NAME,
-        description: "Reminders to stay hydrated throughout the day",
+        name: i18n.t("channelName", { ns: "notifications" }),
+        description: i18n.t("channelDescription", { ns: "notifications" }),
         importance: Notifications.AndroidImportance.HIGH,
         vibrationPattern: [0, 250, 250, 250],
         lightColor: "#3b82f6",
@@ -257,7 +268,7 @@ export function calculateSmartNotificationTimes(
   let anchor: dayjs.Dayjs;
   if (lastDrinkTimestamp) {
     const lastDrink = dayjs(lastDrinkTimestamp);
-    if (lastDrink.isSame(now, "day")) {
+    if (lastDrink.isValid() && lastDrink.isSame(now, "day")) {
       anchor = lastDrink;
     } else {
       anchor = now;
@@ -273,7 +284,7 @@ export function calculateSmartNotificationTimes(
     if (dayOffset === 0) {
       // Today: schedule from anchor + interval increments
       let step = 1;
-      while (times.length < remaining) {
+      while (times.length < remaining && step < 1000) {
         const candidate = anchor.add(step * intervalMinutes, "minute");
 
         // Stop if candidate is past today
@@ -342,7 +353,7 @@ export async function scheduleSmartNotifications(
           title: params.title,
           body: params.body,
           data: { action: NOTIFICATION_ACTION_OPEN_HOME },
-          sound: true,
+          sound: NOTIFICATION_SOUND_ENABLED,
           ...(Platform.OS === "android" && {
             channelId: NOTIFICATION_CHANNEL_ID,
           }),
@@ -400,7 +411,7 @@ export async function scheduleNotifications(
           title: params.title,
           body: params.body,
           data: { action: NOTIFICATION_ACTION_OPEN_HOME },
-          sound: true,
+          sound: NOTIFICATION_SOUND_ENABLED,
           ...(Platform.OS === "android" && {
             channelId: NOTIFICATION_CHANNEL_ID,
           }),

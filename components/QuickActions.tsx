@@ -2,10 +2,10 @@ import { View, Text, Pressable } from "react-native";
 import { useSetupStore } from "@/stores/setup";
 import { useWaterStore } from "@/stores/water";
 import { useGamificationStore } from "@/stores/gamification";
-import { useNotificationsStore } from "@/stores/notifications";
 import { useTranslation } from "react-i18next";
 import { useHaptics } from "@/hooks/useHaptics";
 import { logError } from "@/utils/errorLogging";
+import { rescheduleNotificationsAfterDrink } from "@/hooks/useWater";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useMemo } from "react";
 
@@ -30,17 +30,7 @@ export default function QuickActions() {
       gamificationStore.checkAndUnlockAchievements();
 
       // Reschedule notifications anchored to this drink
-      const notificationsState = useNotificationsStore.getState();
-      if (
-        notificationsState.enabled &&
-        notificationsState.permissionStatus === "granted"
-      ) {
-        const setupState = useSetupStore.getState();
-        await notificationsState.onWaterDrunk(
-          setupState.day.startHour,
-          setupState.day.endHour,
-        );
-      }
+      await rescheduleNotificationsAfterDrink();
     } catch (error) {
       logError(error, {
         operation: "handleQuickAction",

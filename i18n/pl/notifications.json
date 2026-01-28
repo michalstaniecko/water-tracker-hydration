@@ -1,4 +1,6 @@
 {
   "reminderTitle": "Czas na wodę!",
-  "reminderBody": "Pamiętaj o nawodnieniu! Napij się wody."
+  "reminderBody": "Pamiętaj o nawodnieniu! Napij się wody.",
+  "channelName": "Przypomnienia o wodzie",
+  "channelDescription": "Przypomnienia o nawadnianiu się w ciągu dnia"
 }
