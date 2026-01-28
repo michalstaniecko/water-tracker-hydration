@@ -44,5 +44,6 @@
   "reminderIntervalHint": "Double tap to change how often you receive reminders",
   "maxNotifications": "Max reminders before next drink",
   "maxNotificationsHint": "Double tap to change the maximum number of reminders before your next drink",
+  "maxNotificationsDescription": "Limits how many reminder notifications you receive before logging a drink. Set to 'Unlimited' to keep receiving reminders until you drink.",
   "unlimited": "Unlimited"
 }

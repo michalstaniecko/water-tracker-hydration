@@ -44,5 +44,6 @@
   "reminderIntervalHint": "Dotknij dwukrotnie, aby zmienić częstotliwość przypomnień",
   "maxNotifications": "Maks. przypomnienia przed kolejnym piciem",
   "maxNotificationsHint": "Dotknij dwukrotnie, aby zmienić maksymalną liczbę przypomnień przed kolejnym piciem",
+  "maxNotificationsDescription": "Ogranicza liczbę przypomnień, które otrzymasz przed zalogowaniem napoju. Ustaw na 'Bez limitu', aby otrzymywać przypomnienia do momentu wypicia.",
   "unlimited": "Bez limitu"
 }

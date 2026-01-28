@@ -275,6 +275,9 @@ export default function RemindersSettings() {
               onSelect={handleMaxNotificationsChange}
               value={String(maxNotifications)}
             />
+            <Text className="text-gray-500 text-sm mt-1 px-1">
+              {t("maxNotificationsDescription")}
+            </Text>
           </View>
         )}
 
