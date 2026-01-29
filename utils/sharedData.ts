@@ -9,7 +9,7 @@ import { Platform, NativeModules } from "react-native";
 import { logError, logWarning } from "./errorLogging";
 
 // App Group identifier for iOS
-export const APP_GROUP_ID = "group.website.ihumbak.hydration";
+export const APP_GROUP_ID = "group.website.ihumbak.hydration.expowidgets";
 
 // SharedPreferences name for Android
 export const SHARED_PREFS_NAME = "website.ihumbak.hydration.widget";

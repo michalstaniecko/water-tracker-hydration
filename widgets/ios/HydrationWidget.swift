@@ -13,7 +13,7 @@ struct HydrationEntry: TimelineEntry {
 
 // MARK: - Timeline Provider
 struct HydrationProvider: TimelineProvider {
-    let suiteName = "group.website.ihumbak.hydration"
+    let suiteName = "group.website.ihumbak.hydration.expowidgets"
 
     func placeholder(in context: Context) -> HydrationEntry {
         HydrationEntry(
@@ -40,13 +40,18 @@ struct HydrationProvider: TimelineProvider {
 
     private func readData() -> HydrationEntry {
         let userDefaults = UserDefaults(suiteName: suiteName)
+
+        // integer(forKey:) returns 0 if key doesn't exist, so we need explicit check
+        let glassCapacity = userDefaults?.integer(forKey: "glassCapacity") ?? 0
+        let dailyGoal = userDefaults?.integer(forKey: "dailyGoal") ?? 0
+
         return HydrationEntry(
             date: Date(),
             todayWater: userDefaults?.integer(forKey: "todayWater") ?? 0,
-            dailyGoal: userDefaults?.integer(forKey: "dailyGoal") ?? 2000,
+            dailyGoal: dailyGoal > 0 ? dailyGoal : 2000,
             percentage: userDefaults?.double(forKey: "percentage") ?? 0,
             streak: userDefaults?.integer(forKey: "streak") ?? 0,
-            glassCapacity: userDefaults?.integer(forKey: "glassCapacity") ?? 250
+            glassCapacity: glassCapacity > 0 ? glassCapacity : 250
         )
     }
 }
@@ -159,8 +164,8 @@ struct MediumWidgetView: View {
 
             Spacer()
 
-            // Right: Quick Add Button
-            Link(destination: URL(string: "hydration://addwater?amount=\(entry.glassCapacity)")!) {
+            // Right: Quick Add Button (default 250ml)
+            Link(destination: URL(string: "hydration://?action=addwater&amount=250")!) {
                 VStack(spacing: 4) {
                     ZStack {
                         Circle()
@@ -172,7 +177,7 @@ struct MediumWidgetView: View {
                             .foregroundColor(.blue)
                     }
 
-                    Text("+\(entry.glassCapacity)ml")
+                    Text("+250ml")
                         .font(.system(size: 10, weight: .medium))
                         .foregroundColor(.blue)
                 }

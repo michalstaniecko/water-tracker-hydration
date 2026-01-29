@@ -1,8 +1,8 @@
 import ExpoModulesCore
 import WidgetKit
 
-public class HydrationWidgetModule: Module {
-    let suiteName = "group.website.ihumbak.hydration"
+public class ExpoWidgetsModule: Module {
+    let suiteName = "group.website.ihumbak.hydration.expowidgets"
 
     public func definition() -> ModuleDefinition {
         Name("HydrationWidget")

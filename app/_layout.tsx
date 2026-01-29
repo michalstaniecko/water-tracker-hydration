@@ -138,56 +138,65 @@ export default function RootLayout() {
         appState.current = nextAppState;
       },
     );
-    fetchOrInitSetup();
-    fetchOrInitWaterData();
-    fetchOrInitOnboarding();
-    fetchOrInitGamification();
-    fetchOrInitNotifications().then(() => {
-      isNotificationsInitialized.current = true;
-    });
-
-    // Create automatic backup on app start (once per day)
-    createAutomaticBackup();
-
-    // Initialize widget data after stores are loaded
-    initializeWidgetData();
 
     // Handle deep links from widget
     const handleDeepLink = async (event: { url: string }) => {
-      const { queryParams } = Linking.parse(event.url);
+      console.log("[DeepLink] Received URL:", event.url);
+      const parsed = Linking.parse(event.url);
+      console.log("[DeepLink] Parsed:", JSON.stringify(parsed, null, 2));
+
+      const { queryParams } = parsed;
 
       if (queryParams?.action === "addwater" && queryParams?.amount) {
         const amount = parseInt(queryParams.amount as string, 10);
+        console.log("[DeepLink] Adding water amount:", amount);
         if (!isNaN(amount) && amount > 0) {
           await handleWidgetAddWater(amount);
           checkAndUnlockAchievements();
+          console.log("[DeepLink] Water added successfully");
         }
+      } else {
+        console.log("[DeepLink] No addwater action found in queryParams");
       }
     };
 
     // Listen for deep links while app is running
     const linkingSubscription = Linking.addEventListener("url", handleDeepLink);
 
-    // Handle deep link that opened the app
-    Linking.getInitialURL().then((url) => {
-      if (url) {
-        handleDeepLink({ url });
+    // Initialize app - must wait for stores before handling deep links
+    const initializeApp = async () => {
+      // Load all stores first
+      await Promise.all([
+        fetchOrInitSetup(),
+        fetchOrInitWaterData(),
+        fetchOrInitOnboarding(),
+        fetchOrInitGamification(),
+      ]);
+
+      // Initialize notifications after other stores
+      await fetchOrInitNotifications();
+      isNotificationsInitialized.current = true;
+
+      // Create automatic backup on app start (once per day)
+      createAutomaticBackup();
+
+      // Initialize widget data after stores are loaded
+      initializeWidgetData();
+
+      // Handle deep link that opened the app (only after stores are ready)
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) {
+        await handleDeepLink({ url: initialUrl });
       }
-    });
+    };
+
+    initializeApp();
 
     return () => {
       subscription.remove();
       linkingSubscription.remove();
     };
-  }, [
-    fetchOrInitSetup,
-    fetchOrInitWaterData,
-    fetchOrInitOnboarding,
-    fetchOrInitGamification,
-    fetchOrInitNotifications,
-    checkAndUnlockAchievements,
-    createAutomaticBackup,
-  ]);
+  }, []);
 
   useEffect(() => {
     if (loaded) {
