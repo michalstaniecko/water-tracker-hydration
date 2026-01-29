@@ -88,7 +88,7 @@ class HydrationWidget : AppWidgetProvider() {
 
             // Set up add water button with deep link
             val addWaterIntent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("hydration://addwater?amount=$glassCapacity")
+                data = Uri.parse("hydration://?action=addwater&amount=$glassCapacity")
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
             val addWaterPendingIntent = PendingIntent.getActivity(
