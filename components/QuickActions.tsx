@@ -5,6 +5,7 @@ import { useGamificationStore } from "@/stores/gamification";
 import { useTranslation } from "react-i18next";
 import { useHaptics } from "@/hooks/useHaptics";
 import { logError } from "@/utils/errorLogging";
+import { rescheduleNotificationsAfterDrink } from "@/hooks/useWater";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useMemo } from "react";
 
@@ -27,6 +28,9 @@ export default function QuickActions() {
       const newCurrentWater = Number(currentWater) + amount;
       await waterStore.setTodayWater(newCurrentWater.toString());
       gamificationStore.checkAndUnlockAchievements();
+
+      // Reschedule notifications anchored to this drink
+      await rescheduleNotificationsAfterDrink();
     } catch (error) {
       logError(error, {
         operation: "handleQuickAction",

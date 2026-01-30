@@ -2,8 +2,27 @@ import { useEffect } from "react";
 import { useWaterStore } from "@/stores/water";
 import { useSetupStore } from "@/stores/setup";
 import { useGamificationStore } from "@/stores/gamification";
+import { useNotificationsStore } from "@/stores/notifications";
 import { roundBy } from "@/utils/numbers";
 import { logError } from "@/utils/errorLogging";
+
+/**
+ * Reschedules notifications anchored to the current drink event.
+ * Shared by addWater (useWater hook) and QuickActions component.
+ */
+export async function rescheduleNotificationsAfterDrink(): Promise<void> {
+  const notificationsState = useNotificationsStore.getState();
+  if (
+    notificationsState.enabled &&
+    notificationsState.permissionStatus === "granted"
+  ) {
+    const setupState = useSetupStore.getState();
+    await notificationsState.onWaterDrunk(
+      setupState.day.startHour,
+      setupState.day.endHour,
+    );
+  }
+}
 
 export function useWater() {
   const waterStore = useWaterStore();
@@ -35,6 +54,9 @@ export function useWater() {
         Number(currentWater) + Number(setupStore.glassCapacity);
       await waterStore.setTodayWater(newCurrentWater.toString());
       gamificationStore.checkAndUnlockAchievements();
+
+      // Reschedule notifications anchored to this drink
+      await rescheduleNotificationsAfterDrink();
     } catch (error) {
       logError(error, {
         operation: "addWater",

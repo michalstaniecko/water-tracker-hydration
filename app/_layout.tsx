@@ -1,5 +1,5 @@
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useRef } from "react";
 import "react-native-reanimated";
@@ -14,21 +14,37 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useOnboardingStore } from "@/stores/onboarding";
 import { useGamificationStore } from "@/stores/gamification";
 import { useBackupStore } from "@/stores/backup";
+import { useNotificationsStore } from "@/stores/notifications";
+import {
+  addNotificationResponseListener,
+  addNotificationReceivedListener,
+  getNotificationContent,
+} from "@/services/notificationService";
+import { NOTIFICATION_ACTION_OPEN_HOME } from "@/constants/notifications";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const router = useRouter();
   const appState = useRef(AppState.currentState);
+  const isInitialActivityHoursMount = useRef(true);
+  const isNotificationsInitialized = useRef(false);
   const { fetchOrInitData: fetchOrInitWaterData } = useWaterStore();
-  const { fetchOrInitData: fetchOrInitSetup, languageCode } = useSetupStore();
+  const {
+    fetchOrInitData: fetchOrInitSetup,
+    languageCode,
+    day,
+  } = useSetupStore();
   const { fetchOrInitData: fetchOrInitOnboarding } = useOnboardingStore();
   const {
     fetchOrInitData: fetchOrInitGamification,
     checkAndUnlockAchievements,
   } = useGamificationStore();
   const { createAutomaticBackup } = useBackupStore();
+  const { fetchOrInitData: fetchOrInitNotifications, scheduleReminders } =
+    useNotificationsStore();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -40,21 +56,87 @@ export default function RootLayout() {
     );
   }, [languageCode]);
 
+  // Handle notification tap - deep linking
   useEffect(() => {
-    const subscription = AppState.addEventListener("change", (nextAppState) => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === "active"
-      ) {
-        fetchOrInitWaterData();
-        checkAndUnlockAchievements();
+    const subscription = addNotificationResponseListener((response) => {
+      const data = response.notification.request.content.data;
+      if (data?.action === NOTIFICATION_ACTION_OPEN_HOME) {
+        router.push("/(tabs)/");
       }
-      appState.current = nextAppState;
     });
+
+    return () => subscription.remove();
+  }, [router]);
+
+  // Track received notifications in foreground to increment counter
+  useEffect(() => {
+    const subscription = addNotificationReceivedListener(() => {
+      const notificationsState = useNotificationsStore.getState();
+      if (notificationsState.enabled) {
+        notificationsState.onNotificationReceived();
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
+  // Reschedule notifications when activity hours change (skip initial mount)
+  useEffect(() => {
+    if (isInitialActivityHoursMount.current) {
+      isInitialActivityHoursMount.current = false;
+      return;
+    }
+    const { enabled, permissionStatus } = useNotificationsStore.getState();
+    if (enabled && permissionStatus === "granted") {
+      const { title, body } = getNotificationContent();
+      scheduleReminders(day.startHour, day.endHour, title, body);
+    }
+  }, [day.startHour, day.endHour, scheduleReminders]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener(
+      "change",
+      async (nextAppState) => {
+        if (
+          appState.current.match(/inactive|background/) &&
+          nextAppState === "active"
+        ) {
+          fetchOrInitWaterData();
+          checkAndUnlockAchievements();
+
+          // Correct notification counter and reschedule when app becomes active
+          // Use getState() to get fresh values instead of stale closure values
+          // Only reschedule if notifications store has been initialized
+          if (isNotificationsInitialized.current) {
+            const notificationsState = useNotificationsStore.getState();
+            const setupState = useSetupStore.getState();
+            if (
+              notificationsState.enabled &&
+              notificationsState.permissionStatus === "granted"
+            ) {
+              // Correct counter for notifications fired while in background
+              await notificationsState.correctNotificationCount();
+
+              const { title, body } = getNotificationContent();
+              await notificationsState.scheduleReminders(
+                setupState.day.startHour,
+                setupState.day.endHour,
+                title,
+                body,
+              );
+            }
+          }
+        }
+        appState.current = nextAppState;
+      },
+    );
     fetchOrInitSetup();
     fetchOrInitWaterData();
     fetchOrInitOnboarding();
     fetchOrInitGamification();
+    fetchOrInitNotifications().then(() => {
+      isNotificationsInitialized.current = true;
+    });
 
     // Create automatic backup on app start (once per day)
     createAutomaticBackup();
@@ -62,7 +144,15 @@ export default function RootLayout() {
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, [
+    fetchOrInitSetup,
+    fetchOrInitWaterData,
+    fetchOrInitOnboarding,
+    fetchOrInitGamification,
+    fetchOrInitNotifications,
+    checkAndUnlockAchievements,
+    createAutomaticBackup,
+  ]);
 
   useEffect(() => {
     if (loaded) {

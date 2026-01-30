@@ -16,6 +16,12 @@ export default function SettingsMenu() {
       onPress: () => router.push("/(tabs)/setup/general"),
     },
     {
+      id: "reminders",
+      title: t("reminders"),
+      icon: "bell",
+      onPress: () => router.push("/(tabs)/setup/reminders"),
+    },
+    {
       id: "quick-actions",
       title: t("quickActions"),
       icon: "bolt",
@@ -38,6 +44,8 @@ export default function SettingsMenu() {
               key={item.id}
               onPress={item.onPress}
               className="bg-gray-50  p-4 rounded-lg flex-row items-center justify-between active:opacity-70"
+              accessibilityRole="button"
+              accessibilityLabel={item.title}
             >
               <View className="flex-row items-center gap-3">
                 <FontAwesome
