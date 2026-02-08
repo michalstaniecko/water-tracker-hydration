@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getToday } from "@/utils/date";
 import { sanitizeNonNegativeNumber, isNonNegativeNumber } from "@/utils/validation";
 import { logError, logWarning } from "@/utils/errorLogging";
+import { syncToWidget } from "@/services/widgetService";
 
 type Water = {
   amount: string;
@@ -106,7 +107,7 @@ export const useWaterStore = create<WaterStore>((set, get) => ({
         });
         return;
       }
-      
+
       const sanitizedAmount = sanitizeNonNegativeNumber(amount);
       const currentHistory = get().history || {};
       // Create a new object to ensure Zustand detects the change
@@ -115,8 +116,11 @@ export const useWaterStore = create<WaterStore>((set, get) => ({
         [date]: { water: sanitizedAmount },
       };
       set({ history });
-      
+
       await AsyncStorage.setItem(storageKey, JSON.stringify(history));
+
+      // Sync updated data to home screen widget
+      syncToWidget();
     } catch (error) {
       logError(error, {
         operation: 'setWater',

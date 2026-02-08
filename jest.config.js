@@ -7,6 +7,7 @@ module.exports = {
   collectCoverageFrom: [
     'utils/**/*.{ts,tsx}',
     'stores/**/*.{ts,tsx}',
+    'services/**/*.{ts,tsx}',
     '!**/*.d.ts',
     '!**/node_modules/**',
   ],
