@@ -197,7 +197,7 @@ export default function RootLayout() {
       createAutomaticBackup();
 
       // Initialize widget data after stores are loaded
-      initializeWidgetData();
+      await initializeWidgetData();
 
       // Handle deep link that opened the app (only after stores are ready)
       const initialUrl = await Linking.getInitialURL();

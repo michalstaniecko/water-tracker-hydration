@@ -120,7 +120,7 @@ export const useWaterStore = create<WaterStore>((set, get) => ({
       await AsyncStorage.setItem(storageKey, JSON.stringify(history));
 
       // Sync updated data to home screen widget
-      syncToWidget();
+      await syncToWidget();
     } catch (error) {
       logError(error, {
         operation: 'setWater',

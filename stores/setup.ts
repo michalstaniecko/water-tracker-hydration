@@ -198,14 +198,14 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
     const sanitized = sanitizePositiveNumber(capacity, String(DEFAULT_GLASS_CAPACITY));
     await get().setOption(SetupOptions.GLASS_CAPACITY, sanitized);
     // Sync to widget as glass capacity affects quick add button
-    syncToWidget();
+    await syncToWidget();
   },
   setMinimumWater: async (water: string) => {
     // Sanitize and persist to storage
     const sanitized = sanitizePositiveNumber(water, String(DEFAULT_DAILY_GOAL));
     await get().setOption(SetupOptions.MINIMUM_WATER, sanitized);
     // Sync to widget as daily goal affects progress percentage
-    syncToWidget();
+    await syncToWidget();
   },
   setGlassCapacityTemp: (capacity: string) => {
     // Temporary update without persisting - for editing
