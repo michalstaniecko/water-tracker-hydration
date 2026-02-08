@@ -177,6 +177,41 @@ describe('sharedData', () => {
       expect(result).toEqual(mockWidgetData);
     });
 
+    it('should set default values for missing fields on Android', async () => {
+      Platform.OS = 'android';
+      mockReadWidgetData.mockResolvedValue(JSON.stringify({ todayWater: 500 }));
+
+      const result = await readWidgetData();
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          todayWater: 500,
+          dailyGoal: 2000,
+          percentage: 0,
+          streak: 0,
+          glassCapacity: 250,
+          dateKey: '',
+        })
+      );
+      expect(result?.lastUpdated).toBeDefined();
+    });
+
+    it('should return null when Android SharedPreferences has invalid JSON', async () => {
+      Platform.OS = 'android';
+      mockReadWidgetData.mockResolvedValue('not valid json{{{');
+
+      const result = await readWidgetData();
+
+      expect(result).toBeNull();
+      expect(logError).toHaveBeenCalledWith(
+        expect.any(SyntaxError),
+        expect.objectContaining({
+          operation: 'readWidgetData',
+          component: 'SharedData',
+        })
+      );
+    });
+
     it('should return null when no data in SharedPreferences on Android', async () => {
       Platform.OS = 'android';
       mockReadWidgetData.mockResolvedValue(null);

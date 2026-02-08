@@ -118,7 +118,16 @@ export async function readWidgetData(): Promise<WidgetData | null> {
     } else if (Platform.OS === "android") {
       const jsonString = await HydrationWidgetModule.readWidgetData(SHARED_PREFS_NAME);
       if (jsonString) {
-        return JSON.parse(jsonString);
+        const data = JSON.parse(jsonString);
+        return {
+          todayWater: data.todayWater || 0,
+          dailyGoal: data.dailyGoal || 2000,
+          percentage: data.percentage || 0,
+          streak: data.streak || 0,
+          glassCapacity: data.glassCapacity || 250,
+          lastUpdated: data.lastUpdated || new Date().toISOString(),
+          dateKey: data.dateKey || "",
+        };
       }
     }
 

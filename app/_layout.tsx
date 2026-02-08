@@ -22,6 +22,7 @@ import {
 } from "@/services/notificationService";
 import { NOTIFICATION_ACTION_OPEN_HOME } from "@/constants/notifications";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { logInfo } from "@/utils/errorLogging";
 import * as Linking from "expo-linking";
 import {
   initializeWidgetData,
@@ -141,22 +142,37 @@ export default function RootLayout() {
 
     // Handle deep links from widget
     const handleDeepLink = async (event: { url: string }) => {
-      console.log("[DeepLink] Received URL:", event.url);
+      logInfo("Received deep link URL", {
+        operation: "handleDeepLink",
+        component: "RootLayout",
+        data: { url: event.url },
+      });
       const parsed = Linking.parse(event.url);
-      console.log("[DeepLink] Parsed:", JSON.stringify(parsed, null, 2));
 
       const { queryParams } = parsed;
 
       if (queryParams?.action === "addwater" && queryParams?.amount) {
         const amount = parseInt(queryParams.amount as string, 10);
-        console.log("[DeepLink] Adding water amount:", amount);
+        logInfo("Adding water from deep link", {
+          operation: "handleDeepLink",
+          component: "RootLayout",
+          data: { amount },
+        });
         if (!isNaN(amount) && amount > 0) {
           await handleWidgetAddWater(amount);
           checkAndUnlockAchievements();
-          console.log("[DeepLink] Water added successfully");
+          logInfo("Water added successfully from deep link", {
+            operation: "handleDeepLink",
+            component: "RootLayout",
+            data: { amount },
+          });
         }
       } else {
-        console.log("[DeepLink] No addwater action found in queryParams");
+        logInfo("No addwater action found in deep link", {
+          operation: "handleDeepLink",
+          component: "RootLayout",
+          data: { queryParams },
+        });
       }
     };
 
