@@ -6,6 +6,7 @@ import { Banner } from "@/components/ads/Banner";
 import { useSetupStore } from "@/stores/setup";
 import { useTranslation } from "react-i18next";
 import { colors } from "@/constants/colors";
+import HeaderAchievementBadge from "@/components/HeaderAchievementBadge";
 
 export default function TabLayout() {
   const { t } = useTranslation("tabs");
@@ -17,6 +18,7 @@ export default function TabLayout() {
           tabBarHideOnKeyboard: true,
           tabBarActiveTintColor: colors.blue[600],
           animation: "shift",
+          headerRight: () => <HeaderAchievementBadge />,
         }}
         screenLayout={({ children }) => {
           return (

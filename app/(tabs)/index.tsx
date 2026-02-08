@@ -2,8 +2,6 @@ import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSetupStore } from "@/stores/setup";
 import { useWater } from "@/hooks/useWater";
-import AddWater from "@/components/AddWater";
-import RemoveWater from "@/components/RemoveWater";
 import { Card } from "@/components/ui/Card";
 import CardWaterAmount from "@/components/CardWaterAmount";
 import Animated, {
@@ -18,8 +16,7 @@ import CardWelcome from "@/components/onboarding/CardWelcome";
 import CardSecond from "@/components/onboarding/CardSecond";
 import CardThird from "@/components/onboarding/CardThird";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import CardStreakAchievements from "@/components/CardStreakAchievements";
-import QuickActions from "@/components/QuickActions";
+import WaterInputSection from "@/components/WaterInputSection";
 
 const duration = 50;
 
@@ -33,9 +30,6 @@ export default function Index() {
       <ScrollView contentContainerClassName={"p-5"}>
         <View className={"gap-3"}>
           <CardWelcome />
-          <Animated.View layout={CurvedTransition}>
-            <CardStreakAchievements />
-          </Animated.View>
           <Animated.View layout={CurvedTransition} className={"flex-row gap-3"}>
             <View className={"flex-1 gap-3"}>
               <Card
@@ -84,15 +78,7 @@ export default function Index() {
           </Animated.View>
           <CardThird />
           <Animated.View layout={CurvedTransition}>
-            <QuickActions />
-          </Animated.View>
-          <Animated.View layout={CurvedTransition} className={"flex-row gap-3"}>
-            <View className={"flex-1"}>
-              <RemoveWater />
-            </View>
-            <View className={"flex-1"}>
-              <AddWater />
-            </View>
+            <WaterInputSection />
           </Animated.View>
         </View>
       </ScrollView>

@@ -45,6 +45,7 @@ type GamificationStore = {
   achievements: Achievement[];
   notifications: Notification[];
   lastChecked: string | null;
+  unseenAchievementsCount: number;
   fetchOrInitData: () => Promise<void>;
   checkAndUnlockAchievements: () => Promise<void>;
   getUnlockedAchievements: () => Achievement[];
@@ -55,6 +56,7 @@ type GamificationStore = {
   markNotificationAsRead: (id: string) => Promise<void>;
   getUnreadNotifications: () => Notification[];
   clearNotifications: () => Promise<void>;
+  markAchievementsSeen: () => Promise<void>;
   updateStorage: () => Promise<void>;
 };
 
@@ -144,6 +146,7 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
   achievements: defaultAchievements,
   notifications: [],
   lastChecked: null,
+  unseenAchievementsCount: 0,
 
   fetchOrInitData: async () => {
     try {
@@ -163,6 +166,7 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
             achievements: mergedAchievements,
             notifications: parsedData.notifications || [],
             lastChecked: parsedData.lastChecked || null,
+            unseenAchievementsCount: parsedData.unseenAchievementsCount || 0,
           });
         } else {
           logWarning("Invalid gamification data structure, reinitializing", {
@@ -176,6 +180,7 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
           achievements: defaultAchievements,
           notifications: [],
           lastChecked: null,
+          unseenAchievementsCount: 0,
         });
         await get().updateStorage();
       }
@@ -188,6 +193,7 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
         achievements: defaultAchievements,
         notifications: [],
         lastChecked: null,
+        unseenAchievementsCount: 0,
       });
     }
   },
@@ -234,6 +240,7 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
 
       // Unlock achievements and create notifications
       let hasChanges = false;
+      let newlyUnlockedCount = 0;
       const hapticsEnabled = useSetupStore.getState().hapticsEnabled;
       updatedAchievements.forEach((achievement, index) => {
         if (
@@ -246,6 +253,7 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
             unlockedAt: now,
           };
           hasChanges = true;
+          newlyUnlockedCount++;
 
           // Add notification for unlocked achievement
           get().addNotification({
@@ -262,7 +270,12 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
         // Trigger haptic feedback once for all unlocked achievements
         // (avoids multiple rapid haptics when unlocking several at once)
         triggerHapticFeedback("notificationSuccess", hapticsEnabled);
-        set({ achievements: updatedAchievements, lastChecked: now });
+        set({
+          achievements: updatedAchievements,
+          lastChecked: now,
+          unseenAchievementsCount:
+            get().unseenAchievementsCount + newlyUnlockedCount,
+        });
         await get().updateStorage();
       }
     } catch (error) {
@@ -334,6 +347,18 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
     }
   },
 
+  markAchievementsSeen: async () => {
+    try {
+      set({ unseenAchievementsCount: 0 });
+      await get().updateStorage();
+    } catch (error) {
+      logError(error, {
+        operation: "markAchievementsSeen",
+        component: "GamificationStore",
+      });
+    }
+  },
+
   updateStorage: async () => {
     try {
       const state = get();
@@ -341,6 +366,7 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
         achievements: state.achievements,
         notifications: state.notifications,
         lastChecked: state.lastChecked,
+        unseenAchievementsCount: state.unseenAchievementsCount,
       };
       await AsyncStorage.setItem(storageKey, JSON.stringify(data));
     } catch (error) {

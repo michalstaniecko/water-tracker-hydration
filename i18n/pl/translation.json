@@ -58,5 +58,7 @@
   "editQuickActionAccessibilityHint": "Dotknij dwukrotnie, aby edytować ilość",
   "deleteQuickActionAccessibilityLabel": "Usuń szybką akcję {{amount}} mililitrów",
   "saveQuickActionAccessibilityLabel": "Zapisz zmiany",
-  "cancelEditAccessibilityLabel": "Anuluj edycję"
+  "cancelEditAccessibilityLabel": "Anuluj edycję",
+  "achievementBadgeAccessibilityLabel": "{{streak}} dni z rzędu, {{achievements}} osiągnięć odblokowanych",
+  "achievementBadgeAccessibilityHint": "Dotknij dwukrotnie, aby zobaczyć osiągnięcia"
 }

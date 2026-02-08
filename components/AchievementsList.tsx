@@ -6,12 +6,17 @@ import { useEffect } from "react";
 
 export default function AchievementsList() {
   const { t } = useTranslation();
-  const { achievements, fetchOrInitData, checkAndUnlockAchievements } =
-    useGamificationStore();
+  const {
+    achievements,
+    fetchOrInitData,
+    checkAndUnlockAchievements,
+    markAchievementsSeen,
+  } = useGamificationStore();
 
   useEffect(() => {
     fetchOrInitData();
-  }, [fetchOrInitData]);
+    markAchievementsSeen();
+  }, [fetchOrInitData, markAchievementsSeen]);
 
   useEffect(() => {
     checkAndUnlockAchievements();
