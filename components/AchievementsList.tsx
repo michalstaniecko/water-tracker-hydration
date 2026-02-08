@@ -2,7 +2,8 @@ import { View, Text, ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useGamificationStore } from "@/stores/gamification";
 import { Card } from "@/components/ui/Card";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function AchievementsList() {
   const { t } = useTranslation();
@@ -13,10 +14,15 @@ export default function AchievementsList() {
     markAchievementsSeen,
   } = useGamificationStore();
 
-  useEffect(() => {
-    fetchOrInitData();
-    markAchievementsSeen();
-  }, [fetchOrInitData, markAchievementsSeen]);
+  useFocusEffect(
+    useCallback(() => {
+      const init = async () => {
+        await fetchOrInitData();
+        markAchievementsSeen();
+      };
+      init();
+    }, [fetchOrInitData, markAchievementsSeen])
+  );
 
   useEffect(() => {
     checkAndUnlockAchievements();

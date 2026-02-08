@@ -1,6 +1,5 @@
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { useStatisticsStore } from "@/stores/statistics";
 import { useGamificationStore } from "@/stores/gamification";
 import { useWaterStore } from "@/stores/water";
 import { useEffect } from "react";
@@ -12,7 +11,6 @@ export default function HeaderAchievementBadge() {
   const { t } = useTranslation();
   const router = useRouter();
   const waterHistory = useWaterStore((state) => state.history);
-  const currentStreak = useStatisticsStore((state) => state.getCurrentStreak());
   const { achievements, fetchOrInitData, checkAndUnlockAchievements } =
     useGamificationStore();
   const unseenAchievementsCount = useGamificationStore(
@@ -31,9 +29,7 @@ export default function HeaderAchievementBadge() {
     }
   }, [waterHistory, checkAndUnlockAchievements]);
 
-  const unlockedCount = achievements.filter((a) => a.isUnlocked).length;
   const showUnseenBadge = unseenAchievementsCount > 0;
-  const showStreakBadge = !showUnseenBadge && currentStreak > 0;
 
   const handlePress = () => {
     router.push("/(tabs)/achievements");
@@ -46,8 +42,8 @@ export default function HeaderAchievementBadge() {
       style={styles.container}
       accessibilityRole="button"
       accessibilityLabel={t("achievementBadgeAccessibilityLabel", {
-        streak: currentStreak,
-        achievements: unlockedCount,
+        achievements: achievements.filter((a) => a.isUnlocked).length,
+        unseen: unseenAchievementsCount,
       })}
       accessibilityHint={t("achievementBadgeAccessibilityHint")}
     >
@@ -55,11 +51,6 @@ export default function HeaderAchievementBadge() {
       {showUnseenBadge && (
         <View style={[styles.badge, styles.unseenBadge]}>
           <Text style={styles.badgeText}>{unseenAchievementsCount}</Text>
-        </View>
-      )}
-      {showStreakBadge && (
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{currentStreak}</Text>
         </View>
       )}
     </TouchableOpacity>
