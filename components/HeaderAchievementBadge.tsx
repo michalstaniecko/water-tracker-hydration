@@ -1,16 +1,15 @@
-import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, View, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { useGamificationStore } from "@/stores/gamification";
 import { useWaterStore } from "@/stores/water";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { colors } from "@/constants/colors";
 
 export default function HeaderAchievementBadge() {
   const { t } = useTranslation();
   const router = useRouter();
-  const waterHistory = useWaterStore((state) => state.history);
+  const todayWater = useWaterStore((state) => state.getTodayWater());
   const { achievements, fetchOrInitData, checkAndUnlockAchievements } =
     useGamificationStore();
   const unseenAchievementsCount = useGamificationStore(
@@ -18,16 +17,19 @@ export default function HeaderAchievementBadge() {
   );
 
   useEffect(() => {
-    fetchOrInitData();
-    checkAndUnlockAchievements();
+    const init = async () => {
+      await fetchOrInitData();
+      checkAndUnlockAchievements();
+    };
+    init();
   }, [fetchOrInitData, checkAndUnlockAchievements]);
 
-  // Re-check achievements when water history changes
+  // Re-check achievements when water intake changes
   useEffect(() => {
-    if (waterHistory) {
+    if (todayWater) {
       checkAndUnlockAchievements();
     }
-  }, [waterHistory, checkAndUnlockAchievements]);
+  }, [todayWater, checkAndUnlockAchievements]);
 
   const showUnseenBadge = unseenAchievementsCount > 0;
 
@@ -39,7 +41,7 @@ export default function HeaderAchievementBadge() {
     <TouchableOpacity
       onPress={handlePress}
       activeOpacity={0.7}
-      style={styles.container}
+      className="mr-4 p-1"
       accessibilityRole="button"
       accessibilityLabel={t("achievementBadgeAccessibilityLabel", {
         achievements: achievements.filter((a) => a.isUnlocked).length,
@@ -47,39 +49,14 @@ export default function HeaderAchievementBadge() {
       })}
       accessibilityHint={t("achievementBadgeAccessibilityHint")}
     >
-      <FontAwesome name="trophy" size={22} color={colors.blue[600]} />
+      <FontAwesome name="trophy" size={22} color="#3895d3" />
       {showUnseenBadge && (
-        <View style={[styles.badge, styles.unseenBadge]}>
-          <Text style={styles.badgeText}>{unseenAchievementsCount}</Text>
+        <View className="absolute top-[-2px] right-[-6px] bg-pink-600 rounded-full min-w-[18px] h-[18px] items-center justify-center px-1">
+          <Text className="text-white text-[11px] font-bold">
+            {unseenAchievementsCount}
+          </Text>
         </View>
       )}
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginRight: 16,
-    padding: 4,
-  },
-  badge: {
-    position: "absolute",
-    top: -2,
-    right: -6,
-    backgroundColor: colors.orange[500],
-    borderRadius: 10,
-    minWidth: 18,
-    height: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 4,
-  },
-  unseenBadge: {
-    backgroundColor: colors.pink[600],
-  },
-  badgeText: {
-    color: "#ffffff",
-    fontSize: 11,
-    fontWeight: "bold",
-  },
-});

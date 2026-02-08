@@ -59,6 +59,6 @@
   "deleteQuickActionAccessibilityLabel": "Delete quick action {{amount}} milliliters",
   "saveQuickActionAccessibilityLabel": "Save changes",
   "cancelEditAccessibilityLabel": "Cancel editing",
-  "achievementBadgeAccessibilityLabel": "{{streak}} day streak, {{achievements}} achievements unlocked",
+  "achievementBadgeAccessibilityLabel": "{{achievements}} achievements unlocked, {{unseen}} new",
   "achievementBadgeAccessibilityHint": "Double tap to view achievements"
 }

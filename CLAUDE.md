@@ -57,7 +57,7 @@ File-based routing in `app/`:
 
 ### Component Patterns
 - UI primitives in `components/ui/` (Button, Input, Card, Modal, Picker)
-- Feature components at `components/` root (AddWater, RemoveWater, AchievementsList)
+- Feature components at `components/` root (WaterInputSection, HeaderAchievementBadge, AchievementsList)
 - ErrorBoundary wrapper used at app root for crash handling
 - Bottom sheet modals via @gorhom/bottom-sheet
 

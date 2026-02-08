@@ -59,6 +59,6 @@
   "deleteQuickActionAccessibilityLabel": "Usuń szybką akcję {{amount}} mililitrów",
   "saveQuickActionAccessibilityLabel": "Zapisz zmiany",
   "cancelEditAccessibilityLabel": "Anuluj edycję",
-  "achievementBadgeAccessibilityLabel": "{{streak}} dni z rzędu, {{achievements}} osiągnięć odblokowanych",
+  "achievementBadgeAccessibilityLabel": "{{achievements}} osiągnięć odblokowanych, {{unseen}} nowych",
   "achievementBadgeAccessibilityHint": "Dotknij dwukrotnie, aby zobaczyć osiągnięcia"
 }

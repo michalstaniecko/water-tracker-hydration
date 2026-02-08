@@ -10,7 +10,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useMemo, useState } from "react";
 import PickerWheel from "@/components/ui/PickerWheel";
 import Modal, { ModalHeader } from "@/components/ui/Modal";
-import { GLASS_CAPACITY_OPTIONS } from "@/constants/app";
+import { GLASS_CAPACITY_OPTIONS, MAX_DAILY_WATER } from "@/constants/app";
 
 export default function WaterInputSection() {
   const { t } = useTranslation();
@@ -30,9 +30,12 @@ export default function WaterInputSection() {
     try {
       impactMedium();
       const currentWater = waterStore.getTodayWater();
-      const newCurrentWater = Number(currentWater) + amount;
+      const newCurrentWater = Math.min(
+        Number(currentWater) + amount,
+        MAX_DAILY_WATER,
+      );
       await waterStore.setTodayWater(newCurrentWater.toString());
-      gamificationStore.checkAndUnlockAchievements();
+      gamificationStore.checkAndUnlockAchievements().catch(() => {});
       await rescheduleNotificationsAfterDrink();
     } catch (error) {
       logError(error, {
