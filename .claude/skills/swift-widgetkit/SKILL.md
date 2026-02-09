@@ -114,12 +114,23 @@ import WidgetKit
 public class AppWidgetModule: Module {
     let suiteName = "group.com.example.app"
 
+    /// Safely converts a JS bridge value to Int.
+    /// JavaScript numbers arrive as Double via Expo Modules Core;
+    /// `Double as? Int` always returns nil in Swift.
+    private func toInt(_ value: Any?, defaultValue: Int = 0) -> Int {
+        if let intVal = value as? Int { return intVal }
+        if let doubleVal = value as? Double { return Int(doubleVal) }
+        if let nsNum = value as? NSNumber { return nsNum.intValue }
+        return defaultValue
+    }
+
     public func definition() -> ModuleDefinition {
         Name("AppWidget")
 
         Function("updateWidgetData") { (data: [String: Any]) -> Void in
             guard let userDefaults = UserDefaults(suiteName: self.suiteName) else { return }
-            userDefaults.set(data["value"] as? Int ?? 0, forKey: "value")
+            userDefaults.set(self.toInt(data["value"]), forKey: "value")
+            userDefaults.set(data["percentage"] as? Double ?? 0, forKey: "percentage")
             userDefaults.synchronize()
         }
 
@@ -136,6 +147,49 @@ public class AppWidgetModule: Module {
 - Use `[String: Any]` for dictionary data from JavaScript
 - Call `userDefaults.synchronize()` to ensure immediate persistence
 - Wrap iOS 14+ APIs in `#available` checks
+
+### Critical: JS-to-Swift Bridge Pitfalls
+
+#### Module Access — Use `expo`, NOT `react-native`
+Expo Modules Core maintains its own module registry, completely separate from React Native's `NativeModules`. Using the wrong import will silently return `undefined` — the module appears to work (no crashes) but never actually communicates with Swift.
+
+- **ALWAYS** use `requireOptionalNativeModule("ModuleName")` from `expo`
+- **NEVER** use `NativeModules` from `react-native` to access Expo modules
+
+#### JS Numbers Arrive as `Double` in Swift
+JavaScript only has one number type (`Number` = IEEE 754 double). When these cross the Expo Modules Core bridge, Swift receives them as `Double`, not `Int`. A direct cast `value as? Int` will silently return `nil`.
+
+**Always use a `toInt()` helper** (shown in the Module Definition above) that handles `Int`, `Double`, and `NSNumber` cases. Keep `Double` for fractional values like percentages.
+
+#### Module-Level Resolution
+Call `requireOptionalNativeModule()` once at the top of your TypeScript file, not inside each function. The module reference is static and resolving it once avoids repeated lookups:
+```typescript
+const WidgetModule = requireOptionalNativeModule("AppWidget");
+// Then use WidgetModule in all functions
+```
+
+### TypeScript Bridge File Pattern
+
+The correct pattern for accessing an Expo native module from TypeScript:
+
+```typescript
+// CORRECT — uses Expo's module registry
+import { requireOptionalNativeModule } from "expo";
+const WidgetModule = requireOptionalNativeModule("AppWidget");
+
+export async function updateWidget(data: WidgetData): Promise<boolean> {
+  if (!WidgetModule) return false;
+  await WidgetModule.updateWidgetData(data);
+  return true;
+}
+```
+
+**DO NOT** use this pattern — it accesses a completely separate registry and will always be `undefined` for Expo modules:
+```typescript
+// WRONG — NativeModules does NOT contain Expo modules!
+import { NativeModules } from "react-native";
+const WidgetModule = NativeModules.AppWidget; // undefined in production
+```
 
 ## App Groups Data Sharing
 
@@ -200,3 +254,55 @@ struct AppWidget_Previews: PreviewProvider {
 }
 #endif
 ```
+
+## Testing Native Module Bridge
+
+`requireOptionalNativeModule()` resolves at **module load time** (top-level `const`), not per-function call. Standard `jest.mock()` factories are hoisted but cannot reliably reference other variables in this project's Babel setup.
+
+### Required Pattern: `jest.isolateModules` + `jest.doMock`
+
+```typescript
+// Helper to load module with a custom native module mock
+function loadWithMock(mockModule: any) {
+  let result: typeof import('../sharedData');
+  jest.isolateModules(() => {
+    jest.doMock('expo', () => ({
+      requireOptionalNativeModule: (name: string) => {
+        if (name === 'AppWidget') return mockModule;
+        return null;
+      },
+    }));
+    result = require('../sharedData');
+  });
+  return result!;
+}
+
+describe('widgetBridge', () => {
+  let mockUpdate: jest.Mock;
+  let writeData: typeof import('../sharedData').writeWidgetData;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUpdate = jest.fn().mockResolvedValue(undefined);
+    const mod = loadWithMock({ updateWidgetData: mockUpdate });
+    writeData = mod.writeWidgetData;
+  });
+
+  it('should call native module', async () => {
+    await writeData(testData);
+    expect(mockUpdate).toHaveBeenCalled();
+  });
+
+  it('should handle missing module', async () => {
+    const mod = loadWithMock(null);
+    const result = await mod.writeWidgetData(testData);
+    expect(result).toBe(false);
+  });
+});
+```
+
+### Why This Pattern is Necessary
+1. `jest.mock('expo', ...)` factory is hoisted above all `const` declarations — referencing `jest.fn()` variables inside it fails
+2. `jest.doMock` is NOT hoisted, so it respects execution order
+3. `jest.isolateModules` gives a fresh module registry per call, so each test can provide different mock behavior (e.g., `null` module vs working module)
+4. Mock `expo` directly, not `expo-modules-core` — jest-expo's setup already mocks `expo-modules-core` and they conflict
