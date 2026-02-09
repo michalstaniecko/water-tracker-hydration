@@ -1,17 +1,13 @@
-import { Platform, NativeModules } from 'react-native';
-import {
-  writeWidgetData,
-  readWidgetData,
-  refreshWidget,
-  SHARED_PREFS_NAME,
-  WidgetData,
-} from '../sharedData';
-import { logError, logWarning } from '../errorLogging';
+import { Platform } from 'react-native';
+import type { WidgetData } from '../sharedData';
 
 jest.mock('../errorLogging', () => ({
   logError: jest.fn(),
   logWarning: jest.fn(),
 }));
+
+// Import the mocked error logging functions for assertions
+const { logError, logWarning } = jest.requireMock('../errorLogging');
 
 const mockWidgetData: WidgetData = {
   todayWater: 1500,
@@ -23,11 +19,30 @@ const mockWidgetData: WidgetData = {
   dateKey: '2026-01-28',
 };
 
+// Helper to load sharedData with a custom HydrationWidget mock
+function loadWithMock(mockModule: any) {
+  let result: typeof import('../sharedData');
+  jest.isolateModules(() => {
+    jest.doMock('expo', () => ({
+      requireOptionalNativeModule: (name: string) => {
+        if (name === 'HydrationWidget') return mockModule;
+        return null;
+      },
+    }));
+    result = require('../sharedData');
+  });
+  return result!;
+}
+
 describe('sharedData', () => {
   let mockUpdateWidgetData: jest.Mock;
   let mockReadWidgetData: jest.Mock;
   let mockReloadWidget: jest.Mock;
   let mockRefreshWidgetNative: jest.Mock;
+  let writeWidgetData: typeof import('../sharedData').writeWidgetData;
+  let readWidgetData: typeof import('../sharedData').readWidgetData;
+  let refreshWidget: typeof import('../sharedData').refreshWidget;
+  let SHARED_PREFS_NAME: string;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -36,16 +51,16 @@ describe('sharedData', () => {
     mockReloadWidget = jest.fn().mockResolvedValue(undefined);
     mockRefreshWidgetNative = jest.fn().mockResolvedValue(undefined);
 
-    NativeModules.HydrationWidget = {
+    const mod = loadWithMock({
       updateWidgetData: mockUpdateWidgetData,
       readWidgetData: mockReadWidgetData,
       reloadWidget: mockReloadWidget,
       refreshWidget: mockRefreshWidgetNative,
-    };
-  });
-
-  afterEach(() => {
-    delete (NativeModules as any).HydrationWidget;
+    });
+    writeWidgetData = mod.writeWidgetData;
+    readWidgetData = mod.readWidgetData;
+    refreshWidget = mod.refreshWidget;
+    SHARED_PREFS_NAME = mod.SHARED_PREFS_NAME;
   });
 
   describe('writeWidgetData', () => {
@@ -87,14 +102,14 @@ describe('sharedData', () => {
     });
 
     it('should return false when native module is not available', async () => {
-      delete (NativeModules as any).HydrationWidget;
-      const result = await writeWidgetData(mockWidgetData);
+      const mod = loadWithMock(null);
+      const result = await mod.writeWidgetData(mockWidgetData);
       expect(result).toBe(false);
     });
 
     it('should log warning when native module is not available', async () => {
-      delete (NativeModules as any).HydrationWidget;
-      await writeWidgetData(mockWidgetData);
+      const mod = loadWithMock(null);
+      await mod.writeWidgetData(mockWidgetData);
 
       expect(logWarning).toHaveBeenCalledWith(
         'HydrationWidget native module not available',
@@ -221,14 +236,14 @@ describe('sharedData', () => {
     });
 
     it('should return null when native module is not available', async () => {
-      delete (NativeModules as any).HydrationWidget;
-      const result = await readWidgetData();
+      const mod = loadWithMock(null);
+      const result = await mod.readWidgetData();
       expect(result).toBeNull();
     });
 
     it('should log warning when native module is not available', async () => {
-      delete (NativeModules as any).HydrationWidget;
-      await readWidgetData();
+      const mod = loadWithMock(null);
+      await mod.readWidgetData();
 
       expect(logWarning).toHaveBeenCalledWith(
         'HydrationWidget native module not available',
@@ -277,14 +292,14 @@ describe('sharedData', () => {
     });
 
     it('should return false when native module is not available', async () => {
-      delete (NativeModules as any).HydrationWidget;
-      const result = await refreshWidget();
+      const mod = loadWithMock(null);
+      const result = await mod.refreshWidget();
       expect(result).toBe(false);
     });
 
     it('should log warning when native module is not available', async () => {
-      delete (NativeModules as any).HydrationWidget;
-      await refreshWidget();
+      const mod = loadWithMock(null);
+      await mod.refreshWidget();
 
       expect(logWarning).toHaveBeenCalledWith(
         'HydrationWidget native module not available',

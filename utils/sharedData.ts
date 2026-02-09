@@ -5,8 +5,11 @@
  * using App Groups (iOS) and SharedPreferences (Android)
  */
 
-import { Platform, NativeModules } from "react-native";
+import { Platform } from "react-native";
+import { requireOptionalNativeModule } from "expo";
 import { logError, logWarning } from "./errorLogging";
+
+const HydrationWidgetModule = requireOptionalNativeModule("HydrationWidget");
 
 // App Group identifier for iOS
 export const APP_GROUP_ID = "group.website.ihumbak.hydration.expowidgets";
@@ -46,8 +49,6 @@ export const DEFAULT_WIDGET_DATA: WidgetData = {
  */
 export async function writeWidgetData(data: WidgetData): Promise<boolean> {
   try {
-    const HydrationWidgetModule = NativeModules.HydrationWidget;
-
     if (!HydrationWidgetModule) {
       logWarning("HydrationWidget native module not available", {
         operation: "writeWidgetData",
@@ -91,8 +92,6 @@ export async function writeWidgetData(data: WidgetData): Promise<boolean> {
  */
 export async function readWidgetData(): Promise<WidgetData | null> {
   try {
-    const HydrationWidgetModule = NativeModules.HydrationWidget;
-
     if (!HydrationWidgetModule) {
       logWarning("HydrationWidget native module not available", {
         operation: "readWidgetData",
@@ -148,8 +147,6 @@ export async function readWidgetData(): Promise<WidgetData | null> {
  */
 export async function refreshWidget(): Promise<boolean> {
   try {
-    const HydrationWidgetModule = NativeModules.HydrationWidget;
-
     if (!HydrationWidgetModule) {
       logWarning("HydrationWidget native module not available", {
         operation: "refreshWidget",
