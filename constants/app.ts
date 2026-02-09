@@ -12,6 +12,9 @@ export const DEFAULT_GLASS_CAPACITY = 250;
 // Daily hydration goal (in ml)
 export const DEFAULT_DAILY_GOAL = 2000;
 
+// Safety cap for daily water intake (in ml)
+export const MAX_DAILY_WATER = 10000;
+
 // TypeScript type for picker options
 export type PickerOption = {
   key: string;

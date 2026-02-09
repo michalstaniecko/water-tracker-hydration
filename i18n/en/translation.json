@@ -58,5 +58,7 @@
   "editQuickActionAccessibilityHint": "Double tap to edit the amount",
   "deleteQuickActionAccessibilityLabel": "Delete quick action {{amount}} milliliters",
   "saveQuickActionAccessibilityLabel": "Save changes",
-  "cancelEditAccessibilityLabel": "Cancel editing"
+  "cancelEditAccessibilityLabel": "Cancel editing",
+  "achievementBadgeAccessibilityLabel": "{{achievements}} achievements unlocked, {{unseen}} new",
+  "achievementBadgeAccessibilityHint": "Double tap to view achievements"
 }

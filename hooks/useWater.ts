@@ -5,6 +5,7 @@ import { useGamificationStore } from "@/stores/gamification";
 import { useNotificationsStore } from "@/stores/notifications";
 import { roundBy } from "@/utils/numbers";
 import { logError } from "@/utils/errorLogging";
+import { MAX_DAILY_WATER } from "@/constants/app";
 
 /**
  * Reschedules notifications anchored to the current drink event.
@@ -50,10 +51,12 @@ export function useWater() {
   const addWater = async () => {
     try {
       const currentWater = waterStore.getTodayWater();
-      const newCurrentWater =
-        Number(currentWater) + Number(setupStore.glassCapacity);
+      const newCurrentWater = Math.min(
+        Number(currentWater) + Number(setupStore.glassCapacity),
+        MAX_DAILY_WATER,
+      );
       await waterStore.setTodayWater(newCurrentWater.toString());
-      gamificationStore.checkAndUnlockAchievements();
+      gamificationStore.checkAndUnlockAchievements().catch(() => {});
 
       // Reschedule notifications anchored to this drink
       await rescheduleNotificationsAfterDrink();
