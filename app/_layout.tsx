@@ -111,7 +111,7 @@ export default function RootLayout() {
           fetchOrInitWaterData();
           checkAndUnlockAchievements();
           // Sync any changes made from widget while app was in background
-          syncFromWidget();
+          await syncFromWidget();
 
           // Correct notification counter and reschedule when app becomes active
           // Use getState() to get fresh values instead of stale closure values
@@ -197,7 +197,7 @@ export default function RootLayout() {
       createAutomaticBackup();
 
       // Initialize widget data after stores are loaded
-      initializeWidgetData();
+      await initializeWidgetData();
 
       // Handle deep link that opened the app (only after stores are ready)
       const initialUrl = await Linking.getInitialURL();

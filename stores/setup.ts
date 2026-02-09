@@ -194,18 +194,32 @@ export const useSetupStore = create<SetupState & SetupActions>((set, get) => ({
     quickActions: get()[SetupOptions.QUICK_ACTIONS],
   }),
   setGlassCapacity: async (capacity: string) => {
-    // Sanitize and persist to storage
-    const sanitized = sanitizePositiveNumber(capacity, String(DEFAULT_GLASS_CAPACITY));
-    await get().setOption(SetupOptions.GLASS_CAPACITY, sanitized);
-    // Sync to widget as glass capacity affects quick add button
-    syncToWidget();
+    try {
+      // Sanitize and persist to storage
+      const sanitized = sanitizePositiveNumber(capacity, String(DEFAULT_GLASS_CAPACITY));
+      await get().setOption(SetupOptions.GLASS_CAPACITY, sanitized);
+      // Sync to widget as glass capacity affects quick add button
+      await syncToWidget();
+    } catch (error) {
+      logError(error, {
+        operation: 'setGlassCapacity',
+        component: 'SetupStore',
+      });
+    }
   },
   setMinimumWater: async (water: string) => {
-    // Sanitize and persist to storage
-    const sanitized = sanitizePositiveNumber(water, String(DEFAULT_DAILY_GOAL));
-    await get().setOption(SetupOptions.MINIMUM_WATER, sanitized);
-    // Sync to widget as daily goal affects progress percentage
-    syncToWidget();
+    try {
+      // Sanitize and persist to storage
+      const sanitized = sanitizePositiveNumber(water, String(DEFAULT_DAILY_GOAL));
+      await get().setOption(SetupOptions.MINIMUM_WATER, sanitized);
+      // Sync to widget as daily goal affects progress percentage
+      await syncToWidget();
+    } catch (error) {
+      logError(error, {
+        operation: 'setMinimumWater',
+        component: 'SetupStore',
+      });
+    }
   },
   setGlassCapacityTemp: (capacity: string) => {
     // Temporary update without persisting - for editing

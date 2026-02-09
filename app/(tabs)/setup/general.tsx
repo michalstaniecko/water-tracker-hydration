@@ -48,16 +48,19 @@ export default function GeneralSettings() {
     onboarding.setStatus(value as Status);
   };
 
-  const handleGlassCapacityBlur = (value: string) => {
+  const handleGlassCapacityBlur = async (value: string) => {
     // Sanitize and persist on blur
-    const sanitized = sanitizePositiveNumber(value, String(DEFAULT_GLASS_CAPACITY));
-    setupStore.setGlassCapacity(sanitized);
+    const sanitized = sanitizePositiveNumber(
+      value,
+      String(DEFAULT_GLASS_CAPACITY),
+    );
+    await setupStore.setGlassCapacity(sanitized);
   };
 
-  const handleMinimumWaterBlur = (value: string) => {
+  const handleMinimumWaterBlur = async (value: string) => {
     // Sanitize and persist on blur
     const sanitized = sanitizePositiveNumber(value, String(DEFAULT_DAILY_GOAL));
-    setupStore.setMinimumWater(sanitized);
+    await setupStore.setMinimumWater(sanitized);
   };
 
   return (
