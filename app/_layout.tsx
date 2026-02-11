@@ -39,6 +39,7 @@ export default function RootLayout() {
   const appState = useRef(AppState.currentState);
   const isInitialActivityHoursMount = useRef(true);
   const isNotificationsInitialized = useRef(false);
+  const isWidgetInitialized = useRef(false);
   const { fetchOrInitData: fetchOrInitWaterData } = useWaterStore();
   const {
     fetchOrInitData: fetchOrInitSetup,
@@ -112,9 +113,12 @@ export default function RootLayout() {
           fetchOrInitWaterData();
           checkAndUnlockAchievements();
           // Sync any changes made from widget while app was in background
-          await syncFromWidget();
-          // Push fresh app data to widget
-          await syncToWidget();
+          // Only sync if widget data has been initialized to avoid race conditions
+          if (isWidgetInitialized.current) {
+            await syncFromWidget();
+            // Push fresh app data to widget
+            await syncToWidget();
+          }
 
           // Correct notification counter and reschedule when app becomes active
           // Use getState() to get fresh values instead of stale closure values
@@ -201,6 +205,7 @@ export default function RootLayout() {
 
       // Initialize widget data after stores are loaded
       await initializeWidgetData();
+      isWidgetInitialized.current = true;
 
       // Handle deep link that opened the app (only after stores are ready)
       const initialUrl = await Linking.getInitialURL();
