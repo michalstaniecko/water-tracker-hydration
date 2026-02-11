@@ -34,9 +34,9 @@ function prepareWidgetData(): WidgetData {
   const setupStore = useSetupStore.getState();
   const statisticsStore = useStatisticsStore.getState();
 
-  const todayWater = parseInt(waterStore.getTodayWater()) || 0;
-  const dailyGoal = parseInt(setupStore.minimumWater) || 2000;
-  const glassCapacity = parseInt(setupStore.glassCapacity) || 250;
+  const todayWater = parseInt(waterStore.getTodayWater(), 10) || 0;
+  const dailyGoal = parseInt(setupStore.minimumWater, 10) || 2000;
+  const glassCapacity = parseInt(setupStore.glassCapacity, 10) || 250;
   const streak = statisticsStore.getCurrentStreak();
 
   return {
@@ -99,7 +99,7 @@ export async function syncFromWidget(): Promise<boolean> {
     }
 
     const waterStore = useWaterStore.getState();
-    const currentWater = parseInt(waterStore.getTodayWater()) || 0;
+    const currentWater = parseInt(waterStore.getTodayWater(), 10) || 0;
 
     // If widget shows more water than app, user added water from widget
     if (widgetData.todayWater > currentWater) {
@@ -141,8 +141,18 @@ export async function handleWidgetAddWater(amount: number): Promise<void> {
     }
 
     const waterStore = useWaterStore.getState();
-    const currentWater = parseInt(waterStore.getTodayWater()) || 0;
+    const currentWater = parseInt(waterStore.getTodayWater(), 10) || 0;
     const newWater = currentWater + amount;
+
+    const DAILY_WATER_LIMIT = 20000;
+    if (newWater > DAILY_WATER_LIMIT) {
+      logError(new Error("Daily water limit exceeded"), {
+        operation: "handleWidgetAddWater",
+        component: "WidgetService",
+        data: { amount, currentWater, newWater, limit: DAILY_WATER_LIMIT },
+      });
+      return;
+    }
 
     await waterStore.setTodayWater(newWater.toString());
 

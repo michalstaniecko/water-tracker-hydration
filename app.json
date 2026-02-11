@@ -90,7 +90,8 @@
             ]
           }
         }
-      ]
+      ],
+      "./plugins/withAndroidWidgetManifest"
     ],
     "experiments": {
       "typedRoutes": true

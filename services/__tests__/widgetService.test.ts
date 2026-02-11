@@ -353,6 +353,33 @@ describe('widgetService', () => {
       );
     });
 
+    it('should reject amount that would exceed 20000ml daily limit', async () => {
+      mockGetTodayWater.mockReturnValue('19000');
+      await handleWidgetAddWater(1500);
+
+      expect(mockSetTodayWater).not.toHaveBeenCalled();
+      expect(mockLogError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'Daily water limit exceeded' }),
+        expect.objectContaining({
+          operation: 'handleWidgetAddWater',
+          component: 'WidgetService',
+          data: expect.objectContaining({
+            amount: 1500,
+            currentWater: 19000,
+            newWater: 20500,
+            limit: 20000,
+          }),
+        })
+      );
+    });
+
+    it('should allow amount at exactly 20000ml', async () => {
+      mockGetTodayWater.mockReturnValue('19750');
+      await handleWidgetAddWater(250);
+
+      expect(mockSetTodayWater).toHaveBeenCalledWith('20000');
+    });
+
     it('should log error on exception', async () => {
       const error = new Error('Store failed');
       mockSetTodayWater.mockRejectedValue(error);

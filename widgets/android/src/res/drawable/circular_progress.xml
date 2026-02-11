@@ -7,7 +7,7 @@
             android:innerRadiusRatio="2.5"
             android:thicknessRatio="15"
             android:useLevel="false">
-            <solid android:color="#E5E7EB" />
+            <solid android:color="@color/widget_progress_bg" />
         </shape>
     </item>
     <!-- Progress ring -->
@@ -20,7 +20,7 @@
                 android:innerRadiusRatio="2.5"
                 android:thicknessRatio="15"
                 android:useLevel="true">
-                <solid android:color="#3B82F6" />
+                <solid android:color="@color/widget_progress_fg" />
             </shape>
         </rotate>
     </item>
