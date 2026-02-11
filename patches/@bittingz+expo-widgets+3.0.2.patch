@@ -1,0 +1,13 @@
+diff --git a/node_modules/@bittingz/expo-widgets/plugin/build/utils/logger.js b/node_modules/@bittingz/expo-widgets/plugin/build/utils/logger.js
+index 4b64845..bc16548 100644
+--- a/node_modules/@bittingz/expo-widgets/plugin/build/utils/logger.js
++++ b/node_modules/@bittingz/expo-widgets/plugin/build/utils/logger.js
+@@ -15,7 +15,7 @@ class Logger {
+         if (!this.showDebug || !this.consoleAvailable) {
+             return;
+         }
+-        console.debug(message, ...optionalParams);
++        console.error(message, ...optionalParams);
+     }
+     warn(message, ...optionalParams) {
+         if (!this.consoleAvailable) {
