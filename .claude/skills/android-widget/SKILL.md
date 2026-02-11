@@ -227,7 +227,7 @@ class HydrationWidgetModule : Module() {
         AsyncFunction("updateWidgetData") { prefsName: String, jsonString: String ->
             appContext.reactContext?.let { context ->
                 val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-                prefs.edit().putString("widget_data", jsonString).apply()
+                prefs.edit().putString("widget_data", jsonString).commit()
             }
         }
 
@@ -360,7 +360,7 @@ const HydrationWidgetModule = requireOptionalNativeModule("HydrationWidget");
 JS App State -> widgetService.syncToWidget()
              -> sharedData.writeWidgetData()
              -> Native Module (Kotlin)
-             -> SharedPreferences.edit().putString("widget_data", json).apply()
+             -> SharedPreferences.edit().putString("widget_data", json).commit()
              -> HydrationWidget.refreshAllWidgets() sends ACTION_REFRESH broadcast
              -> onReceive() -> onUpdate() reads SharedPreferences -> RemoteViews update
 ```
@@ -369,17 +369,17 @@ JS App State -> widgetService.syncToWidget()
 ```kotlin
 // Write (in native module)
 val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-prefs.edit().putString("widget_data", jsonString).apply()
+prefs.edit().putString("widget_data", jsonString).commit()
 
 // Read (in widget provider)
 val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 val jsonString = prefs.getString(DATA_KEY, null)
 ```
 
-### `apply()` vs `commit()`
-- Use `apply()` (async, non-blocking) for writes from the native module — the widget refresh broadcast gives SharedPreferences time to flush
-- Use `commit()` only if you need a synchronous guarantee (rare)
-- Both are safe for cross-process reads; `apply()` is preferred for performance
+### `commit()` vs `apply()`
+- Use `commit()` (synchronous) for writes from the native module — `apply()` is async and creates a race condition where the `ACTION_REFRESH` broadcast fires before SharedPreferences has flushed to disk, causing the widget to read stale data
+- `apply()` is acceptable for writes that do NOT trigger an immediate read (rare in this architecture)
+- Rule of thumb: if a broadcast or widget refresh follows the write, always use `commit()`
 
 ### Key Constants
 ```kotlin
@@ -433,17 +433,17 @@ For the app to handle widget deep links (`hydration://` scheme):
 2. **`android:exported="true"`** on the receiver — required for receiving system broadcasts
 3. **Deep link intent filter** on `MainActivity` — needed for widget tap-to-open actions
 
-The plugin must be registered in `app.json` **after** the widgets plugin:
+The plugin must be registered in `app.json` **before** the widgets plugin. This is because `withAndroidManifest` modifiers execute in **LIFO (last-in-first-out) order** — the plugin registered first executes last. By placing the custom plugin before `@bittingz/expo-widgets`, it executes after the widgets plugin has already created the receiver entry, so it can safely modify it:
 
 ```json
 "plugins": [
+    "./plugins/withAndroidWidgetManifest",
     ["@bittingz/expo-widgets", {
         "android": {
             "src": "./widgets/android",
             "widgets": [{ "name": "HydrationWidget", "resourceName": "@xml/hydration_widget_info" }]
         }
-    }],
-    "./plugins/withAndroidWidgetManifest"
+    }]
 ]
 ```
 
@@ -616,3 +616,129 @@ describe('Android widget bridge', () => {
 2. `jest.doMock` is NOT hoisted, so it respects execution order
 3. `jest.isolateModules` gives a fresh module registry per call, so each test can provide different mock behavior (e.g., `null` module vs working module)
 4. Mock `expo` directly, not `expo-modules-core` — jest-expo's setup already mocks `expo-modules-core` and they conflict
+
+## Lessons Learned & Design Patterns
+
+Hard-won insights from iterative development. Each subsection documents a non-obvious pitfall and its solution.
+
+### Bidirectional Data Synchronization Architecture
+
+Data flows between three layers:
+
+| Layer | File | Responsibility |
+|---|---|---|
+| Bridge | `utils/sharedData.ts` | Platform-specific read/write to native storage |
+| Business logic | `services/widgetService.ts` | Prepare data, validate, sync decisions |
+| Lifecycle | `app/_layout.tsx` | Trigger sync on app start, resume, and deep links |
+
+**Sync flows:**
+
+1. **Push (app -> widget):** User adds water in app -> `water.ts` store -> `syncToWidget()` -> `writeWidgetData()` -> native `updateWidgetData` -> `commit()` -> `refreshWidget()` broadcast -> widget reads SharedPreferences -> RemoteViews update
+2. **Pull (widget -> app):** App resumes from background -> `_layout.tsx` `AppState` listener -> `syncFromWidget()` -> `readWidgetData()` -> validate `dateKey === today` -> if widget has more water, update store
+3. **Deep link action:** User taps "+250ml" button on widget -> `PendingIntent` fires `hydration://?action=addwater&amount=250` -> `_layout.tsx` `Linking` listener -> `handleWidgetAddWater(amount)` -> validate amount -> update store -> `syncToWidget()` -> widget refreshes
+4. **Initialization/resume:** `_layout.tsx` `useEffect` on mount -> stores load from AsyncStorage -> `syncFromWidget()` (pull widget changes) -> `syncToWidget()` (push fresh state)
+
+### Pitfall: Deep Links vs Launch Intents
+
+**Bug:** Tapping the widget body showed "This screen doesn't exist" (Expo Router 404).
+
+**Root cause:** The original code used `Uri.parse("hydration://home")` to open the app. Expo Router interprets `hydration://home` as a route to `/home`, which doesn't exist (the home screen is at `/(tabs)/` index route).
+
+```kotlin
+// WRONG — Expo Router tries to navigate to /home -> 404
+val openAppIntent = Intent(Intent.ACTION_VIEW).apply {
+    data = Uri.parse("hydration://home")
+    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+}
+
+// CORRECT — use the system launch intent, no route interpretation
+val openAppIntent = context.packageManager
+    .getLaunchIntentForPackage(context.packageName)?.apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+    }
+```
+
+**Rule:** Use deep links (`Uri.parse("hydration://...")`) only for parameterized actions (e.g., `?action=addwater&amount=250`). For "just open the app", always use `getLaunchIntentForPackage()` — it brings the app to the foreground in its current state without triggering route navigation.
+
+See `widgets/android/src/main/java/package_name/HydrationWidget.kt:102-114` for the correct implementation.
+
+### Pitfall: Config Plugin Ordering (LIFO)
+
+Expo config plugins using `withAndroidManifest` execute in **LIFO (last-in-first-out)** order. This means the plugin registered **first** in `app.json`'s `plugins` array executes **last**.
+
+**Why this matters:** The custom `withAndroidWidgetManifest` plugin needs to modify the `<receiver>` element that `@bittingz/expo-widgets` creates. If the custom plugin executes before the widgets plugin, the receiver doesn't exist yet and the modification silently does nothing.
+
+```json
+// WRONG — custom plugin executes AFTER widgets plugin (LIFO),
+// so it runs before the receiver exists
+"plugins": [
+    ["@bittingz/expo-widgets", { ... }],
+    "./plugins/withAndroidWidgetManifest"
+]
+
+// CORRECT — custom plugin registered BEFORE widgets plugin,
+// so it executes LAST (LIFO) when receiver already exists
+"plugins": [
+    "./plugins/withAndroidWidgetManifest",
+    ["@bittingz/expo-widgets", { ... }]
+]
+```
+
+**Symptoms of wrong ordering:** The `ACTION_REFRESH` intent filter and `android:exported="true"` are missing from the built `AndroidManifest.xml`. Widget installs but never refreshes when data changes.
+
+### Pitfall: Native Module Location — `modules/` vs `widgets/`
+
+The `@bittingz/expo-widgets` plugin auto-generates an `ExpoWidgetsModule` from any `Module.kt` found in the `widgets/` directory. If you place your real native module (`HydrationWidgetModule`) in `widgets/android/src/main/java/.../Module.kt`, it gets overwritten or conflicts with the auto-generated one.
+
+**Solution:** Place the real native module in a separate `modules/` directory and leave a stub in `widgets/`:
+
+```
+modules/hydration-widget/
+  android/
+    src/main/java/website/ihumbak/hydration/
+      HydrationWidgetModule.kt          <- Real module with updateWidgetData, readWidgetData, refreshWidget
+  expo-module.config.json               <- Registers with Expo module loader
+
+widgets/android/src/main/java/package_name/
+  Module.kt                             <- Stub: comment-only file preventing auto-generation
+  HydrationWidget.kt                    <- Widget provider (AppWidgetProvider) — stays here
+```
+
+The stub `widgets/.../Module.kt` contains only a package declaration and a comment. This prevents the plugin from generating a conflicting `ExpoWidgetsModule` while keeping the widget provider in the expected location.
+
+### Data Freshness — `dateKey` Pattern
+
+The `WidgetData.dateKey` field (format: `YYYY-MM-DD`) prevents syncing stale data from a previous day.
+
+**Problem without `dateKey`:** If the user doesn't open the app for a day, the widget still holds yesterday's water total. On the next app open, `syncFromWidget()` would incorrectly import yesterday's total as today's intake.
+
+**Solution in `services/widgetService.ts:97`:**
+```typescript
+const today = getToday();
+if (widgetData.dateKey !== today) {
+    return false;  // Reject stale widget data
+}
+```
+
+The `dateKey` is set in `prepareWidgetData()` via `getToday()` every time the app syncs to the widget. This ensures:
+- Widget data always carries the date it was generated for
+- `syncFromWidget()` rejects data from previous days
+- On a new day, the first `syncToWidget()` call pushes fresh zeroed data with today's `dateKey`
+
+### Input Validation at Widget Boundary
+
+Widget deep links are an **untrusted input boundary** — the URL parameters can be manipulated. All values must be validated before affecting app state.
+
+**Validation in `services/widgetService.ts:132-155` (`handleWidgetAddWater`):**
+
+| Check | Rule | Why |
+|---|---|---|
+| Amount range | `amount > 0 && amount <= 5000` | Reject zero, negative, or unreasonably large single additions |
+| Daily limit | `currentWater + amount <= 20000` | Prevent accidental or malicious total overflow |
+| Parse guard | `parseInt(amount, 10)` + `isNaN()` check | Handle non-numeric deep link params (in `_layout.tsx:158-164`) |
+
+**Validation chain:**
+1. `_layout.tsx:158` — `parseInt(queryParams.amount, 10)` parses the URL parameter
+2. `_layout.tsx:164` — `!isNaN(amount) && amount > 0` guards before calling service
+3. `widgetService.ts:134` — `amount <= 0 || amount > 5000` rejects out-of-range values
+4. `widgetService.ts:148` — `newWater > 20000` rejects daily total overflow
