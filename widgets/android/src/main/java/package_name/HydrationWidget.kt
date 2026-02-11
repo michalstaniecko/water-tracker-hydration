@@ -100,17 +100,18 @@ class HydrationWidget : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.add_water_button, addWaterPendingIntent)
 
             // Set up widget tap to open app
-            val openAppIntent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("hydration://home")
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            val openAppIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
             }
-            val openAppPendingIntent = PendingIntent.getActivity(
-                context,
-                1,
-                openAppIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            views.setOnClickPendingIntent(R.id.widget_container, openAppPendingIntent)
+            if (openAppIntent != null) {
+                val openAppPendingIntent = PendingIntent.getActivity(
+                    context,
+                    1,
+                    openAppIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                views.setOnClickPendingIntent(R.id.widget_container, openAppPendingIntent)
+            }
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }

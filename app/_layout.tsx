@@ -28,6 +28,7 @@ import {
   initializeWidgetData,
   handleWidgetAddWater,
   syncFromWidget,
+  syncToWidget,
 } from "@/services/widgetService";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -112,6 +113,8 @@ export default function RootLayout() {
           checkAndUnlockAchievements();
           // Sync any changes made from widget while app was in background
           await syncFromWidget();
+          // Push fresh app data to widget
+          await syncToWidget();
 
           // Correct notification counter and reschedule when app becomes active
           // Use getState() to get fresh values instead of stale closure values

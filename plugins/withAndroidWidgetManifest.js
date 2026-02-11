@@ -5,6 +5,11 @@ const { withAndroidManifest } = require("expo/config-plugins");
  * 1. ACTION_REFRESH intent filter on HydrationWidget receiver (for programmatic refresh)
  * 2. android:exported="true" on receiver (required for broadcast reception)
  * 3. Deep link intent filter on MainActivity (for widget tap-to-open and quick-add)
+ *
+ * IMPORTANT: This plugin must be listed BEFORE @bittingz/expo-widgets in app.json plugins
+ * because withAndroidManifest modifiers execute in LIFO (last-in, first-out) order.
+ * Being listed first means this modifier executes last, ensuring the widget receiver
+ * created by expo-widgets already exists when we modify it.
  */
 function withAndroidWidgetManifest(config) {
   return withAndroidManifest(config, (config) => {

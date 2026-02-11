@@ -7,6 +7,23 @@ description: Expert Kotlin/Android guidance for Android AppWidget development wi
 
 Expert guidance for Android widget development with React Native/Expo integration.
 
+## Directory Structure
+
+The `@bittingz/expo-widgets` plugin expects a `src/` prefix inside the widget directory. Files placed directly in `widgets/android/main/...` or `widgets/android/res/...` (without `src/`) will NOT be found during build.
+
+```
+widgets/android/src/
+  main/
+    java/website/ihumbak/hydration/   ← Kotlin files (Module, Widget Provider)
+    res/
+      drawable/                        ← Shape drawables (backgrounds, progress ring)
+      drawable-night/                  ← Dark mode drawables
+      layout/                          ← Widget layout XML (RemoteViews)
+      values/                          ← Colors, strings (light mode)
+      values-night/                    ← Colors (dark mode overrides)
+      xml/                             ← Widget info XML (appwidget-provider)
+```
+
 ## Code Style Conventions
 
 ### Organization
@@ -154,7 +171,22 @@ RemoteViews only supports a limited subset of Android views:
 ### Important Notes
 - Use `@drawable/widget_background` (shape XML) for rounded corners, not `android:clipToOutline`
 - Circular progress ring is a `ProgressBar` with a custom `layer-list` drawable (`ring` shape)
-- Deprecated: `android:tint` on `ImageView` — use `app:tint` from AndroidX instead
+- **Pitfall: `android:tint` is deprecated** — causes lint warnings and may not work on all API levels. Use `app:tint` from AndroidX instead. This requires adding the `app` namespace to the root layout element:
+
+```xml
+<!-- WRONG — deprecated, lint warning -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:tint="@color/widget_accent" />
+</LinearLayout>
+
+<!-- CORRECT — add app namespace, use app:tint -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView app:tint="@color/widget_accent" />
+</LinearLayout>
+```
+
 - Click handlers use `PendingIntent` set via `views.setOnClickPendingIntent(R.id.view, pendingIntent)`
 - Deep links use `Intent(Intent.ACTION_VIEW)` with `Uri.parse("hydration://...")`
 
@@ -193,20 +225,23 @@ class HydrationWidgetModule : Module() {
         Name("HydrationWidget")
 
         AsyncFunction("updateWidgetData") { prefsName: String, jsonString: String ->
-            val context = appContext.reactContext ?: return@AsyncFunction
-            val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-            prefs.edit().putString("widget_data", jsonString).apply()
+            appContext.reactContext?.let { context ->
+                val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
+                prefs.edit().putString("widget_data", jsonString).apply()
+            }
         }
 
         AsyncFunction("readWidgetData") { prefsName: String ->
-            val context = appContext.reactContext ?: return@AsyncFunction null
-            val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-            prefs.getString("widget_data", null)
+            appContext.reactContext?.let { context ->
+                val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
+                prefs.getString("widget_data", null)
+            }
         }
 
         AsyncFunction("refreshWidget") {
-            val context = appContext.reactContext ?: return@AsyncFunction
-            HydrationWidget.refreshAllWidgets(context)
+            appContext.reactContext?.let { context ->
+                HydrationWidget.refreshAllWidgets(context)
+            }
         }
     }
 }
@@ -217,6 +252,32 @@ class HydrationWidgetModule : Module() {
 - Use `AsyncFunction` for operations that should not block the JS thread
 - Use `Function` (synchronous) only for lightweight, non-blocking operations
 - The module name in `Name("HydrationWidget")` must match the JS-side `requireOptionalNativeModule("HydrationWidget")` call exactly
+
+### Pitfall: `AsyncFunction` Lambda Return Type
+The Expo Modules Kotlin DSL infers the `AsyncFunction` lambda return type as `Any?`. Using `return@AsyncFunction` (bare return, no value) returns `Unit`, which causes a compile error:
+
+```
+e: Module.kt: Return type mismatch: expected 'kotlin.Any?', actual 'kotlin.Unit'
+```
+
+**Fix:** Use `?.let { }` instead of early-return guards. When the receiver is `null`, `?.let` returns `null` (compatible with `Any?`):
+
+```kotlin
+// WRONG — returns Unit, compile error
+AsyncFunction("doSomething") {
+    val context = appContext.reactContext ?: return@AsyncFunction  // Unit!
+    // ...
+}
+
+// CORRECT — returns null when reactContext is null
+AsyncFunction("doSomething") {
+    appContext.reactContext?.let { context ->
+        // ...
+    }
+}
+```
+
+Reference: `expo-localization`'s `LocalizationModule.kt` uses this `?.let` pattern.
 
 ## Critical: JS-to-Kotlin Bridge Pitfalls
 
@@ -363,6 +424,30 @@ For the app to handle widget deep links (`hydration://` scheme):
 - Two intent filters: one for system `APPWIDGET_UPDATE`, one for custom `ACTION_REFRESH`
 - `<meta-data>` points to the widget configuration XML (`@xml/hydration_widget_info`)
 - The `@bittingz/expo-widgets` plugin handles manifest generation — manual edits are overwritten on `npx expo prebuild`
+
+### Config Plugin for Missing Manifest Entries
+
+`@bittingz/expo-widgets` does NOT generate all required manifest entries. A custom Expo config plugin (`plugins/withAndroidWidgetManifest.js`) is needed to add:
+
+1. **`ACTION_REFRESH` intent filter** on the widget receiver — without this, `refreshAllWidgets()` broadcasts are silently ignored
+2. **`android:exported="true"`** on the receiver — required for receiving system broadcasts
+3. **Deep link intent filter** on `MainActivity` — needed for widget tap-to-open actions
+
+The plugin must be registered in `app.json` **after** the widgets plugin:
+
+```json
+"plugins": [
+    ["@bittingz/expo-widgets", {
+        "android": {
+            "src": "./widgets/android",
+            "widgets": [{ "name": "HydrationWidget", "resourceName": "@xml/hydration_widget_info" }]
+        }
+    }],
+    "./plugins/withAndroidWidgetManifest"
+]
+```
+
+The config plugin uses `withAndroidManifest` from `expo/config-plugins` to modify the merged manifest before build. It runs on every `npx expo prebuild`, so changes persist across rebuilds.
 
 ## Dark Mode Support
 
