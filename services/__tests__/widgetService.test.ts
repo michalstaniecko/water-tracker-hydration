@@ -377,6 +377,13 @@ describe('widgetService', () => {
       expect(mockLogError).toHaveBeenCalled();
     });
 
+    it('should allow amount at exactly 5000', async () => {
+      mockGetTodayWater.mockReturnValue('0');
+      await handleWidgetAddWater(5000);
+
+      expect(mockSetTodayWater).toHaveBeenCalledWith('5000');
+    });
+
     it('should reject amount > 5000', async () => {
       await handleWidgetAddWater(5001);
 

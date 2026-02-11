@@ -33,15 +33,17 @@ export interface WidgetData {
 /**
  * Default widget data when no data is available
  */
-export const DEFAULT_WIDGET_DATA: WidgetData = {
-  todayWater: 0,
-  dailyGoal: 2000,
-  percentage: 0,
-  streak: 0,
-  glassCapacity: 250,
-  lastUpdated: new Date().toISOString(),
-  dateKey: "",
-};
+export function getDefaultWidgetData(): WidgetData {
+  return {
+    todayWater: 0,
+    dailyGoal: 2000,
+    percentage: 0,
+    streak: 0,
+    glassCapacity: 250,
+    lastUpdated: new Date().toISOString(),
+    dateKey: "",
+  };
+}
 
 /**
  * Write widget data to shared storage

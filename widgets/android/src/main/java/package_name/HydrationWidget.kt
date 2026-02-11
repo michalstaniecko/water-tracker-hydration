@@ -93,7 +93,7 @@ class HydrationWidget : AppWidgetProvider() {
             }
             val addWaterPendingIntent = PendingIntent.getActivity(
                 context,
-                0,
+                appWidgetId,
                 addWaterIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
