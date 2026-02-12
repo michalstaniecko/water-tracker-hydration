@@ -27,7 +27,6 @@ widgets/android/src/
 ## Code Style Conventions
 
 ### Organization
-- Use `// region` / `// endregion` comments to section code (Constants, Lifecycle, Widget Update, Helpers)
 - Group constants in a `companion object` at the bottom of the class
 - Keep widget provider, native module, and layout XML in separate files
 

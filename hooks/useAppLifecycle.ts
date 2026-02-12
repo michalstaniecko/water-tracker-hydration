@@ -34,6 +34,7 @@ export function useAppLifecycle({
   const appState = useRef(AppState.currentState);
   const isNotificationsInitialized = useRef(false);
   const isWidgetInitialized = useRef(false);
+  const isSyncing = useRef(false);
 
   useEffect(() => {
     const subscription = AppState.addEventListener(
@@ -46,11 +47,16 @@ export function useAppLifecycle({
           fetchOrInitWaterData();
           checkAndUnlockAchievements();
           // Sync any changes made from widget while app was in background
-          // Only sync if widget data has been initialized to avoid race conditions
-          if (isWidgetInitialized.current) {
-            await syncFromWidget();
-            // Push fresh app data to widget
-            await syncToWidget();
+          // Only sync if widget data has been initialized and no sync is already in progress
+          if (isWidgetInitialized.current && !isSyncing.current) {
+            isSyncing.current = true;
+            try {
+              await syncFromWidget();
+              // Push fresh app data to widget
+              await syncToWidget();
+            } finally {
+              isSyncing.current = false;
+            }
           }
 
           // Correct notification counter and reschedule when app becomes active
@@ -92,7 +98,7 @@ export function useAppLifecycle({
       const { queryParams } = parsed;
 
       if (queryParams?.action === "addwater" && queryParams?.amount) {
-        const amount = parseInt(queryParams.amount as string, 10);
+        const amount = parseInt(String(queryParams.amount ?? ""), 10);
         logInfo("Adding water from deep link", {
           operation: "handleDeepLink",
           component: "RootLayout",
