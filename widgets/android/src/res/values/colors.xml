@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="widget_background">#FFFFFF</color>
-    <color name="widget_button_bg">#EBF5FF</color>
-    <color name="widget_progress_bg">#E5E7EB</color>
+    <color name="widget_button_bg">#3B82F6</color>
+    <color name="widget_button_text">#FFFFFF</color>
+    <color name="widget_progress_bg">#66FFFFFF</color>
     <color name="widget_progress_fg">#3B82F6</color>
     <color name="widget_accent">#3B82F6</color>
     <color name="widget_text_primary">#1E40AF</color>
-    <color name="widget_text_secondary">#6B7280</color>
+    <color name="widget_text_secondary">#1E3A5F</color>
     <color name="widget_streak">#F97316</color>
 </resources>
