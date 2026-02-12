@@ -24,6 +24,16 @@ jest.mock('@/utils/errorLogging', () => ({
   logError: jest.fn(),
   logInfo: jest.fn(),
 }));
+jest.mock('@/plugins/i18n', () => ({
+  t: jest.fn((key: string, opts?: any) => {
+    const translations: Record<string, string> = {
+      widgetGoalOf: `of ${opts?.goal}ml`,
+      dayStreak: 'day streak',
+      daysStreak: 'days streak',
+    };
+    return translations[key] || key;
+  }),
+}));
 
 const mockWriteWidgetData = writeWidgetData as jest.MockedFunction<typeof writeWidgetData>;
 const mockReadWidgetData = readWidgetData as jest.MockedFunction<typeof readWidgetData>;
@@ -165,6 +175,34 @@ describe('widgetService', () => {
         })
       );
     });
+
+    it('should include goalText in widget data', async () => {
+      await syncToWidget();
+      expect(mockWriteWidgetData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          goalText: 'of 2000ml',
+        })
+      );
+    });
+
+    it('should include streakText in widget data', async () => {
+      await syncToWidget();
+      expect(mockWriteWidgetData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          streakText: '5 days streak',
+        })
+      );
+    });
+
+    it('should use singular dayStreak when streak is 1', async () => {
+      mockGetCurrentStreak.mockReturnValue(1);
+      await syncToWidget();
+      expect(mockWriteWidgetData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          streakText: '1 day streak',
+        })
+      );
+    });
   });
 
   describe('syncFromWidget', () => {
@@ -268,6 +306,62 @@ describe('widgetService', () => {
       );
     });
 
+    it('should reject todayWater exceeding 20000ml limit', async () => {
+      mockReadWidgetData.mockResolvedValue({
+        todayWater: 25000,
+        dailyGoal: 2000,
+        percentage: 100,
+        streak: 3,
+        glassCapacity: 250,
+        lastUpdated: '2026-01-28T12:00:00.000Z',
+        dateKey: '2026-01-28',
+      });
+
+      const result = await syncFromWidget();
+
+      expect(result).toBe(false);
+      expect(mockSetTodayWater).not.toHaveBeenCalled();
+      expect(mockLogError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'Widget data contains invalid water amount' }),
+        expect.objectContaining({
+          operation: 'syncFromWidget',
+          component: 'WidgetService',
+          data: expect.objectContaining({
+            todayWater: 25000,
+            limit: 20000,
+          }),
+        })
+      );
+    });
+
+    it('should reject negative todayWater', async () => {
+      mockReadWidgetData.mockResolvedValue({
+        todayWater: -100,
+        dailyGoal: 2000,
+        percentage: 0,
+        streak: 3,
+        glassCapacity: 250,
+        lastUpdated: '2026-01-28T12:00:00.000Z',
+        dateKey: '2026-01-28',
+      });
+
+      const result = await syncFromWidget();
+
+      expect(result).toBe(false);
+      expect(mockSetTodayWater).not.toHaveBeenCalled();
+      expect(mockLogError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'Widget data contains invalid water amount' }),
+        expect.objectContaining({
+          operation: 'syncFromWidget',
+          component: 'WidgetService',
+          data: expect.objectContaining({
+            todayWater: -100,
+            limit: 20000,
+          }),
+        })
+      );
+    });
+
     it('should log error and return false on exception', async () => {
       const error = new Error('Read failed');
       mockReadWidgetData.mockRejectedValue(error);
@@ -293,11 +387,11 @@ describe('widgetService', () => {
       expect(mockSetTodayWater).toHaveBeenCalledWith('1250');
     });
 
-    it('should call syncToWidget after update', async () => {
+    it('should not call syncToWidget directly (store handles it)', async () => {
       mockGetTodayWater.mockReturnValue('1000');
       await handleWidgetAddWater(250);
 
-      expect(mockWriteWidgetData).toHaveBeenCalled();
+      expect(mockWriteWidgetData).not.toHaveBeenCalled();
     });
 
     it('should reject amount <= 0', async () => {
@@ -319,6 +413,13 @@ describe('widgetService', () => {
 
       expect(mockSetTodayWater).not.toHaveBeenCalled();
       expect(mockLogError).toHaveBeenCalled();
+    });
+
+    it('should allow amount at exactly 5000', async () => {
+      mockGetTodayWater.mockReturnValue('0');
+      await handleWidgetAddWater(5000);
+
+      expect(mockSetTodayWater).toHaveBeenCalledWith('5000');
     });
 
     it('should reject amount > 5000', async () => {
@@ -351,6 +452,33 @@ describe('widgetService', () => {
           }),
         })
       );
+    });
+
+    it('should reject amount that would exceed 20000ml daily limit', async () => {
+      mockGetTodayWater.mockReturnValue('19000');
+      await handleWidgetAddWater(1500);
+
+      expect(mockSetTodayWater).not.toHaveBeenCalled();
+      expect(mockLogError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'Daily water limit exceeded' }),
+        expect.objectContaining({
+          operation: 'handleWidgetAddWater',
+          component: 'WidgetService',
+          data: expect.objectContaining({
+            amount: 1500,
+            currentWater: 19000,
+            newWater: 20500,
+            limit: 20000,
+          }),
+        })
+      );
+    });
+
+    it('should allow amount at exactly 20000ml', async () => {
+      mockGetTodayWater.mockReturnValue('19750');
+      await handleWidgetAddWater(250);
+
+      expect(mockSetTodayWater).toHaveBeenCalledWith('20000');
     });
 
     it('should log error on exception', async () => {

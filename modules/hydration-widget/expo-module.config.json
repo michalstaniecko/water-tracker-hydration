@@ -1,0 +1,6 @@
+{
+  "platforms": ["android"],
+  "android": {
+    "modules": ["website.ihumbak.hydration.HydrationWidgetModule"]
+  }
+}

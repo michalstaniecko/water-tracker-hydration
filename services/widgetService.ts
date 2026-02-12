@@ -16,6 +16,9 @@ import {
   WidgetData,
 } from "@/utils/sharedData";
 import { logError, logInfo } from "@/utils/errorLogging";
+import i18n from "@/plugins/i18n";
+
+const DAILY_WATER_LIMIT = 20000;
 
 /**
  * Calculates percentage of daily goal achieved
@@ -34,10 +37,15 @@ function prepareWidgetData(): WidgetData {
   const setupStore = useSetupStore.getState();
   const statisticsStore = useStatisticsStore.getState();
 
-  const todayWater = parseInt(waterStore.getTodayWater()) || 0;
-  const dailyGoal = parseInt(setupStore.minimumWater) || 2000;
-  const glassCapacity = parseInt(setupStore.glassCapacity) || 250;
+  const todayWater = parseInt(waterStore.getTodayWater(), 10) || 0;
+  const dailyGoal = parseInt(setupStore.minimumWater, 10) || 2000;
+  const glassCapacity = parseInt(setupStore.glassCapacity, 10) || 250;
   const streak = statisticsStore.getCurrentStreak();
+
+  const t = i18n.t.bind(i18n);
+  const goalText = t("widgetGoalOf", { goal: dailyGoal });
+  const streakLabel = streak === 1 ? t("dayStreak") : t("daysStreak");
+  const streakText = `${streak} ${streakLabel}`;
 
   return {
     todayWater,
@@ -47,6 +55,8 @@ function prepareWidgetData(): WidgetData {
     glassCapacity,
     lastUpdated: new Date().toISOString(),
     dateKey: getToday(),
+    goalText,
+    streakText,
   };
 }
 
@@ -98,8 +108,18 @@ export async function syncFromWidget(): Promise<boolean> {
       return false;
     }
 
+    // Validate widget data bounds
+    if (widgetData.todayWater < 0 || widgetData.todayWater > DAILY_WATER_LIMIT) {
+      logError(new Error("Widget data contains invalid water amount"), {
+        operation: "syncFromWidget",
+        component: "WidgetService",
+        data: { todayWater: widgetData.todayWater, limit: DAILY_WATER_LIMIT },
+      });
+      return false;
+    }
+
     const waterStore = useWaterStore.getState();
-    const currentWater = parseInt(waterStore.getTodayWater()) || 0;
+    const currentWater = parseInt(waterStore.getTodayWater(), 10) || 0;
 
     // If widget shows more water than app, user added water from widget
     if (widgetData.todayWater > currentWater) {
@@ -141,8 +161,17 @@ export async function handleWidgetAddWater(amount: number): Promise<void> {
     }
 
     const waterStore = useWaterStore.getState();
-    const currentWater = parseInt(waterStore.getTodayWater()) || 0;
+    const currentWater = parseInt(waterStore.getTodayWater(), 10) || 0;
     const newWater = currentWater + amount;
+
+    if (newWater > DAILY_WATER_LIMIT) {
+      logError(new Error("Daily water limit exceeded"), {
+        operation: "handleWidgetAddWater",
+        component: "WidgetService",
+        data: { amount, currentWater, newWater, limit: DAILY_WATER_LIMIT },
+      });
+      return;
+    }
 
     await waterStore.setTodayWater(newWater.toString());
 
@@ -152,8 +181,6 @@ export async function handleWidgetAddWater(amount: number): Promise<void> {
       data: { amount, previousWater: currentWater, newWater },
     });
 
-    // Sync updated data back to widget
-    await syncToWidget();
   } catch (error) {
     logError(error, {
       operation: "handleWidgetAddWater",
