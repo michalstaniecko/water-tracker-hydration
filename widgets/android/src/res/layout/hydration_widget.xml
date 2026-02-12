@@ -112,29 +112,39 @@
         android:focusable="true">
 
         <FrameLayout
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:background="@drawable/button_background">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="+"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/widget_accent" />
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/widget_button_text"
+                    android:includeFontPadding="false" />
+
+                <TextView
+                    android:id="@+id/add_water_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/widget_button_text"
+                    android:includeFontPadding="false"
+                    android:text="+250ml" />
+
+            </LinearLayout>
 
         </FrameLayout>
-
-        <TextView
-            android:id="@+id/add_water_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="10sp"
-            android:textColor="@color/widget_accent"
-            android:layout_marginTop="2dp"
-            android:text="+250ml" />
 
     </LinearLayout>
 
