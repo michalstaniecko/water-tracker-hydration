@@ -60,5 +60,6 @@
   "saveQuickActionAccessibilityLabel": "Zapisz zmiany",
   "cancelEditAccessibilityLabel": "Anuluj edycję",
   "achievementBadgeAccessibilityLabel": "{{achievements}} osiągnięć odblokowanych, {{unseen}} nowych",
-  "achievementBadgeAccessibilityHint": "Dotknij dwukrotnie, aby zobaczyć osiągnięcia"
+  "achievementBadgeAccessibilityHint": "Dotknij dwukrotnie, aby zobaczyć osiągnięcia",
+  "widgetGoalOf": "z {{goal}}ml"
 }

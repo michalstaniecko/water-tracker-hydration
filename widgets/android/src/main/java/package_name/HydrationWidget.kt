@@ -53,6 +53,8 @@ class HydrationWidget : AppWidgetProvider() {
             var percentage = 0f
             var streak = 0
             var glassCapacity = 250
+            var goalText = "of ${dailyGoal}ml"
+            var streakText = "$streak day streak"
 
             if (jsonString != null) {
                 try {
@@ -62,6 +64,8 @@ class HydrationWidget : AppWidgetProvider() {
                     percentage = json.optDouble("percentage", 0.0).toFloat()
                     streak = json.optInt("streak", 0)
                     glassCapacity = json.optInt("glassCapacity", 250)
+                    goalText = json.optString("goalText", "of ${dailyGoal}ml")
+                    streakText = json.optString("streakText", "$streak day streak")
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -72,7 +76,7 @@ class HydrationWidget : AppWidgetProvider() {
             // Update text views
             views.setTextViewText(R.id.water_amount, "${todayWater}ml")
             views.setTextViewText(R.id.water_percentage, "${percentage.roundToInt()}%")
-            views.setTextViewText(R.id.daily_goal, "of ${dailyGoal}ml")
+            views.setTextViewText(R.id.daily_goal, goalText)
             views.setTextViewText(R.id.add_water_text, "+${glassCapacity}ml")
 
             // Update progress bar
@@ -81,7 +85,7 @@ class HydrationWidget : AppWidgetProvider() {
             // Show/hide streak
             if (streak > 0) {
                 views.setViewVisibility(R.id.streak_container, View.VISIBLE)
-                views.setTextViewText(R.id.streak_text, "$streak day streak")
+                views.setTextViewText(R.id.streak_text, streakText)
             } else {
                 views.setViewVisibility(R.id.streak_container, View.GONE)
             }

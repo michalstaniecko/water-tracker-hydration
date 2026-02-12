@@ -16,6 +16,7 @@ import {
   WidgetData,
 } from "@/utils/sharedData";
 import { logError, logInfo } from "@/utils/errorLogging";
+import i18n from "@/plugins/i18n";
 
 const DAILY_WATER_LIMIT = 20000;
 
@@ -41,6 +42,11 @@ function prepareWidgetData(): WidgetData {
   const glassCapacity = parseInt(setupStore.glassCapacity, 10) || 250;
   const streak = statisticsStore.getCurrentStreak();
 
+  const t = i18n.t.bind(i18n);
+  const goalText = t("widgetGoalOf", { goal: dailyGoal });
+  const streakLabel = streak === 1 ? t("dayStreak") : t("daysStreak");
+  const streakText = `${streak} ${streakLabel}`;
+
   return {
     todayWater,
     dailyGoal,
@@ -49,6 +55,8 @@ function prepareWidgetData(): WidgetData {
     glassCapacity,
     lastUpdated: new Date().toISOString(),
     dateKey: getToday(),
+    goalText,
+    streakText,
   };
 }
 

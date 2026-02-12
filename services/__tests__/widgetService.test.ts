@@ -24,6 +24,16 @@ jest.mock('@/utils/errorLogging', () => ({
   logError: jest.fn(),
   logInfo: jest.fn(),
 }));
+jest.mock('@/plugins/i18n', () => ({
+  t: jest.fn((key: string, opts?: any) => {
+    const translations: Record<string, string> = {
+      widgetGoalOf: `of ${opts?.goal}ml`,
+      dayStreak: 'day streak',
+      daysStreak: 'days streak',
+    };
+    return translations[key] || key;
+  }),
+}));
 
 const mockWriteWidgetData = writeWidgetData as jest.MockedFunction<typeof writeWidgetData>;
 const mockReadWidgetData = readWidgetData as jest.MockedFunction<typeof readWidgetData>;
@@ -162,6 +172,34 @@ describe('widgetService', () => {
           todayWater: 0,
           dailyGoal: 2000,
           glassCapacity: 250,
+        })
+      );
+    });
+
+    it('should include goalText in widget data', async () => {
+      await syncToWidget();
+      expect(mockWriteWidgetData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          goalText: 'of 2000ml',
+        })
+      );
+    });
+
+    it('should include streakText in widget data', async () => {
+      await syncToWidget();
+      expect(mockWriteWidgetData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          streakText: '5 days streak',
+        })
+      );
+    });
+
+    it('should use singular dayStreak when streak is 1', async () => {
+      mockGetCurrentStreak.mockReturnValue(1);
+      await syncToWidget();
+      expect(mockWriteWidgetData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          streakText: '1 day streak',
         })
       );
     });

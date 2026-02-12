@@ -60,5 +60,6 @@
   "saveQuickActionAccessibilityLabel": "Save changes",
   "cancelEditAccessibilityLabel": "Cancel editing",
   "achievementBadgeAccessibilityLabel": "{{achievements}} achievements unlocked, {{unseen}} new",
-  "achievementBadgeAccessibilityHint": "Double tap to view achievements"
+  "achievementBadgeAccessibilityHint": "Double tap to view achievements",
+  "widgetGoalOf": "of {{goal}}ml"
 }

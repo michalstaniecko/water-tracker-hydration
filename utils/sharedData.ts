@@ -28,6 +28,8 @@ export interface WidgetData {
   glassCapacity: number;
   lastUpdated: string;
   dateKey: string;
+  goalText?: string;
+  streakText?: string;
 }
 
 /**
