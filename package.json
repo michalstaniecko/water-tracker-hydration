@@ -47,7 +47,7 @@
     "react-dom": "19.0.0",
     "react-i18next": "^15.7.4",
     "react-native": "0.79.6",
-    "react-native-date-picker": "^5.0.13",
+    "react-native-date-picker": "5.0.12",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-gifted-charts": "^1.4.74",
     "react-native-google-mobile-ads": "^14.11.0",
