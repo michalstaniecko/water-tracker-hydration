@@ -1,3 +1,134 @@
+diff --git a/node_modules/@bittingz/expo-widgets/ios/ExpoWidgetsModule.swift b/node_modules/@bittingz/expo-widgets/ios/ExpoWidgetsModule.swift
+index cec994d..89c2c89 100644
+--- a/node_modules/@bittingz/expo-widgets/ios/ExpoWidgetsModule.swift
++++ b/node_modules/@bittingz/expo-widgets/ios/ExpoWidgetsModule.swift
+@@ -1,32 +1,64 @@
+ import ExpoModulesCore
+-import ActivityKit
+ import WidgetKit
+ 
+-struct SetDataProps: Record {
+-  @Field
+-  var message: String
+-}
+-
+-// the module is the message handler between your app and the widget
+-// you MUST declare the name of the module and then write whatever functions
+-// you wish your app to send over
+ public class ExpoWidgetsModule: Module {
++    let suiteName = "group.website.ihumbak.hydration.expowidgets"
++
++    /// Safely converts a JS bridge value to Int.
++    /// JavaScript numbers arrive as Double via Expo Modules Core; `Double as? Int` always returns nil in Swift.
++    private func toInt(_ value: Any?, defaultValue: Int = 0) -> Int {
++        if let intVal = value as? Int { return intVal }
++        if let doubleVal = value as? Double { return Int(doubleVal) }
++        if let nsNum = value as? NSNumber { return nsNum.intValue }
++        return defaultValue
++    }
++
+     public func definition() -> ModuleDefinition {
+-        Name("ExpoWidgets")
+-        
+-        Function("setWidgetData") { (data: String) -> Void in   
+-            let logger = Logger(logHandlers: [MyLogHandler()])     
+-            // here we are using UserDefaults to send data to the widget
+-            // you MUST use a suite name of the format group.{your project bundle id}.expowidgets
+-            let widgetSuite = UserDefaults(suiteName: "group.expo.modules.widgets.example.expowidgets")
+-            widgetSuite?.set(data, forKey: "MyData")
+-            logger.log(message: "Encoded data saved to suite group.expo.modules.widgets.example.expowidgets, key MyData")
+-            logger.log(message: data)
+-
+-            // this is optional, but while your app is open and in focus
+-            // messages sent to the widget do not count towards its timeline limitations
++        Name("HydrationWidget")
++
++        // Update widget data in shared UserDefaults
++        Function("updateWidgetData") { (data: [String: Any]) -> Void in
++            guard let userDefaults = UserDefaults(suiteName: self.suiteName) else {
++                return
++            }
++
++            #if DEBUG
++            print("[HydrationWidget] updateWidgetData received: \(data)")
++            print("[HydrationWidget] todayWater type: \(type(of: data["todayWater"])), value: \(self.toInt(data["todayWater"]))")
++            #endif
++
++            userDefaults.set(self.toInt(data["todayWater"], defaultValue: 0), forKey: "todayWater")
++            userDefaults.set(self.toInt(data["dailyGoal"], defaultValue: 2000), forKey: "dailyGoal")
++            userDefaults.set(data["percentage"] as? Double ?? 0, forKey: "percentage")
++            userDefaults.set(self.toInt(data["streak"], defaultValue: 0), forKey: "streak")
++            userDefaults.set(self.toInt(data["glassCapacity"], defaultValue: 250), forKey: "glassCapacity")
++            userDefaults.set(data["lastUpdated"] as? String ?? "", forKey: "lastUpdated")
++            userDefaults.set(data["dateKey"] as? String ?? "", forKey: "dateKey")
++
++            userDefaults.synchronize()
++        }
++
++        // Read widget data from shared UserDefaults
++        Function("readWidgetData") { () -> [String: Any]? in
++            guard let userDefaults = UserDefaults(suiteName: self.suiteName) else {
++                return nil
++            }
++
++            return [
++                "todayWater": userDefaults.integer(forKey: "todayWater"),
++                "dailyGoal": userDefaults.integer(forKey: "dailyGoal"),
++                "percentage": userDefaults.double(forKey: "percentage"),
++                "streak": userDefaults.integer(forKey: "streak"),
++                "glassCapacity": userDefaults.integer(forKey: "glassCapacity"),
++                "lastUpdated": userDefaults.string(forKey: "lastUpdated") ?? "",
++                "dateKey": userDefaults.string(forKey: "dateKey") ?? ""
++            ]
++        }
++
++        // Reload all widget timelines
++        Function("reloadWidget") { () -> Void in
+             if #available(iOS 14.0, *) {
+-               WidgetCenter.shared.reloadAllTimelines()
++                WidgetCenter.shared.reloadAllTimelines()
+             }
+         }
+     }
+diff --git a/node_modules/@bittingz/expo-widgets/plugin/build/ios/withPodfile.js b/node_modules/@bittingz/expo-widgets/plugin/build/ios/withPodfile.js
+index e39bf98..15967ae 100644
+--- a/node_modules/@bittingz/expo-widgets/plugin/build/ios/withPodfile.js
++++ b/node_modules/@bittingz/expo-widgets/plugin/build/ios/withPodfile.js
+@@ -62,19 +62,25 @@ target '${targetName}' do
+   )
+ end
+ `;
+-    const withAppExtFix = (0, generateCode_1.mergeContents)({
+-        tag: "app_ext_fix",
+-        src: podFileContent,
+-        newSrc: `
++    let appExtFixContents = podFileContent;
++    try {
++        const withAppExtFix = (0, generateCode_1.mergeContents)({
++            tag: "app_ext_fix",
++            src: podFileContent,
++            newSrc: `
+         config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = resource_bundle_target.name == 'Sentry' ? 'YES' : 'No'
+         `,
+-        anchor: /resource_bundle_target.build_configurations.each do \|config\|/,
+-        offset: 1,
+-        comment: "#",
+-    });
++            anchor: /resource_bundle_target.build_configurations.each do \|config\|/,
++            offset: 1,
++            comment: "#",
++        });
++        appExtFixContents = withAppExtFix.contents;
++    } catch (e) {
++        logger_1.Logging.logger.debug('Skipping resource_bundle_target patch (not found in Podfile)');
++    }
+     const withAppExtFixPt2 = (0, generateCode_1.mergeContents)({
+         tag: 'fix2',
+-        src: withAppExtFix.contents,
++        src: appExtFixContents,
+         newSrc: ` installer.pods_project.targets.each do |target|
+         target.build_configurations.each do |config|
+           config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
 diff --git a/node_modules/@bittingz/expo-widgets/plugin/build/utils/logger.js b/node_modules/@bittingz/expo-widgets/plugin/build/utils/logger.js
 index 4b64845..bc16548 100644
 --- a/node_modules/@bittingz/expo-widgets/plugin/build/utils/logger.js
