@@ -62,5 +62,11 @@
   "achievementBadgeAccessibilityLabel": "{{achievements}} achievements unlocked, {{unseen}} new",
   "achievementBadgeAccessibilityHint": "Double tap to view achievements",
   "waterGoalOf": "of {{goal}}ml",
-  "widgetGoalOf": "of {{goal}}ml"
+  "widgetGoalOf": "of {{goal}}ml",
+  "selectAmountToAdd": "Select amount to add",
+  "selectAmountToRemove": "Select amount to remove",
+  "addAmount": "Add {{amount}}ml",
+  "removeAmount": "Remove {{amount}}ml",
+  "addWater": "Add water",
+  "removeWater": "Remove water"
 }
