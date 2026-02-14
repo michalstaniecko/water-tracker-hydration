@@ -11,8 +11,8 @@ import Animated, {
 } from "react-native-reanimated";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
-const RING_SIZE = 220;
-const STROKE_WIDTH = 16;
+const RING_SIZE = 240;
+const STROKE_WIDTH = 20;
 const ANIMATION_DURATION = 50;
 
 export default function WaterCircularProgress() {
@@ -39,7 +39,7 @@ export default function WaterCircularProgress() {
             className="items-center"
           >
             <Text className="text-3xl font-bold text-gray-900">{water}ml</Text>
-            <Text className="text-sm text-gray-500 mt-1">
+            <Text className="text-base text-gray-500 mt-1 font-semibold">
               {t("waterGoalOf", { goal: minimumWater })}
             </Text>
           </Animated.View>
