@@ -51,13 +51,13 @@ export default function SettingsMenu() {
                 <FontAwesome
                   name={item.icon as any}
                   size={24}
-                  color="#3b82f6"
+                  color="#2680eb"
                 />
                 <Text className="text-lg font-semibold text-gray-900 ">
                   {item.title}
                 </Text>
               </View>
-              <FontAwesome name="chevron-right" size={16} color="#9ca3af" />
+              <FontAwesome name="chevron-right" size={16} color="#a3adb9" />
             </Pressable>
           ))}
         </View>

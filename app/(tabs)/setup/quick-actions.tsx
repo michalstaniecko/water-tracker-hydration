@@ -186,8 +186,8 @@ export default function QuickActionsSettings() {
               <Switch
                 value={action.enabled}
                 onValueChange={(value) => handleToggle(action.id, value)}
-                trackColor={{ false: "#d1d5db", true: "#3b82f6" }}
-                thumbColor={action.enabled ? "#ffffff" : "#f4f4f5"}
+                trackColor={{ false: "#cdd3dc", true: "#2680eb" }}
+                thumbColor={action.enabled ? "#ffffff" : "#eef1f5"}
               />
             </View>
           </View>

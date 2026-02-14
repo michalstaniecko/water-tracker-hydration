@@ -60,7 +60,7 @@
       [
         "expo-notifications",
         {
-          "color": "#3b82f6"
+          "color": "#2680eb"
         }
       ],
       "./plugins/withAndroidWidgetManifest",

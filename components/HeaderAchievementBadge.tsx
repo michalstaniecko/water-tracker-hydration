@@ -49,7 +49,7 @@ export default function HeaderAchievementBadge() {
       })}
       accessibilityHint={t("achievementBadgeAccessibilityHint")}
     >
-      <FontAwesome name="trophy" size={22} color="#3895d3" />
+      <FontAwesome name="trophy" size={22} color="#1868d8" />
       {showUnseenBadge && (
         <View className="absolute top-[-2px] right-[-6px] bg-pink-600 rounded-full min-w-[18px] h-[18px] items-center justify-center px-1">
           <Text className="text-white text-[11px] font-bold">

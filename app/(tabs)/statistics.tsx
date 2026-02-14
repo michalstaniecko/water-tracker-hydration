@@ -158,9 +158,9 @@ export default function Statistics() {
                     data={chartData}
                     width={screenWidth - 80}
                     height={220}
-                    color="#3b82f6"
+                    color="#2680eb"
                     thickness={2}
-                    dataPointsColor="#2563eb"
+                    dataPointsColor="#1868d8"
                     dataPointsRadius={4}
                     spacing={
                       period === "month"
@@ -171,21 +171,21 @@ export default function Statistics() {
                     initialSpacing={20}
                     endSpacing={20}
                     noOfSections={5}
-                    yAxisColor="#e5e7eb"
-                    xAxisColor="#e5e7eb"
-                    yAxisTextStyle={{ color: "#6b7280", fontSize: 10 }}
+                    yAxisColor="#cdd3dc"
+                    xAxisColor="#cdd3dc"
+                    yAxisTextStyle={{ color: "#64707e", fontSize: 10 }}
                     xAxisLabelTextStyle={{
-                      color: "#6b7280",
+                      color: "#64707e",
                       fontSize: 9,
                       marginLeft: 0,
                     }}
                     showVerticalLines
-                    verticalLinesColor="#f3f4f6"
+                    verticalLinesColor="#e2e6ec"
                     backgroundColor="#ffffff"
-                    rulesColor="#e5e7eb"
+                    rulesColor="#cdd3dc"
                     showReferenceLine1
                     referenceLine1Config={{
-                      color: "#93c5fd",
+                      color: "#7eb8f7",
                       dashWidth: 2,
                       dashGap: 3,
                     }}
