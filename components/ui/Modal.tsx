@@ -11,12 +11,16 @@ type ModalProps = {
   children: React.ReactNode;
   onDismiss?: (visible: boolean) => void;
   closeText?: string;
+  onConfirm?: () => void;
+  confirmText?: string;
 };
 export default function Modal({
   children,
   visible = false,
   onDismiss,
   closeText = "Close",
+  onConfirm,
+  confirmText,
 }: ModalProps) {
   const handleClose = () => {
     onDismiss?.(false);
@@ -32,8 +36,18 @@ export default function Modal({
           <View className={"bg-white p-5 rounded-lg shadow-sm"}>
             {children}
           </View>
-          <View>
-            <Button text={closeText} onPress={handleClose} />
+          <View className={onConfirm ? "flex-row gap-3" : undefined}>
+            {onConfirm && (
+              <View className="flex-1">
+                <Button text={closeText} onPress={handleClose} variant="outlined" />
+              </View>
+            )}
+            <View className={onConfirm ? "flex-1" : undefined}>
+              <Button
+                text={onConfirm ? (confirmText ?? "Confirm") : closeText}
+                onPress={onConfirm ?? handleClose}
+              />
+            </View>
           </View>
         </View>
       </View>

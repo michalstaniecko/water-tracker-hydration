@@ -5,6 +5,7 @@ type ButtonProps = {
   text: string;
   onPress?: () => void;
   disabled?: boolean;
+  variant?: "filled" | "outlined";
   /**
    * Enable haptic feedback on button press.
    * - `true`: Uses "impactMedium" feedback
@@ -17,6 +18,7 @@ export default function Button({
   text,
   onPress,
   disabled,
+  variant = "filled",
   haptic,
 }: ButtonProps) {
   const { triggerHaptic } = useHaptics();
@@ -31,6 +33,7 @@ export default function Button({
       onPress?.();
     }
   };
+  const isOutlined = variant === "outlined";
   return (
     <Pressable
       onPress={handlePress}
@@ -38,10 +41,16 @@ export default function Button({
       className={
         disabled
           ? "bg-gray-400 p-4 rounded-lg opacity-50"
-          : "bg-blue-500  p-4 rounded-lg active:opacity-50 active:bg-blue-400 transition-all"
+          : isOutlined
+            ? "bg-white border border-blue-500 p-4 rounded-lg active:opacity-50 transition-all"
+            : "bg-blue-500 p-4 rounded-lg active:opacity-50 active:bg-blue-400 transition-all"
       }
     >
-      <Text className={"text-white text-lg text-center font-bold"}>{text}</Text>
+      <Text
+        className={`text-lg text-center font-bold ${isOutlined ? "text-blue-500" : "text-white"}`}
+      >
+        {text}
+      </Text>
     </Pressable>
   );
 }

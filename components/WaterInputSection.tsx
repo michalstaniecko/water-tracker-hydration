@@ -2,7 +2,7 @@ import { View, Text, Pressable } from "react-native";
 import { useSetupStore } from "@/stores/setup";
 import { useWaterStore } from "@/stores/water";
 import { useGamificationStore } from "@/stores/gamification";
-import { useWater, rescheduleNotificationsAfterDrink } from "@/hooks/useWater";
+import { rescheduleNotificationsAfterDrink } from "@/hooks/useWater";
 import { useTranslation } from "react-i18next";
 import { useHaptics } from "@/hooks/useHaptics";
 import { logError } from "@/utils/errorLogging";
@@ -12,14 +12,16 @@ import PickerWheel from "@/components/ui/PickerWheel";
 import Modal, { ModalHeader } from "@/components/ui/Modal";
 import { GLASS_CAPACITY_OPTIONS, MAX_DAILY_WATER } from "@/constants/app";
 
+type ModalMode = "add" | "remove" | null;
+
 export default function WaterInputSection() {
   const { t } = useTranslation();
-  const { quickActions, glassCapacity, setGlassCapacity } = useSetupStore();
+  const { quickActions, glassCapacity } = useSetupStore();
   const waterStore = useWaterStore();
-  const { water, addWater, removeWater } = useWater();
   const gamificationStore = useGamificationStore();
   const { impactMedium, impactLight } = useHaptics();
-  const [pickerVisible, setPickerVisible] = useState(false);
+  const [modalMode, setModalMode] = useState<ModalMode>(null);
+  const [selectedAmount, setSelectedAmount] = useState(glassCapacity);
 
   const enabledActions = useMemo(
     () => quickActions.filter((action) => action.enabled),
@@ -45,23 +47,43 @@ export default function WaterInputSection() {
     }
   };
 
-  const handleAddWater = () => {
-    impactMedium();
-    addWater();
+  const openModal = (mode: "add" | "remove") => {
+    setSelectedAmount(glassCapacity);
+    setModalMode(mode);
   };
 
-  const handleRemoveWater = () => {
-    if (Number(water) > 0) {
+  const handleConfirm = async () => {
+    const amount = Number(selectedAmount);
+    if (modalMode === "add") {
+      try {
+        impactMedium();
+        const currentWater = Number(waterStore.getTodayWater());
+        const newWater = Math.min(currentWater + amount, MAX_DAILY_WATER);
+        await waterStore.setTodayWater(newWater.toString());
+        gamificationStore.checkAndUnlockAchievements().catch(() => {});
+        await rescheduleNotificationsAfterDrink();
+      } catch (error) {
+        logError(error, {
+          operation: "handleConfirmAdd",
+          component: "WaterInputSection",
+        });
+      }
+    } else if (modalMode === "remove") {
       impactLight();
-      removeWater();
+      const currentWater = Number(waterStore.getTodayWater());
+      const newWater = Math.max(currentWater - amount, 0);
+      await waterStore.setTodayWater(newWater.toString());
     }
+    setModalMode(null);
   };
 
-  const isDisabled = Number(water) <= 0;
+  const modalTitle =
+    modalMode === "add" ? t("selectAmountToAdd") : t("selectAmountToRemove");
 
-  const handleCapacitySelect = (value: string) => {
-    setGlassCapacity(value);
-  };
+  const confirmText =
+    modalMode === "add"
+      ? t("addAmount", { amount: selectedAmount })
+      : t("removeAmount", { amount: selectedAmount });
 
   return (
     <View className="gap-3">
@@ -102,45 +124,41 @@ export default function WaterInputSection() {
 
       <View className="flex-row gap-2">
         <Pressable
-          onPress={handleRemoveWater}
-          className={`border border-blue-500 rounded justify-center px-4 ${isDisabled ? "opacity-30" : "active:opacity-50"}`}
+          onPress={() => openModal("remove")}
+          className="flex-1 flex-row items-center justify-center gap-2 border border-blue-500 rounded py-3 active:opacity-50"
           accessibilityRole="button"
-          accessibilityLabel={t("removeWaterButton", {
-            capacity: glassCapacity,
-          })}
+          accessibilityLabel={t("removeWater")}
         >
-          <FontAwesome name="minus" size={16} color="#1868d8" />
-        </Pressable>
-
-        <Pressable
-          onPress={handleAddWater}
-          className="flex-1 bg-blue-500 rounded active:opacity-50 active:bg-blue-400"
-        >
-          <Text className="text-white px-3 py-3 text-lg text-center font-semibold">
-            {t("addWaterButton", { capacity: glassCapacity })}
+          <FontAwesome name="minus" size={14} color="#1868d8" />
+          <Text className="text-blue-600 text-base font-semibold">
+            {t("removeWater")}
           </Text>
         </Pressable>
 
         <Pressable
-          onPress={() => setPickerVisible(true)}
-          className="bg-blue-500 rounded justify-center px-4 active:opacity-50 active:bg-blue-400"
+          onPress={() => openModal("add")}
+          className="flex-1 flex-row items-center justify-center gap-2 bg-blue-500 rounded py-3 active:opacity-50 active:bg-blue-400"
           accessibilityRole="button"
-          accessibilityLabel={t("setup:glassCapacityInMl")}
+          accessibilityLabel={t("addWater")}
         >
-          <FontAwesome name="edit" size={16} color="#ffffff" />
+          <FontAwesome name="plus" size={14} color="#ffffff" />
+          <Text className="text-white text-base font-semibold">
+            {t("addWater")}
+          </Text>
         </Pressable>
       </View>
 
       <Modal
-        visible={pickerVisible}
-        onDismiss={setPickerVisible}
-        closeText={t("close")}
+        visible={modalMode !== null}
+        onDismiss={() => setModalMode(null)}
+        onConfirm={handleConfirm}
+        confirmText={confirmText}
       >
-        <ModalHeader title={t("setup:glassCapacityInMl")} />
+        <ModalHeader title={modalTitle} />
         <PickerWheel
           options={GLASS_CAPACITY_OPTIONS}
-          value={glassCapacity}
-          onValueChange={handleCapacitySelect}
+          value={selectedAmount}
+          onValueChange={setSelectedAmount}
         />
       </Modal>
     </View>
