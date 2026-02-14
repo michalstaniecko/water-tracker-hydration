@@ -58,6 +58,9 @@ export default function WaterCircularProgress() {
             <Text className="text-lg font-semibold text-green-600 mt-1 text-center px-4">
               {t("youDrankEnoughWaterToday")}
             </Text>
+            <Text className="text-sm text-green-500 mt-1 font-semibold">
+              {water}ml {t("waterGoalOf", { goal: minimumWater })}
+            </Text>
           </Animated.View>
         )}
       </LayoutAnimationConfig>
