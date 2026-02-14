@@ -7,7 +7,7 @@ export const LOADING_OVERLAY_ANIMATION = {
 } as const;
 
 export const LOADING_OVERLAY_COLORS = {
-  INDICATOR: "#3b82f6", // blue-500
+  INDICATOR: "#2680eb", // blue-500
 } as const;
 
 type LoadingOverlayProps = {

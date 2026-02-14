@@ -109,7 +109,7 @@ export default function WaterInputSection() {
             capacity: glassCapacity,
           })}
         >
-          <FontAwesome name="minus" size={16} color="#3895d3" />
+          <FontAwesome name="minus" size={16} color="#1868d8" />
         </Pressable>
 
         <Pressable
