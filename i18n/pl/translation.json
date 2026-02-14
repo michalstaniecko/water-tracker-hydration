@@ -61,5 +61,6 @@
   "cancelEditAccessibilityLabel": "Anuluj edycję",
   "achievementBadgeAccessibilityLabel": "{{achievements}} osiągnięć odblokowanych, {{unseen}} nowych",
   "achievementBadgeAccessibilityHint": "Dotknij dwukrotnie, aby zobaczyć osiągnięcia",
+  "waterGoalOf": "z {{goal}}ml",
   "widgetGoalOf": "z {{goal}}ml"
 }
