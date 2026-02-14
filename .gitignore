@@ -48,6 +48,7 @@ hydration-458006-3af686a2a08d.json
 
 build-*.aab
 build-*.apk
+build-*.ipa
 
 # Local Expo modules build artifacts
 modules/**/android/build/
