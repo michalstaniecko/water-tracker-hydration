@@ -1,5 +1,39 @@
 {
   "enabledPlugins": {
     "frontend-mobile-development@claude-code-workflows": true
+  },
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:medium.com)",
+      "WebFetch(domain:expo.dev)",
+      "WebSearch",
+      "WebFetch(domain:gist.github.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:www.peterarontoth.com)",
+      "WebFetch(domain:docs.expo.dev)",
+      "Bash(npx patch-package:*)",
+      "Bash(npx expo config:*)",
+      "Bash(npx expo prebuild:*)",
+      "Bash(node -e:*)",
+      "Bash(npx expo-modules-autolinking resolve:*)",
+      "Bash(npx expo-modules-autolinking:*)",
+      "Bash(xargs -I {} sh -c 'echo \"\"\"\"=== {} ===\"\"\"\" && cat {}')",
+      "Bash(npx tsc:*)",
+      "Bash(npx expo-doctor:*)",
+      "Bash(npm audit:*)",
+      "Bash(npx expo install:*)",
+      "Bash(npm ls:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm view:*)",
+      "Bash(bash:*)",
+      "Bash(npm info:*)",
+      "Bash(npx expo-doctor@latest:*)",
+      "Bash(npm --version:*)",
+      "Bash(npx eslint:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(gh pr:*)",
+      "Bash(gh diff:*)",
+      "Bash(sed:*)"
+    ]
   }
 }
