@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import Animated, {
   useAnimatedProps,
@@ -44,6 +44,44 @@ export default function CircularProgress({
 
   return (
     <View style={{ width: size, height: size, alignSelf: "center", marginVertical: 12 }}>
+      {/* Shadow layer 1 - tight, dense shadow */}
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor: "#fff",
+          ...Platform.select({
+            ios: {
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.35,
+              shadowRadius: 6,
+            },
+            android: {
+              elevation: 4,
+            },
+          }),
+        }}
+      />
+      {/* Shadow layer 2 - stacked for denser Android shadow */}
+      {Platform.OS === "android" && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            backgroundColor: "#fff",
+            elevation: 4,
+          }}
+        />
+      )}
       <Svg width={size} height={size}>
         <Circle
           cx={center}
