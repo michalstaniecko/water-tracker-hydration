@@ -3,10 +3,12 @@ import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { useConsentStore } from "@/stores/consent";
 
 export default function SettingsMenu() {
   const router = useRouter();
-  const { t } = useTranslation("setup");
+  const { t } = useTranslation(["setup", "consent"]);
+  const { privacyOptionsRequired, showPrivacyOptions } = useConsentStore();
 
   const menuItems = [
     {
@@ -33,6 +35,17 @@ export default function SettingsMenu() {
       icon: "download",
       onPress: () => router.push("/(tabs)/setup/backup"),
     },
+    // Only show for EU users who have given consent
+    ...(privacyOptionsRequired
+      ? [
+          {
+            id: "privacy",
+            title: t("consent:privacySettings"),
+            icon: "shield",
+            onPress: showPrivacyOptions,
+          },
+        ]
+      : []),
   ];
 
   return (
