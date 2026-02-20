@@ -18,6 +18,7 @@ interface UseAppLifecycleParams {
   fetchOrInitOnboarding: () => Promise<void>;
   fetchOrInitGamification: () => Promise<void>;
   fetchOrInitNotifications: () => Promise<void>;
+  initializeConsent: () => Promise<void>;
   createAutomaticBackup: () => void;
   checkAndUnlockAchievements: () => void;
 }
@@ -28,6 +29,7 @@ export function useAppLifecycle({
   fetchOrInitOnboarding,
   fetchOrInitGamification,
   fetchOrInitNotifications,
+  initializeConsent,
   createAutomaticBackup,
   checkAndUnlockAchievements,
 }: UseAppLifecycleParams) {
@@ -127,6 +129,10 @@ export function useAppLifecycle({
 
     // Initialize app - must wait for stores before handling deep links
     const initializeApp = async () => {
+      // Initialize consent FIRST (before ads SDK)
+      // This must happen before any ad-related code runs
+      await initializeConsent();
+
       // Load all stores first
       await Promise.all([
         fetchOrInitSetup(),
