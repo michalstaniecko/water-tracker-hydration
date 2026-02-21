@@ -1,0 +1,14 @@
+{
+  "welcome": {
+    "title": "¡Bienvenido a tu registro diario de agua!",
+    "description": "Es tu primera vez aquí, así que vamos a comenzar."
+  },
+  "secondStep": {
+    "title": "Establece tu meta diaria de agua",
+    "description": "Puedes actualizar tu meta de consumo de agua diario en la configuración."
+  },
+  "thirdStep": {
+    "title": "Monitorea tu progreso",
+    "description": "Sigue tu hidratación diaria: ¡mira cuánta agua ya has bebido y cuánto tiempo te queda para alcanzar tu meta diaria antes de que termine el día!"
+  }
+}

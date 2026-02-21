@@ -1,0 +1,14 @@
+{
+  "welcome": {
+    "title": "Bienvenue dans votre suivi d'hydratation quotidien !",
+    "description": "C'est votre première visite, alors commençons."
+  },
+  "secondStep": {
+    "title": "Définissez votre objectif d'hydratation quotidien",
+    "description": "Vous pouvez modifier votre objectif de consommation d'eau quotidienne dans les paramètres."
+  },
+  "thirdStep": {
+    "title": "Suivez votre progression",
+    "description": "Suivez votre hydratation quotidienne – voyez combien d'eau vous avez déjà bu et combien de temps il vous reste pour atteindre votre objectif avant la fin de la journée !"
+  }
+}

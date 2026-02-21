@@ -1,0 +1,17 @@
+{
+  "somethingWentWrong": "Etwas ist schiefgelaufen",
+  "componentError": "Ein Fehler ist in der Komponente aufgetreten. Bitte versuche es später erneut.",
+  "exportSuccess": "Daten erfolgreich exportiert",
+  "exportError": "Daten konnten nicht exportiert werden",
+  "importSuccess": "Daten erfolgreich importiert",
+  "importError": "Daten konnten nicht importiert werden",
+  "backupError": "Sicherung konnte nicht erstellt werden",
+  "restoreError": "Sicherung konnte nicht wiederhergestellt werden",
+  "fileReadError": "Datei konnte nicht gelesen werden",
+  "fileWriteError": "Datei konnte nicht geschrieben werden",
+  "invalidFileFormat": "Ungültiges Dateiformat",
+  "networkError": "Netzwerkfehler. Bitte überprüfe deine Verbindung.",
+  "unknownError": "Ein unbekannter Fehler ist aufgetreten",
+  "pdfExportSuccess": "PDF erfolgreich exportiert!",
+  "pdfExportFailed": "PDF konnte nicht exportiert werden"
+}

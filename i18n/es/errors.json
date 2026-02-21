@@ -1,0 +1,17 @@
+{
+  "somethingWentWrong": "Algo salió mal",
+  "componentError": "Ocurrió un error en el componente. Por favor, inténtalo de nuevo más tarde.",
+  "exportSuccess": "Datos exportados con éxito",
+  "exportError": "Error al exportar los datos",
+  "importSuccess": "Datos importados con éxito",
+  "importError": "Error al importar los datos",
+  "backupError": "Error al crear la copia de seguridad",
+  "restoreError": "Error al restaurar la copia de seguridad",
+  "fileReadError": "Error al leer el archivo",
+  "fileWriteError": "Error al escribir el archivo",
+  "invalidFileFormat": "Formato de archivo no válido",
+  "networkError": "Error de red. Por favor, verifica tu conexión.",
+  "unknownError": "Ocurrió un error desconocido",
+  "pdfExportSuccess": "¡PDF exportado con éxito!",
+  "pdfExportFailed": "Error al exportar el PDF"
+}

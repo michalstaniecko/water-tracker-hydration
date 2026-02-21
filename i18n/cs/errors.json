@@ -1,0 +1,17 @@
+{
+  "somethingWentWrong": "Něco se pokazilo",
+  "componentError": "V komponentě došlo k chybě. Zkuste to prosím později.",
+  "exportSuccess": "Data byla úspěšně exportována",
+  "exportError": "Export dat se nezdařil",
+  "importSuccess": "Data byla úspěšně importována",
+  "importError": "Import dat se nezdařil",
+  "backupError": "Vytvoření zálohy se nezdařilo",
+  "restoreError": "Obnovení zálohy se nezdařilo",
+  "fileReadError": "Čtení souboru se nezdařilo",
+  "fileWriteError": "Zápis do souboru se nezdařil",
+  "invalidFileFormat": "Neplatný formát souboru",
+  "networkError": "Chyba sítě. Zkontrolujte prosím připojení.",
+  "unknownError": "Došlo k neznámé chybě",
+  "pdfExportSuccess": "PDF bylo úspěšně exportováno!",
+  "pdfExportFailed": "Export PDF se nezdařil"
+}

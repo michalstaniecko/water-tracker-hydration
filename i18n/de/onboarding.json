@@ -1,0 +1,14 @@
+{
+  "welcome": {
+    "title": "Willkommen bei deinem täglichen Wasser-Tracker!",
+    "description": "Du bist zum ersten Mal hier, also lass uns loslegen."
+  },
+  "secondStep": {
+    "title": "Setze dein tägliches Wasserziel",
+    "description": "Du kannst dein tägliches Wasseraufnahmeziel in den Einstellungen aktualisieren."
+  },
+  "thirdStep": {
+    "title": "Verfolge deinen Fortschritt",
+    "description": "Verfolge deine tägliche Flüssigkeitszufuhr – sieh, wie viel Wasser du bereits getrunken hast und wie viel Zeit dir noch bleibt, um dein Tagesziel zu erreichen!"
+  }
+}
