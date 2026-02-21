@@ -1,0 +1,14 @@
+{
+  "welcome": {
+    "title": "Vítejte ve vašem denním sledovači hydratace!",
+    "description": "Jste tu poprvé, tak vás pojďme rychle seznámit."
+  },
+  "secondStep": {
+    "title": "Nastavte si denní cíl příjmu vody",
+    "description": "Svůj denní cíl příjmu vody můžete kdykoli upravit v nastavení."
+  },
+  "thirdStep": {
+    "title": "Sledujte svůj pokrok",
+    "description": "Sledujte svou denní hydrataci – podívejte se, kolik vody jste již vypili a kolik času vám zbývá k dosažení denního cíle před koncem dne!"
+  }
+}
