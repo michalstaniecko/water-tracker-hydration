@@ -14,6 +14,7 @@ import { useOnboardingStore } from "@/stores/onboarding";
 import { useGamificationStore } from "@/stores/gamification";
 import { useBackupStore } from "@/stores/backup";
 import { useNotificationsStore } from "@/stores/notifications";
+import { useConsentStore } from "@/stores/consent";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { useNotificationListeners } from "@/hooks/useNotificationListeners";
 import { useActivityHoursRescheduler } from "@/hooks/useActivityHoursRescheduler";
@@ -37,6 +38,7 @@ export default function RootLayout() {
   const { createAutomaticBackup } = useBackupStore();
   const { fetchOrInitData: fetchOrInitNotifications, scheduleReminders } =
     useNotificationsStore();
+  const { initializeConsent } = useConsentStore();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -56,6 +58,7 @@ export default function RootLayout() {
     fetchOrInitOnboarding,
     fetchOrInitGamification,
     fetchOrInitNotifications,
+    initializeConsent,
     createAutomaticBackup,
     checkAndUnlockAchievements,
   });

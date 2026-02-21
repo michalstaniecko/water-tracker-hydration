@@ -6,6 +6,7 @@ import onboarding from "@/i18n/en/onboarding.json";
 import gamification from "@/i18n/en/gamification.json";
 import errors from "@/i18n/en/errors.json";
 import notifications from "@/i18n/en/notifications.json";
+import consent from "@/i18n/en/consent.json";
 
 export default {
   translation,
@@ -16,4 +17,5 @@ export default {
   gamification,
   errors,
   notifications,
+  consent,
 };
