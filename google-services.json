@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "196787424348",
+    "project_id": "herding-paws",
+    "storage_bucket": "herding-paws.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:196787424348:android:2ac939bf6bd79c5703ea99",
+        "android_client_info": {
+          "package_name": "website.ihumbak.hydration"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDefG92xxPXZEUaOwVZs4FlAX3DcmsuA3w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

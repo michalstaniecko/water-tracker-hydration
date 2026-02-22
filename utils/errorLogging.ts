@@ -2,7 +2,8 @@
  * Error logging utility with structured error reporting and analytics integration
  */
 
-import { trackError, trackPerformance } from './analytics';
+import { trackError, trackPerformance } from "./analytics";
+import { recordError as recordCrashlyticsError } from "@/services/crashlytics";
 
 type ErrorContext = {
   operation: string;
@@ -46,8 +47,12 @@ export function logError(error: unknown, context: ErrorContext): void {
     ...context.data,
   });
 
-  // In production, you could send this to a logging service
-  // Example: sendToLoggingService(logEntry);
+  // Record error to Crashlytics
+  const errorObj = error instanceof Error ? error : new Error(errorMessage);
+  recordCrashlyticsError(errorObj, {
+    operation: context.operation,
+    component: context.component || "Unknown",
+  });
 }
 
 /**

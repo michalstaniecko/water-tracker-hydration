@@ -46,6 +46,8 @@
           "backgroundColor": "#ffffff"
         }
       ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/crashlytics",
       [
         "react-native-google-mobile-ads",
         {
