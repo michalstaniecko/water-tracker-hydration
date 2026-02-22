@@ -2,7 +2,6 @@ import React, { Component, ReactNode } from "react";
 import { View, Text } from "react-native";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { logError } from "@/utils/errorLogging";
-import { recordError } from "@/services/crashlytics";
 
 interface ErrorBoundaryProps extends WithTranslation {
   children: ReactNode;
@@ -41,13 +40,6 @@ class ErrorBoundaryComponent extends Component<
       data: {
         componentStack: errorInfo.componentStack,
       },
-    });
-
-    // Record crash to Crashlytics with additional context
-    recordError(error, {
-      errorType: "react_crash",
-      component: this.props.componentName || "Unknown Component",
-      componentStack: errorInfo.componentStack || "",
     });
   }
 

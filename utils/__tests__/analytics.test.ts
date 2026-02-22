@@ -11,6 +11,11 @@ import {
   trackError,
 } from '../analytics';
 
+// Mock Firebase Analytics to prevent console pollution
+jest.mock('@/services/firebaseAnalytics', () => ({
+  logFirebaseEvent: jest.fn(),
+}));
+
 // Mock console.log to capture analytics events
 let consoleLogs: any[] = [];
 
@@ -36,7 +41,7 @@ describe('Analytics Utility', () => {
         metadata: { key: 'value' },
       });
 
-      expect(consoleLogs.length).toBeGreaterThanOrEqual(1);
+      expect(consoleLogs.length).toBe(1);
       expect(consoleLogs[0][0]).toBe('[Analytics Event]');
       expect(consoleLogs[0][1]).toMatchObject({
         service: 'firebase',
@@ -54,7 +59,7 @@ describe('Analytics Utility', () => {
         action: 'test_action',
       });
 
-      expect(consoleLogs.length).toBeGreaterThanOrEqual(1);
+      expect(consoleLogs.length).toBe(1);
       expect(consoleLogs[0][1]).toMatchObject({
         category: 'test',
         action: 'test_action',
@@ -76,7 +81,7 @@ describe('Analytics Utility', () => {
     it('should track engagement with metadata', () => {
       trackEngagement('button_click', { button: 'export' });
 
-      expect(consoleLogs.length).toBeGreaterThanOrEqual(1);
+      expect(consoleLogs.length).toBe(1);
       expect(consoleLogs[0][1]).toMatchObject({
         category: 'engagement',
         action: 'button_click',
@@ -87,7 +92,7 @@ describe('Analytics Utility', () => {
     it('should track engagement without metadata', () => {
       trackEngagement('page_view');
 
-      expect(consoleLogs.length).toBeGreaterThanOrEqual(1);
+      expect(consoleLogs.length).toBe(1);
       expect(consoleLogs[0][1]).toMatchObject({
         category: 'engagement',
         action: 'page_view',
@@ -99,7 +104,7 @@ describe('Analytics Utility', () => {
     it('should track goal achievement', () => {
       trackGoalAchievement('daily_goal', 2000);
 
-      expect(consoleLogs.length).toBeGreaterThanOrEqual(1);
+      expect(consoleLogs.length).toBe(1);
       expect(consoleLogs[0][1]).toMatchObject({
         category: 'goals',
         action: 'goal_achieved',
@@ -113,7 +118,7 @@ describe('Analytics Utility', () => {
     it('should track successful export', () => {
       trackDataExport('pdf', true);
 
-      expect(consoleLogs.length).toBeGreaterThanOrEqual(1);
+      expect(consoleLogs.length).toBe(1);
       expect(consoleLogs[0][1]).toMatchObject({
         category: 'data_export',
         action: 'export_success',
@@ -124,7 +129,7 @@ describe('Analytics Utility', () => {
     it('should track failed export', () => {
       trackDataExport('csv', false);
 
-      expect(consoleLogs.length).toBeGreaterThanOrEqual(1);
+      expect(consoleLogs.length).toBe(1);
       expect(consoleLogs[0][1]).toMatchObject({
         category: 'data_export',
         action: 'export_failed',
@@ -142,7 +147,7 @@ describe('Analytics Utility', () => {
         metadata: { recordCount: 100 },
       });
 
-      expect(consoleLogs.length).toBeGreaterThanOrEqual(1);
+      expect(consoleLogs.length).toBe(1);
       expect(consoleLogs[0][1]).toMatchObject({
         category: 'performance',
         action: 'data_load',
@@ -159,7 +164,7 @@ describe('Analytics Utility', () => {
         success: false,
       });
 
-      expect(consoleLogs.length).toBeGreaterThanOrEqual(1);
+      expect(consoleLogs.length).toBe(1);
       expect(consoleLogs[0][1]).toMatchObject({
         category: 'performance',
         action: 'api_call',
@@ -174,7 +179,7 @@ describe('Analytics Utility', () => {
       const error = new Error('Test error');
       trackError(error, { component: 'TestComponent' });
 
-      expect(consoleLogs.length).toBeGreaterThanOrEqual(1);
+      expect(consoleLogs.length).toBe(1);
       expect(consoleLogs[0][1]).toMatchObject({
         category: 'errors',
         action: 'error_occurred',
@@ -187,7 +192,7 @@ describe('Analytics Utility', () => {
     it('should track error with string message', () => {
       trackError('Simple error message', { operation: 'test_op' });
 
-      expect(consoleLogs.length).toBeGreaterThanOrEqual(1);
+      expect(consoleLogs.length).toBe(1);
       expect(consoleLogs[0][1]).toMatchObject({
         category: 'errors',
         action: 'error_occurred',
@@ -199,7 +204,7 @@ describe('Analytics Utility', () => {
     it('should track error without context', () => {
       trackError('Error without context');
 
-      expect(consoleLogs.length).toBeGreaterThanOrEqual(1);
+      expect(consoleLogs.length).toBe(1);
       expect(consoleLogs[0][1]).toMatchObject({
         category: 'errors',
         action: 'error_occurred',
