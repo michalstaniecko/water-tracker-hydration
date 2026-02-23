@@ -11,6 +11,11 @@ import {
   trackError,
 } from '../analytics';
 
+// Mock Firebase Analytics to prevent console pollution
+jest.mock('@/services/firebaseAnalytics', () => ({
+  logFirebaseEvent: jest.fn(),
+}));
+
 // Mock console.log to capture analytics events
 let consoleLogs: any[] = [];
 
@@ -39,7 +44,7 @@ describe('Analytics Utility', () => {
       expect(consoleLogs.length).toBe(1);
       expect(consoleLogs[0][0]).toBe('[Analytics Event]');
       expect(consoleLogs[0][1]).toMatchObject({
-        service: 'default',
+        service: 'firebase',
         category: 'test',
         action: 'test_action',
         label: 'test_label',

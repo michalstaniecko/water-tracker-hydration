@@ -1,11 +1,11 @@
 /**
  * Analytics Integration Utility
- * 
+ *
  * Provides hooks for analytics systems (Google Analytics, Firebase, etc.)
  * to track user behavior, app performance, and business metrics.
- * 
- * This is a foundation for future integration with analytics platforms.
  */
+
+import { logFirebaseEvent } from "@/services/firebaseAnalytics";
 
 export type AnalyticsEvent = {
   category: string;
@@ -20,35 +20,23 @@ export type AnalyticsService = 'google_analytics' | 'firebase' | 'custom';
 /**
  * Track an event in the analytics system
  * @param event - Event to track
- * @param service - Analytics service to use (optional)
+ * @param service - Analytics service to use (defaults to 'firebase')
  */
-export function trackEvent(event: AnalyticsEvent, service?: AnalyticsService): void {
-  // Log for debugging/monitoring
-  console.log('[Analytics Event]', {
-    timestamp: new Date().toISOString(),
-    service: service || 'default',
-    ...event,
-  });
+export function trackEvent(
+  event: AnalyticsEvent,
+  service: AnalyticsService = "firebase"
+): void {
+  if (__DEV__) {
+    console.log("[Analytics Event]", {
+      timestamp: new Date().toISOString(),
+      service,
+      ...event,
+    });
+  }
 
-  // Future integration points:
-  // if (service === 'google_analytics') {
-  //   // Send to Google Analytics
-  //   gtag('event', event.action, {
-  //     event_category: event.category,
-  //     event_label: event.label,
-  //     value: event.value,
-  //   });
-  // }
-  //
-  // if (service === 'firebase') {
-  //   // Send to Firebase Analytics
-  //   analytics().logEvent(event.action, {
-  //     category: event.category,
-  //     label: event.label,
-  //     value: event.value,
-  //     ...event.metadata,
-  //   });
-  // }
+  if (service === "firebase") {
+    logFirebaseEvent(event);
+  }
 }
 
 /**

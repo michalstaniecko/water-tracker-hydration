@@ -6,6 +6,8 @@ import {
   loadAndShowConsentFormIfRequired,
   showPrivacyOptionsForm,
 } from "@/services/consentService";
+import { initializeFirebaseAnalytics } from "@/services/firebaseAnalytics";
+import { initializeCrashlytics } from "@/services/crashlytics";
 import { logError, logInfo } from "@/utils/errorLogging";
 import {
   ConsentInitializationStatus,
@@ -78,7 +80,11 @@ export const useConsentStore = create<ConsentState & ConsentActions>(
           },
         });
 
-        // Step 3: Initialize Mobile Ads SDK if we can request ads
+        // Step 3: Initialize Firebase services based on consent
+        await initializeFirebaseAnalytics(consentResult.canRequestAds);
+        await initializeCrashlytics(consentResult.canRequestAds);
+
+        // Step 4: Initialize Mobile Ads SDK if we can request ads
         if (consentResult.canRequestAds) {
           logInfo("Initializing Mobile Ads SDK", {
             operation: "initializeConsent",
@@ -134,6 +140,10 @@ export const useConsentStore = create<ConsentState & ConsentActions>(
           canRequestAds: result.canRequestAds,
           privacyOptionsRequired: result.privacyOptionsRequired,
         });
+
+        // Update Firebase services based on new consent
+        await initializeFirebaseAnalytics(result.canRequestAds);
+        await initializeCrashlytics(result.canRequestAds);
 
         // If user changed consent to allow ads and SDK not initialized
         if (result.canRequestAds && !get().isMobileAdsInitialized) {
