@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "196787424348",
-    "project_id": "herding-paws",
-    "storage_bucket": "herding-paws.firebasestorage.app"
+    "project_number": "182652850196",
+    "project_id": "water-tracker-hydration",
+    "storage_bucket": "water-tracker-hydration.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:196787424348:android:2ac939bf6bd79c5703ea99",
+        "mobilesdk_app_id": "1:182652850196:android:efba019f1b4a013a6fd701",
         "android_client_info": {
           "package_name": "website.ihumbak.hydration"
         }
@@ -15,14 +15,15 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDefG92xxPXZEUaOwVZs4FlAX3DcmsuA3w"
+          "current_key": "AIzaSyCfJBEKLpL5pHeoQSZ07GKM4Mf4UUsZysU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": []
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-7007354971618918~4011715390"
     }
   ],
   "configuration_version": "1"
