@@ -68,5 +68,6 @@
   "addAmount": "Dodaj {{amount}}ml",
   "removeAmount": "Usuń {{amount}}ml",
   "addWater": "Dodaj wodę",
-  "removeWater": "Usuń wodę"
+  "removeWater": "Usuń wodę",
+  "adCountdown": "Reklama pojawi się za {{seconds}}s"
 }

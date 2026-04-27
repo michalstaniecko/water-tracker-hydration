@@ -6,6 +6,8 @@ import { rescheduleNotificationsAfterDrink } from "@/hooks/useWater";
 import { useTranslation } from "react-i18next";
 import { useHaptics } from "@/hooks/useHaptics";
 import { logError } from "@/utils/errorLogging";
+import { useWaterInterstitial } from "@/hooks/useWaterInterstitial";
+import { AdCountdownBanner } from "@/components/ads/AdCountdownBanner";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useMemo, useState } from "react";
 import PickerWheel from "@/components/ui/PickerWheel";
@@ -20,6 +22,7 @@ export default function WaterInputSection() {
   const waterStore = useWaterStore();
   const gamificationStore = useGamificationStore();
   const { impactMedium, impactLight } = useHaptics();
+  const { trackWaterAdd, countdown } = useWaterInterstitial();
   const [modalMode, setModalMode] = useState<ModalMode>(null);
   const [selectedAmount, setSelectedAmount] = useState(glassCapacity);
 
@@ -38,6 +41,7 @@ export default function WaterInputSection() {
       );
       await waterStore.setTodayWater(newCurrentWater.toString());
       gamificationStore.checkAndUnlockAchievements().catch(() => {});
+      trackWaterAdd().catch(() => {});
       await rescheduleNotificationsAfterDrink();
     } catch (error) {
       logError(error, {
@@ -61,6 +65,7 @@ export default function WaterInputSection() {
         const newWater = Math.min(currentWater + amount, MAX_DAILY_WATER);
         await waterStore.setTodayWater(newWater.toString());
         gamificationStore.checkAndUnlockAchievements().catch(() => {});
+        trackWaterAdd().catch(() => {});
         await rescheduleNotificationsAfterDrink();
       } catch (error) {
         logError(error, {
@@ -87,6 +92,7 @@ export default function WaterInputSection() {
 
   return (
     <View className="gap-3">
+      <AdCountdownBanner countdown={countdown} />
       {enabledActions.length > 0 && (
         <View className="bg-white rounded-lg p-4 border border-gray-200">
           <Text className="text-sm text-gray-600 mb-3 font-medium">

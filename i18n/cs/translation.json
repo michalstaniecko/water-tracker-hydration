@@ -68,5 +68,6 @@
   "addAmount": "Přidat {{amount}}ml",
   "removeAmount": "Odebrat {{amount}}ml",
   "addWater": "Přidat vodu",
-  "removeWater": "Odebrat vodu"
+  "removeWater": "Odebrat vodu",
+  "adCountdown": "Reklama se zobrazí za {{seconds}}s"
 }

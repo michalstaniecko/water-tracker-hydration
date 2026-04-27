@@ -68,5 +68,6 @@
   "addAmount": "Add {{amount}}ml",
   "removeAmount": "Remove {{amount}}ml",
   "addWater": "Add water",
-  "removeWater": "Remove water"
+  "removeWater": "Remove water",
+  "adCountdown": "An ad will appear in {{seconds}}s"
 }
