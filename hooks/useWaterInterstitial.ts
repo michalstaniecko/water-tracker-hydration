@@ -16,21 +16,24 @@ const AD_COUNTDOWN_SECONDS = 5;
 const adUnitId = __DEV__
   ? TestIds.INTERSTITIAL
   : Platform.OS === "ios"
-    ? "ca-app-pub-7007354971618918/TODO_IOS_INTERSTITIAL_UNIT_ID" // TODO: replace with real iOS interstitial unit ID
-    : "ca-app-pub-7007354971618918/TODO_ANDROID_INTERSTITIAL_UNIT_ID"; // TODO: replace with real Android interstitial unit ID
+    ? "ca-app-pub-7007354971618918/8594705309"
+    : "ca-app-pub-7007354971618918/4998330361";
 
 export function useWaterInterstitial() {
   const { canRequestAds, isMobileAdsInitialized } = useConsentStore();
   const adRef = useRef<InterstitialAd | null>(null);
   const loadedRef = useRef(false);
   const addCountRef = useRef(0);
-  const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
+    null,
+  );
   const adTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
 
   useEffect(() => {
     return () => {
-      if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+      if (countdownIntervalRef.current)
+        clearInterval(countdownIntervalRef.current);
       if (adTimeoutRef.current) clearTimeout(adTimeoutRef.current);
     };
   }, []);
