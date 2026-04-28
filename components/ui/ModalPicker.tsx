@@ -66,7 +66,6 @@ export const ModalPicker = ({
       >
         <BottomSheetView
           style={{
-            flex: 1,
             paddingBottom: bottom,
           }}
         >
@@ -109,21 +108,17 @@ const Item = ({ option, onSelect, selected }: ItemProps) => {
     <Pressable onPress={() => onSelect(option.value)}>
       {({ pressed }) => (
         <View
-          className={`${pressed ? "bg-gray-200/100" : "bg-gray-200/0"} transition-[background-color] duration-100 flex-row items-center justify-between`}
+          className={`${pressed ? "bg-gray-200" : ""} flex-row items-center justify-between`}
         >
-          <View>
-            <Text
-              className={`w-full text-lg py-3 rounded  ${selected && "font-semibold"}`}
-            >
-              {option.label}
-            </Text>
-          </View>
-
-          <View>
-            {selected && (
-              <FontAwesome name="check" size={20} color={colors.green[500]} />
-            )}
-          </View>
+          <Text
+            className={`flex-1 text-lg py-3 ${selected ? "font-semibold" : ""}`}
+            style={{ includeFontPadding: false }}
+          >
+            {option.label}
+          </Text>
+          {selected && (
+            <FontAwesome name="check" size={20} color={colors.green[500]} />
+          )}
         </View>
       )}
     </Pressable>
