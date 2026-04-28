@@ -30,16 +30,38 @@ export default function AchievementsList() {
 
   const unlockedAchievements = achievements.filter((a) => a.isUnlocked);
   const lockedAchievements = achievements.filter((a) => !a.isUnlocked);
+  const total = achievements.length;
+  const unlocked = unlockedAchievements.length;
 
   return (
-    <ScrollView className="flex-1 p-5">
-      <View className="gap-3">
+    <ScrollView className="flex-1 bg-white">
+      <View className="p-5 gap-3">
+        {/* Progress summary */}
+        {total > 0 && (
+          <View className="bg-yellow-50 rounded-lg p-4">
+            <Text className="text-lg font-semibold mb-1">
+              {t("gamification:progressSummary")}
+            </Text>
+            <Text className="text-3xl font-bold text-yellow-600">
+              {unlocked}/{total}
+            </Text>
+            <Text className="text-sm text-gray-600 mt-1">
+              {t("gamification:achievementsUnlocked")}
+            </Text>
+            <View className="mt-3 h-2 bg-yellow-200 rounded-full overflow-hidden">
+              <View
+                className="h-2 bg-yellow-500 rounded-full"
+                style={{ width: `${total > 0 ? (unlocked / total) * 100 : 0}%` }}
+              />
+            </View>
+          </View>
+        )}
+
         {/* Unlocked Achievements */}
         {unlockedAchievements.length > 0 && (
           <View className="gap-2">
             <Text className="text-xl font-bold text-gray-800">
-              {t("gamification:unlockedAchievements")} (
-              {unlockedAchievements.length})
+              {t("gamification:unlockedAchievements")} ({unlocked})
             </Text>
             {unlockedAchievements.map((achievement) => (
               <Card
@@ -71,19 +93,18 @@ export default function AchievementsList() {
 
         {/* Locked Achievements */}
         {lockedAchievements.length > 0 && (
-          <View className="gap-2 mt-4">
+          <View className="gap-2">
             <Text className="text-xl font-bold text-gray-800">
-              {t("gamification:lockedAchievements")} (
-              {lockedAchievements.length})
+              {t("gamification:lockedAchievements")} ({lockedAchievements.length})
             </Text>
             {lockedAchievements.map((achievement) => (
               <Card
                 key={achievement.id}
-                className="opacity-60"
+                className="opacity-50"
                 backgroundColor="bg-gray-100"
               >
                 <View className="flex-row items-center gap-3">
-                  <Text className="text-4xl grayscale">{achievement.icon}</Text>
+                  <Text className="text-4xl">{achievement.icon}</Text>
                   <View className="flex-1">
                     <Text className="text-lg font-semibold text-gray-600">
                       {achievement.title}
