@@ -1,0 +1,14 @@
+{
+  "welcome": {
+    "title": "Dobrodošli u vaš dnevni praćač vode!",
+    "description": "Ovo vam je prvi put ovdje, hajdemo početi."
+  },
+  "secondStep": {
+    "title": "Postavite svoj dnevni cilj unosa vode",
+    "description": "Možete ažurirati svoj dnevni cilj unosa vode u postavkama."
+  },
+  "thirdStep": {
+    "title": "Pratite svoj napredak",
+    "description": "Pratite svoju dnevnu hidrataciju – vidite koliko ste vode već popili i koliko vam vremena ostaje za postizanje dnevnog cilja prije kraja dana!"
+  }
+}

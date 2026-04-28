@@ -1,0 +1,14 @@
+{
+  "welcome": {
+    "title": "Benvenuto nel tuo tracker giornaliero dell'acqua!",
+    "description": "È la tua prima volta qui, iniziamo."
+  },
+  "secondStep": {
+    "title": "Imposta il tuo obiettivo giornaliero d'acqua",
+    "description": "Puoi aggiornare il tuo obiettivo giornaliero di consumo d'acqua nelle impostazioni."
+  },
+  "thirdStep": {
+    "title": "Monitora i tuoi progressi",
+    "description": "Tieni traccia della tua idratazione giornaliera – guarda quanta acqua hai già bevuto e quanto tempo ti resta per raggiungere il tuo obiettivo prima della fine della giornata!"
+  }
+}

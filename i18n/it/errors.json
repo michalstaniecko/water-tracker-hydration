@@ -1,0 +1,17 @@
+{
+  "somethingWentWrong": "Qualcosa è andato storto",
+  "componentError": "Si è verificato un errore nel componente. Riprova più tardi.",
+  "exportSuccess": "Dati esportati con successo",
+  "exportError": "Esportazione dati fallita",
+  "importSuccess": "Dati importati con successo",
+  "importError": "Importazione dati fallita",
+  "backupError": "Creazione backup fallita",
+  "restoreError": "Ripristino backup fallito",
+  "fileReadError": "Lettura file fallita",
+  "fileWriteError": "Scrittura file fallita",
+  "invalidFileFormat": "Formato file non valido",
+  "networkError": "Errore di rete. Controlla la connessione.",
+  "unknownError": "Si è verificato un errore sconosciuto",
+  "pdfExportSuccess": "PDF esportato con successo!",
+  "pdfExportFailed": "Esportazione PDF fallita"
+}

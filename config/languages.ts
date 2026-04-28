@@ -23,4 +23,16 @@ export const languages = [
     label: "french",
     code: "fr",
   },
+  {
+    label: "italian",
+    code: "it",
+  },
+  {
+    label: "ukrainian",
+    code: "uk",
+  },
+  {
+    label: "croatian",
+    code: "hr",
+  },
 ];

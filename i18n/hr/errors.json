@@ -1,0 +1,17 @@
+{
+  "somethingWentWrong": "Nešto je pošlo po krivu",
+  "componentError": "Došlo je do greške u komponenti. Pokušajte ponovo kasnije.",
+  "exportSuccess": "Podaci su uspješno izvezeni",
+  "exportError": "Izvoz podataka nije uspio",
+  "importSuccess": "Podaci su uspješno uvezeni",
+  "importError": "Uvoz podataka nije uspio",
+  "backupError": "Izrada sigurnosne kopije nije uspjela",
+  "restoreError": "Obnova sigurnosne kopije nije uspjela",
+  "fileReadError": "Čitanje datoteke nije uspjelo",
+  "fileWriteError": "Pisanje datoteke nije uspjelo",
+  "invalidFileFormat": "Nevažeći format datoteke",
+  "networkError": "Mrežna greška. Provjerite vezu.",
+  "unknownError": "Došlo je do nepoznate greške",
+  "pdfExportSuccess": "PDF je uspješno izvezen!",
+  "pdfExportFailed": "Izvoz PDF-a nije uspio"
+}
