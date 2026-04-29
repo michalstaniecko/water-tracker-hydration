@@ -8,26 +8,33 @@ import CardThird from "@/components/onboarding/CardThird";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import WaterInputSection from "@/components/WaterInputSection";
 import WaterCircularProgress from "@/components/WaterCircularProgress";
+import { AdCountdownBanner } from "@/components/ads/AdCountdownBanner";
+import { useWaterInterstitial } from "@/hooks/useWaterInterstitial";
 
 export default function Index() {
+  const { trackWaterAdd, countdown } = useWaterInterstitial();
+
   return (
     <ErrorBoundary componentName="Home Screen">
-      <ScrollView contentContainerClassName={"p-5"}>
-        <View className={"gap-3"}>
-          <CardWelcome />
-          <CardSecond />
-          <Animated.View layout={CurvedTransition}>
-            <CardDayProgress />
-          </Animated.View>
-          <CardThird />
-          <Animated.View layout={CurvedTransition}>
-            <WaterCircularProgress />
-          </Animated.View>
-          <Animated.View layout={CurvedTransition}>
-            <WaterInputSection />
-          </Animated.View>
-        </View>
-      </ScrollView>
+      <View style={{ flex: 1 }}>
+        <ScrollView contentContainerClassName={"p-5"}>
+          <View className={"gap-3"}>
+            <CardWelcome />
+            <CardSecond />
+            <Animated.View layout={CurvedTransition}>
+              <CardDayProgress />
+            </Animated.View>
+            <CardThird />
+            <Animated.View layout={CurvedTransition}>
+              <WaterCircularProgress />
+            </Animated.View>
+            <Animated.View layout={CurvedTransition}>
+              <WaterInputSection trackWaterAdd={trackWaterAdd} />
+            </Animated.View>
+          </View>
+        </ScrollView>
+        <AdCountdownBanner countdown={countdown} />
+      </View>
     </ErrorBoundary>
   );
 }
