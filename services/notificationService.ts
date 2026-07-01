@@ -118,7 +118,7 @@ export async function setupNotificationChannel(): Promise<void> {
         description: i18n.t("channelDescription", { ns: "notifications" }),
         importance: Notifications.AndroidImportance.HIGH,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#3b82f6",
+        lightColor: "#2680eb",
       });
     } catch (error) {
       logError(error, {

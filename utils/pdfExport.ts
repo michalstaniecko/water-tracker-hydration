@@ -32,7 +32,7 @@ function generateReportHTML(data: ReportData): string {
   const chartBars = stats.dailyData
     .map((day: DailyStats) => {
       const height = Math.min((day.percentage / 100) * 150, 150);
-      const color = day.percentage >= 100 ? '#10b981' : '#3b82f6';
+      const color = day.percentage >= 100 ? '#10b981' : '#2680eb';
       return `
         <div style="display: inline-block; margin: 0 4px; vertical-align: bottom;">
           <div style="width: 20px; height: ${height}px; background-color: ${color}; border-radius: 2px;"></div>
@@ -55,8 +55,8 @@ function generateReportHTML(data: ReportData): string {
             color: #1f2937;
           }
           h1 {
-            color: #1e40af;
-            border-bottom: 3px solid #3b82f6;
+            color: #0a2a62;
+            border-bottom: 3px solid #2680eb;
             padding-bottom: 10px;
             margin-bottom: 30px;
           }
@@ -69,7 +69,7 @@ function generateReportHTML(data: ReportData): string {
             margin-bottom: 40px;
           }
           .info {
-            color: #6b7280;
+            color: #64707e;
             font-size: 14px;
             margin: 5px 0;
           }
@@ -80,7 +80,7 @@ function generateReportHTML(data: ReportData): string {
             margin: 30px 0;
           }
           .stat-card {
-            border: 2px solid #e5e7eb;
+            border: 2px solid #e2e6ec;
             border-radius: 8px;
             padding: 20px;
             background-color: #f9fafb;
@@ -88,11 +88,11 @@ function generateReportHTML(data: ReportData): string {
           .stat-value {
             font-size: 32px;
             font-weight: bold;
-            color: #1e40af;
+            color: #0a2a62;
             margin-bottom: 5px;
           }
           .stat-label {
-            color: #6b7280;
+            color: #64707e;
             font-size: 14px;
           }
           .chart-container {
@@ -112,9 +112,9 @@ function generateReportHTML(data: ReportData): string {
           .footer {
             margin-top: 50px;
             padding-top: 20px;
-            border-top: 2px solid #e5e7eb;
+            border-top: 2px solid #e2e6ec;
             text-align: center;
-            color: #9ca3af;
+            color: #828d9a;
             font-size: 12px;
           }
         </style>
