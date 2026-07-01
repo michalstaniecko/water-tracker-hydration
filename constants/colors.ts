@@ -69,7 +69,7 @@ export const colors = {
     900: "#262568",
     950: "#1a1844",
   },
-  orange: {
+  steel: {
     50: "#f0f4fa",
     100: "#dce4f2",
     200: "#b8c8e3",
