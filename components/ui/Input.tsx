@@ -69,7 +69,7 @@ export default function Input({
       {label && <Label>{label}</Label>}
       <TextInput
         ref={ref}
-        className={`h-[32] py-0 border-b-2 font-normal focus:border-blue-700 ${className}`}
+        className={`h-[32] py-0 border-b-2 border-gray-300 dark:border-gray-600 font-normal text-gray-900 dark:text-gray-100 focus:border-blue-700 dark:focus:border-blue-400 ${className}`}
         value={value}
         placeholder={placeholder}
         secureTextEntry={secureTextEntry}

@@ -18,6 +18,7 @@ interface UseAppLifecycleParams {
   fetchOrInitOnboarding: () => Promise<void>;
   fetchOrInitGamification: () => Promise<void>;
   fetchOrInitNotifications: () => Promise<void>;
+  fetchOrInitTheme: () => Promise<void>;
   initializeConsent: () => Promise<void>;
   createAutomaticBackup: () => void;
   checkAndUnlockAchievements: () => void;
@@ -29,6 +30,7 @@ export function useAppLifecycle({
   fetchOrInitOnboarding,
   fetchOrInitGamification,
   fetchOrInitNotifications,
+  fetchOrInitTheme,
   initializeConsent,
   createAutomaticBackup,
   checkAndUnlockAchievements,
@@ -139,6 +141,7 @@ export function useAppLifecycle({
         fetchOrInitWaterData(),
         fetchOrInitOnboarding(),
         fetchOrInitGamification(),
+        fetchOrInitTheme(),
       ]);
 
       // Initialize notifications after other stores

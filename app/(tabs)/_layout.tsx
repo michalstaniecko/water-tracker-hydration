@@ -7,16 +7,32 @@ import { useSetupStore } from "@/stores/setup";
 import { useTranslation } from "react-i18next";
 import { colors } from "@/constants/colors";
 import HeaderAchievementBadge from "@/components/HeaderAchievementBadge";
+import { useColorScheme } from "nativewind";
 
 export default function TabLayout() {
   const { t } = useTranslation("tabs");
   const { dateFormat } = useSetupStore();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
+
   return (
     <>
       <Tabs
         screenOptions={{
           tabBarHideOnKeyboard: true,
-          tabBarActiveTintColor: colors.blue[600],
+          tabBarActiveTintColor: isDark ? colors.blue[400] : colors.blue[600],
+          tabBarInactiveTintColor: isDark ? colors.gray[400] : colors.gray[500],
+          tabBarStyle: {
+            backgroundColor: isDark ? colors.gray[950] : colors.white,
+            borderTopColor: isDark ? colors.gray[800] : colors.gray[200],
+          },
+          headerStyle: {
+            backgroundColor: isDark ? colors.gray[950] : colors.white,
+          },
+          headerTintColor: isDark ? colors.gray[100] : colors.gray[900],
+          sceneStyle: {
+            backgroundColor: isDark ? colors.gray[950] : colors.white,
+          },
           animation: "shift",
           headerRight: () => <HeaderAchievementBadge />,
         }}

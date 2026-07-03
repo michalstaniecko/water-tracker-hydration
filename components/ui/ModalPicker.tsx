@@ -11,6 +11,7 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { Label } from "@/components/ui/Label";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 type Option = {
   label: string;
@@ -33,6 +34,7 @@ export const ModalPicker = ({
   const { t } = useTranslation();
   const { bottom } = useSafeAreaInsets();
   const ref = useRef<BottomSheetModal>(null);
+  const themeColors = useThemeColors();
 
   const handleSelect = (value: string) => {
     onSelect(value);
@@ -55,7 +57,11 @@ export const ModalPicker = ({
     <>
       <Pressable onPress={() => ref.current?.present()}>
         <Label>{label}</Label>
-        <Text className={"leading-[32px] py-0 border-b-2 font-normal"}>
+        <Text
+          className={
+            "leading-[32px] py-0 border-b-2 border-gray-300 dark:border-gray-600 font-normal text-gray-900 dark:text-gray-100"
+          }
+        >
           {options.find((option) => option.value === initValue)?.label}
         </Text>
       </Pressable>
@@ -63,6 +69,8 @@ export const ModalPicker = ({
         backdropComponent={renderBackdrop}
         enablePanDownToClose={true}
         ref={ref}
+        backgroundStyle={{ backgroundColor: themeColors.sheetBg }}
+        handleIndicatorStyle={{ backgroundColor: themeColors.sheetHandle }}
       >
         <BottomSheetView
           style={{
@@ -70,7 +78,9 @@ export const ModalPicker = ({
           }}
         >
           <View className={"p-5"}>
-            <Text className={"uppercase"}>{label}</Text>
+            <Text className={"uppercase text-gray-900 dark:text-gray-100"}>
+              {label}
+            </Text>
             <View className={"mt-3 mb-5"}>
               {options.map((option, index) => (
                 <Item
@@ -108,10 +118,10 @@ const Item = ({ option, onSelect, selected }: ItemProps) => {
     <Pressable onPress={() => onSelect(option.value)}>
       {({ pressed }) => (
         <View
-          className={`${pressed ? "bg-gray-200" : ""} flex-row items-center justify-between`}
+          className={`${pressed ? "bg-gray-200 dark:bg-gray-700" : ""} flex-row items-center justify-between`}
         >
           <Text
-            className={`flex-1 text-lg py-3 ${selected ? "font-semibold" : ""}`}
+            className={`flex-1 text-lg py-3 text-gray-900 dark:text-gray-100 ${selected ? "font-semibold" : ""}`}
             style={{ includeFontPadding: false }}
           >
             {option.label}

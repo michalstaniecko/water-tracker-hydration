@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, View, Text } from "react-native";
 import { useTranslation } from "react-i18next";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 interface Props {
   countdown: number | null;
@@ -11,6 +12,7 @@ export function AdCountdownBanner({ countdown }: Props) {
   const { t } = useTranslation();
   const translateY = useRef(new Animated.Value(-80)).current;
   const visible = countdown !== null;
+  const themeColors = useThemeColors();
 
   useEffect(() => {
     if (visible) {
@@ -32,7 +34,11 @@ export function AdCountdownBanner({ countdown }: Props) {
         style={{ transform: [{ translateY }] }}
         className="mx-4 mt-14 bg-blue-700 rounded-2xl px-4 py-3 flex-row items-center gap-3 shadow-lg"
       >
-        <FontAwesome name="info-circle" size={18} color="#fff" />
+        <FontAwesome
+          name="info-circle"
+          size={18}
+          color={themeColors.iconInverse}
+        />
         <Text className="text-white text-sm font-medium flex-1">
           {t("adCountdown", { seconds: countdown })}
         </Text>

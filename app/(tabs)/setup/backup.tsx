@@ -5,7 +5,10 @@ import BackupSection from "@/components/BackupSection";
 export default function BackupSettings() {
   return (
     <ErrorBoundary componentName="Backup Settings">
-      <ScrollView contentContainerClassName={"gap-5 flex-1 p-5"}>
+      <ScrollView
+        className="dark:bg-gray-950"
+        contentContainerClassName={"gap-5 flex-1 p-5"}
+      >
         <BackupSection />
       </ScrollView>
     </ErrorBoundary>

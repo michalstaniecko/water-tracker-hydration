@@ -21,7 +21,7 @@ export default function AchievementsList() {
         markAchievementsSeen();
       };
       init();
-    }, [fetchOrInitData, markAchievementsSeen])
+    }, [fetchOrInitData, markAchievementsSeen]),
   );
 
   useEffect(() => {
@@ -34,24 +34,26 @@ export default function AchievementsList() {
   const unlocked = unlockedAchievements.length;
 
   return (
-    <ScrollView className="flex-1 bg-white">
+    <ScrollView className="flex-1 bg-white dark:bg-gray-950">
       <View className="p-5 gap-3">
         {/* Progress summary */}
         {total > 0 && (
-          <View className="bg-yellow-50 rounded-lg p-4">
-            <Text className="text-lg font-semibold mb-1">
+          <View className="bg-yellow-50 dark:bg-yellow-950 rounded-lg p-4">
+            <Text className="text-lg font-semibold mb-1 text-gray-900 dark:text-gray-100">
               {t("gamification:progressSummary")}
             </Text>
-            <Text className="text-3xl font-bold text-yellow-600">
+            <Text className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
               {unlocked}/{total}
             </Text>
-            <Text className="text-sm text-gray-600 mt-1">
+            <Text className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               {t("gamification:achievementsUnlocked")}
             </Text>
-            <View className="mt-3 h-2 bg-yellow-200 rounded-full overflow-hidden">
+            <View className="mt-3 h-2 bg-yellow-200 dark:bg-yellow-900 rounded-full overflow-hidden">
               <View
                 className="h-2 bg-yellow-500 rounded-full"
-                style={{ width: `${total > 0 ? (unlocked / total) * 100 : 0}%` }}
+                style={{
+                  width: `${total > 0 ? (unlocked / total) * 100 : 0}%`,
+                }}
               />
             </View>
           </View>
@@ -60,7 +62,7 @@ export default function AchievementsList() {
         {/* Unlocked Achievements */}
         {unlockedAchievements.length > 0 && (
           <View className="gap-2">
-            <Text className="text-xl font-bold text-gray-800">
+            <Text className="text-xl font-bold text-gray-800 dark:text-gray-200">
               {t("gamification:unlockedAchievements")} ({unlocked})
             </Text>
             {unlockedAchievements.map((achievement) => (
@@ -72,14 +74,14 @@ export default function AchievementsList() {
                 <View className="flex-row items-center gap-3">
                   <Text className="text-4xl">{achievement.icon}</Text>
                   <View className="flex-1">
-                    <Text className="text-lg font-semibold text-gray-800">
+                    <Text className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                       {achievement.title}
                     </Text>
-                    <Text className="text-sm text-gray-600">
+                    <Text className="text-sm text-gray-600 dark:text-gray-400">
                       {achievement.description}
                     </Text>
                     {achievement.unlockedAt && (
-                      <Text className="mt-1 text-xs text-green-600">
+                      <Text className="mt-1 text-xs text-green-600 dark:text-green-400">
                         {t("gamification:unlockedOn")}{" "}
                         {new Date(achievement.unlockedAt).toLocaleDateString()}
                       </Text>
@@ -94,8 +96,9 @@ export default function AchievementsList() {
         {/* Locked Achievements */}
         {lockedAchievements.length > 0 && (
           <View className="gap-2">
-            <Text className="text-xl font-bold text-gray-800">
-              {t("gamification:lockedAchievements")} ({lockedAchievements.length})
+            <Text className="text-xl font-bold text-gray-800 dark:text-gray-200">
+              {t("gamification:lockedAchievements")} (
+              {lockedAchievements.length})
             </Text>
             {lockedAchievements.map((achievement) => (
               <Card
@@ -106,10 +109,10 @@ export default function AchievementsList() {
                 <View className="flex-row items-center gap-3">
                   <Text className="text-4xl">{achievement.icon}</Text>
                   <View className="flex-1">
-                    <Text className="text-lg font-semibold text-gray-600">
+                    <Text className="text-lg font-semibold text-gray-600 dark:text-gray-400">
                       {achievement.title}
                     </Text>
-                    <Text className="text-sm text-gray-500">
+                    <Text className="text-sm text-gray-500 dark:text-gray-500">
                       {achievement.description}
                     </Text>
                   </View>
@@ -121,7 +124,7 @@ export default function AchievementsList() {
 
         {achievements.length === 0 && (
           <Card>
-            <Text className="text-center text-gray-500">
+            <Text className="text-center text-gray-500 dark:text-gray-400">
               {t("gamification:noAchievements")}
             </Text>
           </Card>

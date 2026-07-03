@@ -16,8 +16,11 @@ export default function Index() {
 
   return (
     <ErrorBoundary componentName="Home Screen">
-      <View style={{ flex: 1 }}>
-        <ScrollView contentContainerClassName={"p-5"}>
+      <View style={{ flex: 1 }} className="bg-white dark:bg-gray-950">
+        <ScrollView
+          className="dark:bg-gray-950"
+          contentContainerClassName={"p-5"}
+        >
           <View className={"gap-3"}>
             <CardWelcome />
             <CardSecond />

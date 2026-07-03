@@ -12,12 +12,14 @@ import {
   MAX_QUICK_ACTION_AMOUNT,
   DEFAULT_QUICK_ACTION_AMOUNT,
 } from "@/constants/app";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 export default function QuickActionsSettings() {
   const { t } = useTranslation("setup");
   const { quickActions, updateQuickAction, setQuickActions } = useSetupStore();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>("");
+  const themeColors = useThemeColors();
 
   const isAtMaxActions = quickActions.length >= MAX_QUICK_ACTIONS;
 
@@ -106,15 +108,18 @@ export default function QuickActionsSettings() {
 
   return (
     <ErrorBoundary componentName="Quick Actions Settings">
-      <ScrollView contentContainerClassName="p-5 gap-4">
-        <Text className="text-gray-600 text-sm mb-2">
+      <ScrollView
+        className="dark:bg-gray-950"
+        contentContainerClassName="p-5 gap-4"
+      >
+        <Text className="text-gray-600 dark:text-gray-400 text-sm mb-2">
           {t("quickActionsDescription")}
         </Text>
 
         {quickActions.map((action) => (
           <View
             key={action.id}
-            className="bg-gray-50 rounded-lg p-4 flex-row items-center justify-between"
+            className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 flex-row items-center justify-between"
           >
             <View className="flex-1">
               {editingId === action.id ? (
@@ -134,17 +139,25 @@ export default function QuickActionsSettings() {
                       ns: "translation",
                     })}
                   >
-                    <FontAwesome name="check" size={16} color="#ffffff" />
+                    <FontAwesome
+                      name="check"
+                      size={16}
+                      color={themeColors.iconInverse}
+                    />
                   </Pressable>
                   <Pressable
                     onPress={handleCancelEdit}
-                    className="bg-gray-400 p-2 rounded"
+                    className="bg-gray-400 dark:bg-gray-600 p-2 rounded"
                     accessibilityRole="button"
                     accessibilityLabel={t("cancelEditAccessibilityLabel", {
                       ns: "translation",
                     })}
                   >
-                    <FontAwesome name="times" size={16} color="#ffffff" />
+                    <FontAwesome
+                      name="times"
+                      size={16}
+                      color={themeColors.iconInverse}
+                    />
                   </Pressable>
                 </View>
               ) : (
@@ -159,10 +172,10 @@ export default function QuickActionsSettings() {
                     ns: "translation",
                   })}
                 >
-                  <Text className="text-lg font-semibold text-gray-900">
+                  <Text className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     {action.amount}ml
                   </Text>
-                  <Text className="text-gray-500 text-sm">
+                  <Text className="text-gray-500 dark:text-gray-400 text-sm">
                     {t(action.labelKey, { ns: "translation" })}
                   </Text>
                 </Pressable>
@@ -180,7 +193,11 @@ export default function QuickActionsSettings() {
                     amount: action.amount,
                   })}
                 >
-                  <FontAwesome name="trash" size={18} color="#ef4444" />
+                  <FontAwesome
+                    name="trash"
+                    size={18}
+                    color={themeColors.iconDanger}
+                  />
                 </Pressable>
               )}
               <Switch
@@ -205,7 +222,7 @@ export default function QuickActionsSettings() {
           })}
           accessibilityState={{ disabled: isAtMaxActions }}
         >
-          <FontAwesome name="plus" size={16} color="#ffffff" />
+          <FontAwesome name="plus" size={16} color={themeColors.iconInverse} />
           <Text className="text-white font-semibold">
             {t("addQuickAction")}
           </Text>

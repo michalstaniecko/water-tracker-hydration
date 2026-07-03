@@ -40,14 +40,14 @@ export default function Button({
       disabled={disabled}
       className={
         disabled
-          ? "bg-gray-400 p-4 rounded-lg opacity-50"
+          ? "bg-gray-400 dark:bg-gray-700 p-4 rounded-lg opacity-50"
           : isOutlined
-            ? "bg-white border border-blue-500 p-4 rounded-lg active:opacity-50 transition-all"
+            ? "bg-white dark:bg-gray-900 border border-blue-500 dark:border-blue-400 p-4 rounded-lg active:opacity-50 transition-all"
             : "bg-blue-500 p-4 rounded-lg active:opacity-50 active:bg-blue-400 transition-all"
       }
     >
       <Text
-        className={`text-lg text-center font-bold ${isOutlined ? "text-blue-500" : "text-white"}`}
+        className={`text-lg text-center font-bold ${isOutlined ? "text-blue-500 dark:text-blue-400" : "text-white"}`}
       >
         {text}
       </Text>

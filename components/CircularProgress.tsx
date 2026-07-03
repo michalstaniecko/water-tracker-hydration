@@ -6,6 +6,7 @@ import Animated, {
   withTiming,
   useDerivedValue,
 } from "react-native-reanimated";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -29,6 +30,7 @@ export default function CircularProgress({
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const center = size / 2;
+  const themeColors = useThemeColors();
 
   const animatedProgress = useDerivedValue(() => {
     return withTiming(progress, { duration: 600 });
@@ -43,7 +45,14 @@ export default function CircularProgress({
   });
 
   return (
-    <View style={{ width: size, height: size, alignSelf: "center", marginVertical: 12 }}>
+    <View
+      style={{
+        width: size,
+        height: size,
+        alignSelf: "center",
+        marginVertical: 12,
+      }}
+    >
       {/* Shadow layer 1 - tight, dense shadow */}
       <View
         style={{
@@ -53,7 +62,7 @@ export default function CircularProgress({
           width: size,
           height: size,
           borderRadius: size / 2,
-          backgroundColor: "#fff",
+          backgroundColor: themeColors.chartBg,
           ...Platform.select({
             ios: {
               shadowColor: "#000",
@@ -77,7 +86,7 @@ export default function CircularProgress({
             width: size,
             height: size,
             borderRadius: size / 2,
-            backgroundColor: "#fff",
+            backgroundColor: themeColors.chartBg,
             elevation: 4,
           }}
         />

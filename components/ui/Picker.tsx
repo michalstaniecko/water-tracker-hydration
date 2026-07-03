@@ -28,7 +28,7 @@ export default function Picker({ options, onChange, value: initValue }: Props) {
           setValue(itemValue);
           onChange(itemValue);
         }}
-        className="bg-white border border-gray-300 rounded-lg p-2"
+        className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-2"
       >
         {options.map((option) => (
           <PickerUI.Item

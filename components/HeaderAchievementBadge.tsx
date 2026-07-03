@@ -5,10 +5,12 @@ import { useWaterStore } from "@/stores/water";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 export default function HeaderAchievementBadge() {
   const { t } = useTranslation();
   const router = useRouter();
+  const themeColors = useThemeColors();
   const todayWater = useWaterStore((state) => state.getTodayWater());
   const { achievements, fetchOrInitData, checkAndUnlockAchievements } =
     useGamificationStore();
@@ -49,7 +51,7 @@ export default function HeaderAchievementBadge() {
       })}
       accessibilityHint={t("achievementBadgeAccessibilityHint")}
     >
-      <FontAwesome name="trophy" size={22} color="#1868d8" />
+      <FontAwesome name="trophy" size={22} color={themeColors.iconPrimary} />
       {showUnseenBadge && (
         <View className="absolute top-[-2px] right-[-6px] bg-pink-600 rounded-full min-w-[18px] h-[18px] items-center justify-center px-1">
           <Text className="text-white text-[11px] font-bold">

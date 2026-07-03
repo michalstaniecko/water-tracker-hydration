@@ -61,7 +61,7 @@ export default function NotificationsList() {
         <View className="gap-3">
           {notifications.length === 0 && (
             <Card>
-              <Text className="text-center text-gray-500">
+              <Text className="text-center text-gray-500 dark:text-gray-400">
                 {t("gamification:noNotifications")}
               </Text>
             </Card>
@@ -89,7 +89,9 @@ export default function NotificationsList() {
                     <View className="flex-row items-center justify-between">
                       <Text
                         className={`text-lg font-semibold ${
-                          notification.read ? "text-gray-500" : "text-gray-800"
+                          notification.read
+                            ? "text-gray-500 dark:text-gray-400"
+                            : "text-gray-800 dark:text-gray-100"
                         }`}
                       >
                         {t(notification.titleKey)}
@@ -100,12 +102,14 @@ export default function NotificationsList() {
                     </View>
                     <Text
                       className={`text-sm ${
-                        notification.read ? "text-gray-400" : "text-gray-600"
+                        notification.read
+                          ? "text-gray-400 dark:text-gray-500"
+                          : "text-gray-600 dark:text-gray-300"
                       }`}
                     >
                       {t(notification.messageKey, notification.messageParams)}
                     </Text>
-                    <Text className="text-xs text-gray-400">
+                    <Text className="text-xs text-gray-400 dark:text-gray-500">
                       {new Date(notification.timestamp).toLocaleString()}
                     </Text>
                   </View>

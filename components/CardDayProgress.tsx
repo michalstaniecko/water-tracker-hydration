@@ -10,11 +10,13 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 export default function CardDayProgress() {
   const setupStore = useSetupStore();
   const [time, setTime] = useState(dayjs().format("HH:mm"));
   const { t } = useTranslation();
+  const themeColors = useThemeColors();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -28,26 +30,34 @@ export default function CardDayProgress() {
     <Card backgroundColor="bg-white">
       <View className="flex-row items-center justify-between mb-2">
         <View className="flex-row items-center gap-2">
-          <FontAwesome name="clock-o" size={16} color="#64707e" />
-          <Text className="text-lg font-semibold text-gray-900">{time}</Text>
+          <FontAwesome name="clock-o" size={16} color={themeColors.chartText} />
+          <Text className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {time}
+          </Text>
         </View>
         <View className="flex-row items-center gap-3">
           <View className="flex-row items-center gap-1">
-            <FontAwesome name="sun-o" size={12} color="#64707e" />
-            <Text className="text-sm font-semibold text-gray-600">
+            <FontAwesome name="sun-o" size={12} color={themeColors.chartText} />
+            <Text className="text-sm font-semibold text-gray-600 dark:text-gray-400">
               {setupStore[SetupOptions.DAY].startHour}
             </Text>
           </View>
           <View className="flex-row items-center gap-1">
-            <FontAwesome name="moon-o" size={12} color="#64707e" />
-            <Text className="text-sm font-semibold text-gray-600">
+            <FontAwesome
+              name="moon-o"
+              size={12}
+              color={themeColors.chartText}
+            />
+            <Text className="text-sm font-semibold text-gray-600 dark:text-gray-400">
               {setupStore[SetupOptions.DAY].endHour}
             </Text>
           </View>
         </View>
       </View>
       <AnimatedBar />
-      <Text className="text-gray-500 text-xs mt-1">{t("dayProgress")}</Text>
+      <Text className="text-gray-500 dark:text-gray-400 text-xs mt-1">
+        {t("dayProgress")}
+      </Text>
     </Card>
   );
 }
@@ -70,7 +80,7 @@ const AnimatedBar = () => {
   }, [dayProgress, width]);
 
   return (
-    <View className="h-3 rounded-full bg-green-100 overflow-hidden">
+    <View className="h-3 rounded-full bg-green-100 dark:bg-green-900 overflow-hidden">
       <Animated.View
         className="h-full rounded-full bg-green-500"
         style={widthStyle}

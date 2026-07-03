@@ -5,7 +5,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 export default function AchievementsScreen() {
   return (
     <ErrorBoundary componentName="Achievements Screen">
-      <View className="flex-1">
+      <View className="flex-1 bg-white dark:bg-gray-950">
         <AchievementsList />
       </View>
     </ErrorBoundary>

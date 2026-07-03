@@ -33,13 +33,19 @@ export default function Modal({
           <View className={"absolute top-0 left-0 right-0 bottom-0"} />
         </TouchableWithoutFeedback>
         <View className={"gap-3"}>
-          <View className={"bg-white p-5 rounded-lg shadow-sm"}>
+          <View
+            className={"bg-white dark:bg-gray-900 p-5 rounded-lg shadow-sm"}
+          >
             {children}
           </View>
           <View className={onConfirm ? "flex-row gap-3" : undefined}>
             {onConfirm && (
               <View className="flex-1">
-                <Button text={closeText} onPress={handleClose} variant="outlined" />
+                <Button
+                  text={closeText}
+                  onPress={handleClose}
+                  variant="outlined"
+                />
               </View>
             )}
             <View className={onConfirm ? "flex-1" : undefined}>
@@ -59,7 +65,9 @@ export const ModalHeader = ({ title }: { title: string }) => {
   return (
     <View className={"mb-3"}>
       <Text
-        className={"uppercase text-sm font-semibold text-gray-800 text-center"}
+        className={
+          "uppercase text-sm font-semibold text-gray-800 dark:text-gray-200 text-center"
+        }
       >
         {title}
       </Text>

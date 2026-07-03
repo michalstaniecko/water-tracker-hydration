@@ -30,11 +30,11 @@ export const ModalPickerItem = ({
     <Pressable onPress={() => onSelect(option.value)} onLayout={handleLayout}>
       {({ pressed }) => (
         <View
-          className={`${pressed ? "bg-gray-200/100" : "bg-gray-200/0"} transition-[background-color] duration-100 flex-row items-center justify-between`}
+          className={`${pressed ? "bg-gray-200/100 dark:bg-gray-700/100" : "bg-gray-200/0 dark:bg-gray-700/0"} transition-[background-color] duration-100 flex-row items-center justify-between`}
         >
           <View>
             <Text
-              className={`w-full text-lg py-3 rounded  ${selected && "font-semibold"}`}
+              className={`w-full text-lg py-3 rounded text-gray-900 dark:text-gray-100 ${selected && "font-semibold"}`}
             >
               {option.label}
             </Text>

@@ -18,8 +18,10 @@ export default function History() {
 
   if (!hasHistory) {
     return (
-      <View className={"flex-1 p-5"}>
-        <Text>No history available. Drink some water.</Text>
+      <View className={"flex-1 bg-white dark:bg-gray-950 p-5"}>
+        <Text className="text-gray-900 dark:text-gray-100">
+          No history available. Drink some water.
+        </Text>
       </View>
     );
   }
@@ -27,7 +29,7 @@ export default function History() {
   return (
     <ErrorBoundary componentName="History Screen">
       <FlatList
-        className={"flex-1 p-5"}
+        className={"flex-1 bg-white dark:bg-gray-950 p-5"}
         contentContainerClassName={"gap-1"}
         data={getSortedHistory()}
         renderItem={({ item }) => <Item date={item.date} water={item.water} />}
@@ -44,9 +46,14 @@ function Item({ date, water }: { date: string; water: string }) {
     dateFormat,
   );
   return (
-    <View key={date} className={"flex-row py-2 border-b justify-between"}>
-      <Text>{convertedDate}</Text>
-      <Text>{water}ml</Text>
+    <View
+      key={date}
+      className={
+        "flex-row py-2 border-b border-gray-200 dark:border-gray-700 justify-between"
+      }
+    >
+      <Text className="text-gray-900 dark:text-gray-100">{convertedDate}</Text>
+      <Text className="text-gray-900 dark:text-gray-100">{water}ml</Text>
     </View>
   );
 }
