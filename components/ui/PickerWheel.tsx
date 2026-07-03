@@ -70,7 +70,10 @@ const PickerWheelItem = ({ children, scroll, index }: PickerWheelItemProps) => {
   }));
   return (
     <Animated.View style={[scale, opacity, { height: ITEM_HEIGHT }]}>
-      <Text style={{ padding: 10, fontSize: 18, textAlign: "center" }}>
+      <Text
+        className="text-gray-900 dark:text-gray-100"
+        style={{ padding: 10, fontSize: 18, textAlign: "center" }}
+      >
         {children}
       </Text>
     </Animated.View>

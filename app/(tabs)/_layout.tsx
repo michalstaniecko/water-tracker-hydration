@@ -5,18 +5,32 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Banner } from "@/components/ads/Banner";
 import { useSetupStore } from "@/stores/setup";
 import { useTranslation } from "react-i18next";
-import { colors } from "@/constants/colors";
 import HeaderAchievementBadge from "@/components/HeaderAchievementBadge";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 export default function TabLayout() {
   const { t } = useTranslation("tabs");
   const { dateFormat } = useSetupStore();
+  const themeColors = useThemeColors();
+
   return (
     <>
       <Tabs
         screenOptions={{
           tabBarHideOnKeyboard: true,
-          tabBarActiveTintColor: colors.blue[600],
+          tabBarActiveTintColor: themeColors.navActive,
+          tabBarInactiveTintColor: themeColors.navInactive,
+          tabBarStyle: {
+            backgroundColor: themeColors.navBg,
+            borderTopColor: themeColors.navBorder,
+          },
+          headerStyle: {
+            backgroundColor: themeColors.navBg,
+          },
+          headerTintColor: themeColors.navText,
+          sceneStyle: {
+            backgroundColor: themeColors.navBg,
+          },
           animation: "shift",
           headerRight: () => <HeaderAchievementBadge />,
         }}

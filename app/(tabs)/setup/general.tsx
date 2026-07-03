@@ -66,7 +66,10 @@ export default function GeneralSettings() {
   return (
     <ErrorBoundary componentName="General Settings">
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView contentContainerClassName={"gap-5 flex-1 p-5"}>
+        <ScrollView
+          className="dark:bg-gray-950"
+          contentContainerClassName={"gap-5 flex-1 p-5"}
+        >
           <View className={"gap-1"}>
             <Input
               label={t("glassCapacityInMl")}

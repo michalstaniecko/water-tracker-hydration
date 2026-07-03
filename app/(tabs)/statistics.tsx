@@ -18,6 +18,7 @@ import { useWaterStore } from "@/stores/water";
 import { convertDateFormat } from "@/utils/date";
 import { useSetupStore } from "@/stores/setup";
 import { StatisticsSkeleton } from "@/components/skeletons/StatisticsSkeleton";
+import { useThemeColors } from "@/hooks/useThemeColors";
 // PDF export functions kept for future use but hidden from UI
 // import { exportWeeklyReport, exportMonthlyReport } from "@/utils/pdfExport";
 // import { trackEngagement } from "@/utils/analytics";
@@ -42,6 +43,7 @@ export default function Statistics() {
   const { minimumWater } = useSetupStore();
   // Subscribe to water history to trigger re-render when water data changes
   const history = useWaterStore((state) => state.history);
+  const themeColors = useThemeColors();
 
   // Show skeleton loading while data is being loaded
   const isLoading = history === null;
@@ -97,7 +99,7 @@ export default function Statistics() {
   if (isLoading) {
     return (
       <ErrorBoundary componentName="Statistics Screen">
-        <ScrollView className="flex-1 bg-white">
+        <ScrollView className="flex-1 bg-white dark:bg-gray-950">
           <StatisticsSkeleton />
         </ScrollView>
       </ErrorBoundary>
@@ -106,36 +108,36 @@ export default function Statistics() {
 
   return (
     <ErrorBoundary componentName="Statistics Screen">
-      <ScrollView className="flex-1 bg-white">
+      <ScrollView className="flex-1 bg-white dark:bg-gray-950">
         <View className="p-5 gap-3">
           {/* Tab selector */}
           <View className="flex-row gap-2">
             <TouchableOpacity
-              className={`flex-1 p-4 rounded-lg ${activeTab === "week" ? "bg-blue-600" : "bg-gray-200"}`}
+              className={`flex-1 p-4 rounded-lg ${activeTab === "week" ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-800"}`}
               onPress={() => setActiveTab("week")}
             >
               <Text
-                className={`text-center font-semibold ${activeTab === "week" ? "text-white" : "text-gray-700"}`}
+                className={`text-center font-semibold ${activeTab === "week" ? "text-white" : "text-gray-700 dark:text-gray-300"}`}
               >
                 {t("weeklyView")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              className={`flex-1 p-4 rounded-lg ${activeTab === "month" ? "bg-blue-600" : "bg-gray-200"}`}
+              className={`flex-1 p-4 rounded-lg ${activeTab === "month" ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-800"}`}
               onPress={() => setActiveTab("month")}
             >
               <Text
-                className={`text-center font-semibold ${activeTab === "month" ? "text-white" : "text-gray-700"}`}
+                className={`text-center font-semibold ${activeTab === "month" ? "text-white" : "text-gray-700 dark:text-gray-300"}`}
               >
                 {t("monthlyView")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              className={`flex-1 p-4 rounded-lg ${activeTab === "history" ? "bg-blue-600" : "bg-gray-200"}`}
+              className={`flex-1 p-4 rounded-lg ${activeTab === "history" ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-800"}`}
               onPress={() => setActiveTab("history")}
             >
               <Text
-                className={`text-center font-semibold ${activeTab === "history" ? "text-white" : "text-gray-700"}`}
+                className={`text-center font-semibold ${activeTab === "history" ? "text-white" : "text-gray-700 dark:text-gray-300"}`}
               >
                 {t("history")}
               </Text>
@@ -149,8 +151,8 @@ export default function Statistics() {
             <>
               {/* Chart */}
               {hasData ? (
-                <View className="bg-white rounded-lg overflow-hidden shadow-sm p-4">
-                  <Text className="text-lg font-semibold pb-2">
+                <View className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-sm p-4">
+                  <Text className="text-lg font-semibold pb-2 text-gray-900 dark:text-gray-100">
                     {t("waterIntakeChart")}
                   </Text>
                   <LineChart
@@ -158,9 +160,9 @@ export default function Statistics() {
                     data={chartData}
                     width={screenWidth - 80}
                     height={220}
-                    color="#2680eb"
+                    color={themeColors.chartLine}
                     thickness={2}
-                    dataPointsColor="#1868d8"
+                    dataPointsColor={themeColors.chartDataPoint}
                     dataPointsRadius={4}
                     spacing={
                       period === "month"
@@ -171,21 +173,24 @@ export default function Statistics() {
                     initialSpacing={20}
                     endSpacing={20}
                     noOfSections={5}
-                    yAxisColor="#cdd3dc"
-                    xAxisColor="#cdd3dc"
-                    yAxisTextStyle={{ color: "#64707e", fontSize: 10 }}
+                    yAxisColor={themeColors.chartAxis}
+                    xAxisColor={themeColors.chartAxis}
+                    yAxisTextStyle={{
+                      color: themeColors.chartText,
+                      fontSize: 10,
+                    }}
                     xAxisLabelTextStyle={{
-                      color: "#64707e",
+                      color: themeColors.chartText,
                       fontSize: 9,
                       marginLeft: 0,
                     }}
                     showVerticalLines
-                    verticalLinesColor="#e2e6ec"
-                    backgroundColor="#ffffff"
-                    rulesColor="#cdd3dc"
+                    verticalLinesColor={themeColors.chartVerticalLines}
+                    backgroundColor={themeColors.chartBg}
+                    rulesColor={themeColors.chartRules}
                     showReferenceLine1
                     referenceLine1Config={{
-                      color: "#7eb8f7",
+                      color: themeColors.chartReferenceLine,
                       dashWidth: 2,
                       dashGap: 3,
                     }}
@@ -213,18 +218,18 @@ export default function Statistics() {
 
               {/* Trend Analysis */}
               {hasData && (
-                <View className="bg-purple-50 rounded-lg p-4 mt-2">
-                  <Text className="text-lg font-semibold mb-2">
+                <View className="bg-purple-50 dark:bg-purple-950 rounded-lg p-4 mt-2">
+                  <Text className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
                     {t("trendAnalysis")}
                   </Text>
                   <View className="flex-row items-center gap-2">
                     <Text
                       className={`text-2xl ${
                         trend.direction === "up"
-                          ? "text-green-600"
+                          ? "text-green-600 dark:text-green-400"
                           : trend.direction === "down"
-                            ? "text-red-600"
-                            : "text-gray-600"
+                            ? "text-red-600 dark:text-red-400"
+                            : "text-gray-600 dark:text-gray-400"
                       }`}
                     >
                       {trend.direction === "up"
@@ -234,17 +239,17 @@ export default function Statistics() {
                           : "→"}
                     </Text>
                     <View>
-                      <Text className="font-semibold text-base">
+                      <Text className="font-semibold text-base text-gray-900 dark:text-gray-100">
                         {trend.direction === "up"
                           ? t("trendUp")
                           : trend.direction === "down"
                             ? t("trendDown")
                             : t("trendStable")}
                       </Text>
-                      <Text className="text-sm text-gray-600">
+                      <Text className="text-sm text-gray-600 dark:text-gray-400">
                         {trend.description}
                       </Text>
-                      <Text className="text-xs text-gray-500 mt-1">
+                      <Text className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {t("comparedToPrevious")}
                       </Text>
                     </View>
@@ -253,7 +258,7 @@ export default function Statistics() {
               )}
 
               {/* Progress Summary */}
-              <Text className="text-xl font-bold mt-2">
+              <Text className="text-xl font-bold mt-2 text-gray-900 dark:text-gray-100">
                 {t("progressSummary")}
               </Text>
 
@@ -325,8 +330,8 @@ function HistoryView() {
 
   if (!hasHistory()) {
     return (
-      <View className="bg-gray-100 p-8 rounded-lg items-center">
-        <Text className="text-gray-600 text-center text-base">
+      <View className="bg-gray-100 dark:bg-gray-800 p-8 rounded-lg items-center">
+        <Text className="text-gray-600 dark:text-gray-400 text-center text-base">
           {t("noHistoryAvailable")}
         </Text>
       </View>
@@ -334,8 +339,8 @@ function HistoryView() {
   }
 
   return (
-    <View className="bg-white rounded-lg overflow-hidden shadow-sm">
-      <View className="flex-row bg-blue-600 p-4 border-b border-gray-200">
+    <View className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-sm">
+      <View className="flex-row bg-blue-600 p-4 border-b border-gray-200 dark:border-gray-700">
         <Text className="flex-1 font-bold text-white text-base">
           {t("date")}
         </Text>
@@ -378,10 +383,12 @@ function HistoryItem({
   );
   return (
     <View
-      className={`flex-row p-4 border-b border-gray-200 ${isOdd ? "bg-gray-50" : "bg-white"}`}
+      className={`flex-row p-4 border-b border-gray-200 dark:border-gray-700 ${isOdd ? "bg-gray-50 dark:bg-gray-800" : "bg-white dark:bg-gray-900"}`}
     >
-      <Text className="flex-1 text-gray-800 text-base">{convertedDate}</Text>
-      <Text className="w-24 text-gray-800 text-base text-right font-semibold">
+      <Text className="flex-1 text-gray-800 dark:text-gray-200 text-base">
+        {convertedDate}
+      </Text>
+      <Text className="w-24 text-gray-800 dark:text-gray-200 text-base text-right font-semibold">
         {water}ml
       </Text>
     </View>

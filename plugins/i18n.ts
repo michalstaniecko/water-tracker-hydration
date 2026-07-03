@@ -6,6 +6,9 @@ import de from "@/i18n/de";
 import es from "@/i18n/es";
 import cs from "@/i18n/cs";
 import fr from "@/i18n/fr";
+import it from "@/i18n/it";
+import uk from "@/i18n/uk";
+import hr from "@/i18n/hr";
 
 const resources = {
   en,
@@ -14,6 +17,9 @@ const resources = {
   es,
   cs,
   fr,
+  it,
+  uk,
+  hr,
 };
 
 i18n.use(initReactI18next).init({

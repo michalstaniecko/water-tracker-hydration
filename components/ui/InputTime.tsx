@@ -52,7 +52,11 @@ export default function InputTime({
     <View>
       <Pressable onPress={() => setOpen(true)}>
         <Label>{label}</Label>
-        <Text className={"leading-[32px] py-0 border-b-2 font-normal"}>
+        <Text
+          className={
+            "leading-[32px] py-0 border-b-2 font-normal text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700"
+          }
+        >
           {convertDateToFormat(selectedTime, format)}
         </Text>
       </Pressable>

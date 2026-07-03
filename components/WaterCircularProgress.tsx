@@ -10,6 +10,7 @@ import Animated, {
   LayoutAnimationConfig,
 } from "react-native-reanimated";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 const RING_SIZE = 240;
 const STROKE_WIDTH = 20;
@@ -18,10 +19,13 @@ const ANIMATION_DURATION = 50;
 export default function WaterCircularProgress() {
   const { water, minimumWater, percentOfDailyWater, leftToDrink } = useWater();
   const { t } = useTranslation();
+  const themeColors = useThemeColors();
 
   const isGoalAchieved = leftToDrink <= 0;
   const progressColor = isGoalAchieved ? colors.green[500] : colors.blue[500];
-  const trackColor = isGoalAchieved ? colors.green[100] : colors.blue[100];
+  const trackColor = isGoalAchieved
+    ? themeColors.trackSuccess
+    : themeColors.trackProgress;
 
   return (
     <CircularProgress
@@ -38,8 +42,10 @@ export default function WaterCircularProgress() {
             exiting={FadeOut.duration(ANIMATION_DURATION)}
             className="items-center"
           >
-            <Text className="text-3xl font-bold text-gray-900">{water}ml</Text>
-            <Text className="text-base text-gray-500 mt-1 font-semibold">
+            <Text className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              {water}ml
+            </Text>
+            <Text className="text-base text-gray-500 dark:text-gray-400 mt-1 font-semibold">
               {t("waterGoalOf", { goal: minimumWater })}
             </Text>
           </Animated.View>
@@ -55,10 +61,10 @@ export default function WaterCircularProgress() {
               size={32}
               color={colors.green[500]}
             />
-            <Text className="text-lg font-semibold text-green-600 mt-1 text-center px-4">
+            <Text className="text-lg font-semibold text-green-600 dark:text-green-400 mt-1 text-center px-4">
               {t("youDrankEnoughWaterToday")}
             </Text>
-            <Text className="text-sm text-green-500 mt-1 font-semibold">
+            <Text className="text-sm text-green-500 dark:text-green-400 mt-1 font-semibold">
               {water}ml {t("waterGoalOf", { goal: minimumWater })}
             </Text>
           </Animated.View>

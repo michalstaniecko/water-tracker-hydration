@@ -213,7 +213,7 @@ export default function RemindersSettings() {
 
   if (!isInitialized) {
     return (
-      <View className="flex-1 items-center justify-center">
+      <View className="flex-1 items-center justify-center bg-white dark:bg-gray-950">
         <ActivityIndicator size="large" />
       </View>
     );
@@ -222,6 +222,7 @@ export default function RemindersSettings() {
   return (
     <ErrorBoundary componentName="Reminders Settings">
       <ScrollView
+        className="dark:bg-gray-950"
         contentContainerClassName="gap-5 flex-1 p-5"
         accessible={true}
         accessibilityLabel={t("remindersSettingsScreen")}
@@ -275,7 +276,7 @@ export default function RemindersSettings() {
               onSelect={handleMaxNotificationsChange}
               value={String(maxNotifications)}
             />
-            <Text className="text-gray-500 text-sm mt-1 px-1">
+            <Text className="text-gray-500 dark:text-gray-400 text-sm mt-1 px-1">
               {t("maxNotificationsDescription")}
             </Text>
           </View>
@@ -283,18 +284,18 @@ export default function RemindersSettings() {
 
         {/* Activity Hours Info */}
         <View
-          className="bg-gray-100 rounded-lg p-4 gap-2"
+          className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 gap-2"
           accessible={true}
           accessibilityRole="text"
           accessibilityLabel={`${t("activityHours")}: ${setupStore.day.startHour} - ${setupStore.day.endHour}. ${t("activityHoursDescription")}`}
         >
-          <Text className="text-gray-600 font-medium">
+          <Text className="text-gray-600 dark:text-gray-400 font-medium">
             {t("activityHours")}
           </Text>
-          <Text className="text-gray-800">
+          <Text className="text-gray-800 dark:text-gray-200">
             {setupStore.day.startHour} - {setupStore.day.endHour}
           </Text>
-          <Text className="text-gray-500 text-sm">
+          <Text className="text-gray-500 dark:text-gray-400 text-sm">
             {t("activityHoursDescription")}
           </Text>
         </View>
@@ -302,12 +303,14 @@ export default function RemindersSettings() {
         {/* Permission Status Warning */}
         {permissionStatus === "denied" && (
           <View
-            className="bg-yellow-100 rounded-lg p-4"
+            className="bg-yellow-100 dark:bg-yellow-900 rounded-lg p-4"
             accessible={true}
             accessibilityRole="alert"
             accessibilityLabel={t("permissionDenied")}
           >
-            <Text className="text-yellow-800">{t("permissionDenied")}</Text>
+            <Text className="text-yellow-800 dark:text-yellow-200">
+              {t("permissionDenied")}
+            </Text>
           </View>
         )}
       </ScrollView>

@@ -1,7 +1,8 @@
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useRef, useState } from "react";
 import "react-native-reanimated";
 import "../global.css";
 import { useWaterStore } from "@/stores/water";
@@ -15,10 +16,13 @@ import { useGamificationStore } from "@/stores/gamification";
 import { useBackupStore } from "@/stores/backup";
 import { useNotificationsStore } from "@/stores/notifications";
 import { useConsentStore } from "@/stores/consent";
+import { useThemeStore } from "@/stores/theme";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { useNotificationListeners } from "@/hooks/useNotificationListeners";
 import { useActivityHoursRescheduler } from "@/hooks/useActivityHoursRescheduler";
 import { useAppLifecycle } from "@/hooks/useAppLifecycle";
+import { useAppliedTheme } from "@/hooks/useAppliedTheme";
+import { View } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -39,9 +43,23 @@ export default function RootLayout() {
   const { fetchOrInitData: fetchOrInitNotifications, scheduleReminders } =
     useNotificationsStore();
   const { initializeConsent } = useConsentStore();
+  const { fetchOrInitData: fetchOrInitTheme } = useThemeStore();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+  // Theme preference must be loaded (and applied via useAppliedTheme below)
+  // BEFORE the splash screen is hidden, otherwise the app briefly flashes
+  // the wrong color scheme.
+  const [themeReady, setThemeReady] = useState(false);
+  const isThemeFetchStarted = useRef(false);
+
+  useEffect(() => {
+    if (isThemeFetchStarted.current) {
+      return;
+    }
+    isThemeFetchStarted.current = true;
+    fetchOrInitTheme().finally(() => setThemeReady(true));
+  }, [fetchOrInitTheme]);
 
   useEffect(() => {
     const { languageCode: deviceLanguageCode } = getLocales()[0];
@@ -58,18 +76,23 @@ export default function RootLayout() {
     fetchOrInitOnboarding,
     fetchOrInitGamification,
     fetchOrInitNotifications,
+    fetchOrInitTheme,
     initializeConsent,
     createAutomaticBackup,
     checkAndUnlockAchievements,
   });
 
+  const colorScheme = useAppliedTheme();
+
+  const appReady = loaded && themeReady;
+
   useEffect(() => {
-    if (loaded) {
+    if (appReady) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [appReady]);
 
-  if (!loaded) {
+  if (!appReady) {
     return null;
   }
 
@@ -77,10 +100,17 @@ export default function RootLayout() {
     <ErrorBoundary componentName="App Root">
       <GestureHandlerRootView>
         <BottomSheetModalProvider>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
+          <View className="flex-1 bg-white dark:bg-gray-950">
+            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+            <Stack
+              screenOptions={{
+                contentStyle: { backgroundColor: "transparent" },
+              }}
+            >
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          </View>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </ErrorBoundary>

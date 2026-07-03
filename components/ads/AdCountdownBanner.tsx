@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
-import { Animated, Modal, View, Text } from "react-native";
+import { Animated, StyleSheet, View, Text } from "react-native";
 import { useTranslation } from "react-i18next";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 interface Props {
   countdown: number | null;
@@ -11,6 +12,7 @@ export function AdCountdownBanner({ countdown }: Props) {
   const { t } = useTranslation();
   const translateY = useRef(new Animated.Value(-80)).current;
   const visible = countdown !== null;
+  const themeColors = useThemeColors();
 
   useEffect(() => {
     if (visible) {
@@ -27,21 +29,23 @@ export function AdCountdownBanner({ countdown }: Props) {
   if (!visible) return null;
 
   return (
-    <Modal transparent visible animationType="none" statusBarTranslucent>
-      <View className="flex-1" pointerEvents="none">
-        <Animated.View
-          style={{ transform: [{ translateY }] }}
-          className="mx-4 mt-14 bg-blue-700 rounded-2xl px-4 py-3 flex-row items-center gap-3 shadow-lg"
-        >
-          <FontAwesome name="info-circle" size={18} color="#fff" />
-          <Text className="text-white text-sm font-medium flex-1">
-            {t("adCountdown", { seconds: countdown })}
-          </Text>
-          <View className="bg-blue-500 rounded-full w-8 h-8 items-center justify-center">
-            <Text className="text-white font-bold text-base">{countdown}</Text>
-          </View>
-        </Animated.View>
-      </View>
-    </Modal>
+    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+      <Animated.View
+        style={{ transform: [{ translateY }] }}
+        className="mx-4 mt-14 bg-blue-700 rounded-2xl px-4 py-3 flex-row items-center gap-3 shadow-lg"
+      >
+        <FontAwesome
+          name="info-circle"
+          size={18}
+          color={themeColors.iconInverse}
+        />
+        <Text className="text-white text-sm font-medium flex-1">
+          {t("adCountdown", { seconds: countdown })}
+        </Text>
+        <View className="bg-blue-500 rounded-full w-8 h-8 items-center justify-center">
+          <Text className="text-white font-bold text-base">{countdown}</Text>
+        </View>
+      </Animated.View>
+    </View>
   );
 }

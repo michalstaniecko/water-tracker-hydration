@@ -64,7 +64,9 @@ class ErrorBoundaryComponent extends Component<
           <Text className="text-red-500 text-lg font-semibold mb-2">
             {errorTitle}
           </Text>
-          <Text className="text-gray-600 text-center">{errorMessage}</Text>
+          <Text className="text-gray-600 dark:text-gray-400 text-center">
+            {errorMessage}
+          </Text>
         </View>
       );
     }

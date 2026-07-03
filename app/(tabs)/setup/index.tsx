@@ -4,11 +4,13 @@ import { useTranslation } from "react-i18next";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { useConsentStore } from "@/stores/consent";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 export default function SettingsMenu() {
   const router = useRouter();
   const { t } = useTranslation(["setup", "consent"]);
   const { privacyOptionsRequired, showPrivacyOptions } = useConsentStore();
+  const themeColors = useThemeColors();
 
   const menuItems = [
     {
@@ -16,6 +18,12 @@ export default function SettingsMenu() {
       title: t("general"),
       icon: "sliders",
       onPress: () => router.push("/(tabs)/setup/general"),
+    },
+    {
+      id: "appearance",
+      title: t("appearance"),
+      icon: "moon-o",
+      onPress: () => router.push("/(tabs)/setup/appearance"),
     },
     {
       id: "reminders",
@@ -50,13 +58,13 @@ export default function SettingsMenu() {
 
   return (
     <ErrorBoundary componentName="Settings Menu">
-      <View className="flex-1 bg-white  p-5">
+      <View className="flex-1 bg-white dark:bg-gray-950 p-5">
         <View className="gap-3">
           {menuItems.map((item) => (
             <Pressable
               key={item.id}
               onPress={item.onPress}
-              className="bg-gray-50  p-4 rounded-lg flex-row items-center justify-between active:opacity-70"
+              className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg flex-row items-center justify-between active:opacity-70"
               accessibilityRole="button"
               accessibilityLabel={item.title}
             >
@@ -64,13 +72,17 @@ export default function SettingsMenu() {
                 <FontAwesome
                   name={item.icon as any}
                   size={24}
-                  color="#2680eb"
+                  color={themeColors.iconPrimary}
                 />
-                <Text className="text-lg font-semibold text-gray-900 ">
+                <Text className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {item.title}
                 </Text>
               </View>
-              <FontAwesome name="chevron-right" size={16} color="#a3adb9" />
+              <FontAwesome
+                name="chevron-right"
+                size={16}
+                color={themeColors.iconMuted}
+              />
             </Pressable>
           ))}
         </View>

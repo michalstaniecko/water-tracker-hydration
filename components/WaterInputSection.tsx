@@ -6,25 +6,28 @@ import { rescheduleNotificationsAfterDrink } from "@/hooks/useWater";
 import { useTranslation } from "react-i18next";
 import { useHaptics } from "@/hooks/useHaptics";
 import { logError } from "@/utils/errorLogging";
-import { useWaterInterstitial } from "@/hooks/useWaterInterstitial";
-import { AdCountdownBanner } from "@/components/ads/AdCountdownBanner";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useMemo, useState } from "react";
 import PickerWheel from "@/components/ui/PickerWheel";
 import Modal, { ModalHeader } from "@/components/ui/Modal";
 import { GLASS_CAPACITY_OPTIONS, MAX_DAILY_WATER } from "@/constants/app";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 type ModalMode = "add" | "remove" | null;
 
-export default function WaterInputSection() {
+type Props = {
+  trackWaterAdd: () => Promise<void>;
+};
+
+export default function WaterInputSection({ trackWaterAdd }: Props) {
   const { t } = useTranslation();
   const { quickActions, glassCapacity } = useSetupStore();
   const waterStore = useWaterStore();
   const gamificationStore = useGamificationStore();
   const { impactMedium, impactLight } = useHaptics();
-  const { trackWaterAdd, countdown } = useWaterInterstitial();
   const [modalMode, setModalMode] = useState<ModalMode>(null);
   const [selectedAmount, setSelectedAmount] = useState(glassCapacity);
+  const themeColors = useThemeColors();
 
   const enabledActions = useMemo(
     () => quickActions.filter((action) => action.enabled),
@@ -92,10 +95,9 @@ export default function WaterInputSection() {
 
   return (
     <View className="gap-3">
-      <AdCountdownBanner countdown={countdown} />
       {enabledActions.length > 0 && (
-        <View className="bg-white rounded-lg p-4 border border-gray-200">
-          <Text className="text-sm text-gray-600 mb-3 font-medium">
+        <View className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+          <Text className="text-sm text-gray-600 dark:text-gray-400 mb-3 font-medium">
             {t("quickActions")}
           </Text>
           <View className="flex-row gap-2">
@@ -114,7 +116,11 @@ export default function WaterInputSection() {
                 })}
               >
                 <View className="items-center">
-                  <FontAwesome name="plus-circle" size={20} color="#ffffff" />
+                  <FontAwesome
+                    name="plus-circle"
+                    size={20}
+                    color={themeColors.iconInverse}
+                  />
                   <Text className="text-white font-bold text-base mt-1">
                     {action.amount}ml
                   </Text>
@@ -131,12 +137,12 @@ export default function WaterInputSection() {
       <View className="flex-row gap-2">
         <Pressable
           onPress={() => openModal("remove")}
-          className="flex-1 flex-row items-center justify-center gap-2 border border-blue-500 rounded py-3 active:opacity-50"
+          className="flex-1 flex-row items-center justify-center gap-2 border border-blue-500 dark:border-blue-400 rounded py-3 active:opacity-50"
           accessibilityRole="button"
           accessibilityLabel={t("removeWater")}
         >
-          <FontAwesome name="minus" size={14} color="#1868d8" />
-          <Text className="text-blue-600 text-base font-semibold">
+          <FontAwesome name="minus" size={14} color={themeColors.iconPrimary} />
+          <Text className="text-blue-600 dark:text-blue-400 text-base font-semibold">
             {t("removeWater")}
           </Text>
         </Pressable>
@@ -147,7 +153,7 @@ export default function WaterInputSection() {
           accessibilityRole="button"
           accessibilityLabel={t("addWater")}
         >
-          <FontAwesome name="plus" size={14} color="#ffffff" />
+          <FontAwesome name="plus" size={14} color={themeColors.iconInverse} />
           <Text className="text-white text-base font-semibold">
             {t("addWater")}
           </Text>

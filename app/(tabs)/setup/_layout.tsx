@@ -21,6 +21,13 @@ export default function SetupLayout() {
         }}
       />
       <Stack.Screen
+        name="appearance"
+        options={{
+          title: t("appearance"),
+          headerBackTitle: t("back"),
+        }}
+      />
+      <Stack.Screen
         name="backup"
         options={{
           title: t("backup"),
