@@ -1,0 +1,14 @@
+{
+  "welcome": {
+    "title": "Selamat datang di pelacak air harian Anda!",
+    "description": "Ini pertama kalinya Anda di sini, jadi mari kita mulai."
+  },
+  "secondStep": {
+    "title": "Tetapkan Target Air Harian Anda",
+    "description": "Anda dapat memperbarui target asupan air harian Anda di pengaturan."
+  },
+  "thirdStep": {
+    "title": "Pantau Progres Anda",
+    "description": "Lacak hidrasi harian Anda – lihat berapa banyak air yang sudah Anda minum dan berapa lama waktu yang tersisa untuk mencapai target harian sebelum hari berakhir!"
+  }
+}

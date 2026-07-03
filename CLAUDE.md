@@ -36,7 +36,7 @@ File-based routing in `app/`:
 TailwindCSS via NativeWind. Custom palette in `tailwind.config.js` (pink, blue, green, yellow, purple, orange, mint, lilac, peach, gray).
 
 ### Internationalization
-i18next in `i18n/`. Languages: `cs, de, en, es, fr, pl`. For namespaces and keys see `i18n/<lang>/*.json`. Language is auto-detected and overridable in settings.
+i18next in `i18n/`. Languages: `cs, de, en, es, fr, hr, id, it, ja, pl, pt, uk`. For namespaces and keys see `i18n/<lang>/*.json`. Language is auto-detected and overridable in settings.
 
 ### Key Directories
 - `utils/` — pure helpers. `validation.ts` and `numbers.ts` are kept at 100% test coverage.

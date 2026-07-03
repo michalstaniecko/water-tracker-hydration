@@ -9,6 +9,9 @@ import fr from "@/i18n/fr";
 import it from "@/i18n/it";
 import uk from "@/i18n/uk";
 import hr from "@/i18n/hr";
+import pt from "@/i18n/pt";
+import ja from "@/i18n/ja";
+import id from "@/i18n/id";
 
 const resources = {
   en,
@@ -20,6 +23,9 @@ const resources = {
   it,
   uk,
   hr,
+  pt,
+  ja,
+  id,
 };
 
 i18n.use(initReactI18next).init({

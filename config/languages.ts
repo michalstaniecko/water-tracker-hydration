@@ -35,4 +35,16 @@ export const languages = [
     label: "croatian",
     code: "hr",
   },
+  {
+    label: "portuguese",
+    code: "pt",
+  },
+  {
+    label: "japanese",
+    code: "ja",
+  },
+  {
+    label: "indonesian",
+    code: "id",
+  },
 ];

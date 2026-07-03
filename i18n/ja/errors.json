@@ -1,0 +1,17 @@
+{
+  "somethingWentWrong": "問題が発生しました",
+  "componentError": "コンポーネントでエラーが発生しました。後でもう一度お試しください。",
+  "exportSuccess": "データのエクスポートに成功しました",
+  "exportError": "データのエクスポートに失敗しました",
+  "importSuccess": "データのインポートに成功しました",
+  "importError": "データのインポートに失敗しました",
+  "backupError": "バックアップの作成に失敗しました",
+  "restoreError": "バックアップの復元に失敗しました",
+  "fileReadError": "ファイルの読み込みに失敗しました",
+  "fileWriteError": "ファイルの書き込みに失敗しました",
+  "invalidFileFormat": "無効なファイル形式です",
+  "networkError": "ネットワークエラーです。接続を確認してください。",
+  "unknownError": "不明なエラーが発生しました",
+  "pdfExportSuccess": "PDFのエクスポートに成功しました！",
+  "pdfExportFailed": "PDFのエクスポートに失敗しました"
+}

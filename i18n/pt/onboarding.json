@@ -1,0 +1,14 @@
+{
+  "welcome": {
+    "title": "Bem-vindo ao seu controle diário de água!",
+    "description": "É a sua primeira vez aqui, então vamos começar."
+  },
+  "secondStep": {
+    "title": "Defina sua meta diária de água",
+    "description": "Você pode atualizar sua meta diária de consumo de água nas configurações."
+  },
+  "thirdStep": {
+    "title": "Acompanhe seu progresso",
+    "description": "Acompanhe sua hidratação diária – veja quanta água você já bebeu e quanto tempo resta para atingir sua meta diária antes do fim do dia!"
+  }
+}
