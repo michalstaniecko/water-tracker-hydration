@@ -1,0 +1,17 @@
+{
+  "somethingWentWrong": "Terjadi kesalahan",
+  "componentError": "Terjadi kesalahan pada komponen. Silakan coba lagi nanti.",
+  "exportSuccess": "Data berhasil diekspor",
+  "exportError": "Gagal mengekspor data",
+  "importSuccess": "Data berhasil diimpor",
+  "importError": "Gagal mengimpor data",
+  "backupError": "Gagal membuat cadangan",
+  "restoreError": "Gagal memulihkan cadangan",
+  "fileReadError": "Gagal membaca file",
+  "fileWriteError": "Gagal menulis file",
+  "invalidFileFormat": "Format file tidak valid",
+  "networkError": "Kesalahan jaringan. Silakan periksa koneksi Anda.",
+  "unknownError": "Terjadi kesalahan yang tidak diketahui",
+  "pdfExportSuccess": "PDF berhasil diekspor!",
+  "pdfExportFailed": "Gagal mengekspor PDF"
+}
