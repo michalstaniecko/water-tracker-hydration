@@ -5,33 +5,31 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Banner } from "@/components/ads/Banner";
 import { useSetupStore } from "@/stores/setup";
 import { useTranslation } from "react-i18next";
-import { colors } from "@/constants/colors";
 import HeaderAchievementBadge from "@/components/HeaderAchievementBadge";
-import { useColorScheme } from "nativewind";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 export default function TabLayout() {
   const { t } = useTranslation("tabs");
   const { dateFormat } = useSetupStore();
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const themeColors = useThemeColors();
 
   return (
     <>
       <Tabs
         screenOptions={{
           tabBarHideOnKeyboard: true,
-          tabBarActiveTintColor: isDark ? colors.blue[400] : colors.blue[600],
-          tabBarInactiveTintColor: isDark ? colors.gray[400] : colors.gray[500],
+          tabBarActiveTintColor: themeColors.navActive,
+          tabBarInactiveTintColor: themeColors.navInactive,
           tabBarStyle: {
-            backgroundColor: isDark ? colors.gray[950] : colors.white,
-            borderTopColor: isDark ? colors.gray[800] : colors.gray[200],
+            backgroundColor: themeColors.navBg,
+            borderTopColor: themeColors.navBorder,
           },
           headerStyle: {
-            backgroundColor: isDark ? colors.gray[950] : colors.white,
+            backgroundColor: themeColors.navBg,
           },
-          headerTintColor: isDark ? colors.gray[100] : colors.gray[900],
+          headerTintColor: themeColors.navText,
           sceneStyle: {
-            backgroundColor: isDark ? colors.gray[950] : colors.white,
+            backgroundColor: themeColors.navBg,
           },
           animation: "shift",
           headerRight: () => <HeaderAchievementBadge />,

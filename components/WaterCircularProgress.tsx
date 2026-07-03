@@ -10,7 +10,7 @@ import Animated, {
   LayoutAnimationConfig,
 } from "react-native-reanimated";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useColorScheme } from "nativewind";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 const RING_SIZE = 240;
 const STROKE_WIDTH = 20;
@@ -19,18 +19,13 @@ const ANIMATION_DURATION = 50;
 export default function WaterCircularProgress() {
   const { water, minimumWater, percentOfDailyWater, leftToDrink } = useWater();
   const { t } = useTranslation();
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const themeColors = useThemeColors();
 
   const isGoalAchieved = leftToDrink <= 0;
   const progressColor = isGoalAchieved ? colors.green[500] : colors.blue[500];
   const trackColor = isGoalAchieved
-    ? isDark
-      ? colors.green[900]
-      : colors.green[100]
-    : isDark
-      ? colors.blue[900]
-      : colors.blue[100];
+    ? themeColors.trackSuccess
+    : themeColors.trackProgress;
 
   return (
     <CircularProgress

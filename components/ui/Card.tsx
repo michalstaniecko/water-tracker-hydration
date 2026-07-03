@@ -41,6 +41,17 @@ export function Card({
     ? DARK_BACKGROUND_MAP[backgroundColor]
     : undefined;
 
+  // The dark variant can't be derived at runtime — Tailwind's JIT scanner only
+  // compiles class names that appear literally in source, so every supported
+  // background must have an explicit entry in DARK_BACKGROUND_MAP above. Warn
+  // in development when a caller passes an unmapped `bg-*` class, which would
+  // otherwise silently keep its light background in dark mode.
+  if (__DEV__ && backgroundColor.startsWith("bg-") && !darkBackgroundColor) {
+    console.warn(
+      `<Card>: backgroundColor "${backgroundColor}" has no dark-mode mapping in DARK_BACKGROUND_MAP (components/ui/Card.tsx). It will keep its light background in dark mode — add an entry to fix this.`,
+    );
+  }
+
   if (!title && !description && !children) {
     return null;
   }
