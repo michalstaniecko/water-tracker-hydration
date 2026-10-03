@@ -80,6 +80,7 @@
         }
       ],
       "./plugins/withFirebaseModularHeaders",
+      "./plugins/withPodsDeploymentTarget",
       "expo-localization",
       "expo-web-browser",
       [
