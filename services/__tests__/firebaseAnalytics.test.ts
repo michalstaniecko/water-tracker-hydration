@@ -10,7 +10,7 @@ function load() {
   jest.isolateModules(() => {
     jest.doMock('@react-native-firebase/analytics', () => ({
       getAnalytics: jest.fn(() => analyticsInstance),
-      logEvent: jest.fn().mockResolvedValue(undefined),
+      logEvent: jest.fn(),
       logScreenView: jest.fn().mockResolvedValue(undefined),
       setUserProperty: jest.fn().mockResolvedValue(undefined),
       setAnalyticsCollectionEnabled: jest.fn().mockResolvedValue(undefined),
@@ -121,7 +121,9 @@ describe('firebaseAnalytics service', () => {
     it('swallows native errors when logging', async () => {
       const { service, firebase } = load();
       await service.initializeFirebaseAnalytics(true);
-      firebase.logEvent.mockRejectedValueOnce(new Error('boom'));
+      firebase.logEvent.mockImplementationOnce(() => {
+        throw new Error('boom');
+      });
       await expect(
         service.logFirebaseEvent({ category: 'c', action: 'a' }),
       ).resolves.toBeUndefined();

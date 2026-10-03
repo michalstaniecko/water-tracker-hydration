@@ -65,7 +65,8 @@ export async function logFirebaseEvent(event: AnalyticsEvent): Promise<void> {
       });
     }
 
-    await logEvent(getAnalytics(), event.action, params);
+    // logEvent is synchronous (void) since @react-native-firebase v26
+    logEvent(getAnalytics(), event.action, params);
 
     if (__DEV__) {
       console.log("[Firebase Analytics] Event logged:", event.action, params);
