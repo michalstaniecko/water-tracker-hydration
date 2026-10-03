@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useGamificationStore } from "@/stores/gamification";
 import { Card } from "@/components/ui/Card";
 import { useCallback, useEffect } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 
 export default function AchievementsList() {
   const { t } = useTranslation();

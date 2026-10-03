@@ -96,7 +96,8 @@ describe("NotificationService", () => {
       const result = await handlerArg.handleNotification();
 
       expect(result).toEqual({
-        shouldShowAlert: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
         shouldPlaySound: true,
         shouldSetBadge: false,
       });
