@@ -65,11 +65,12 @@ export async function logFirebaseEvent(event: AnalyticsEvent): Promise<void> {
       });
     }
 
-    // logEvent is synchronous (void) since @react-native-firebase v26
+    // logEvent is fire-and-forget (void) since @react-native-firebase v26: native
+    // failures are no longer observable here, only synchronous validation throws are.
     logEvent(getAnalytics(), event.action, params);
 
     if (__DEV__) {
-      console.log("[Firebase Analytics] Event logged:", event.action, params);
+      console.log("[Firebase Analytics] Event dispatched:", event.action, params);
     }
   } catch (error) {
     console.error("[Firebase Analytics] Error logging event:", error);

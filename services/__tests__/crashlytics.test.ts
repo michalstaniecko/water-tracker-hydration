@@ -110,4 +110,16 @@ describe('crashlytics service', () => {
       expect(errorSpy).toHaveBeenCalled();
     });
   });
+
+  it('does not throw when getCrashlytics() itself throws', async () => {
+    const { service, firebase } = load();
+    await service.initializeCrashlytics(true);
+    firebase.getCrashlytics.mockImplementation(() => {
+      throw new Error('no app');
+    });
+    expect(() => service.recordError(new Error('x'))).not.toThrow();
+    expect(() => service.logMessage('m')).not.toThrow();
+    await expect(service.initializeCrashlytics(true)).resolves.toBeUndefined();
+    expect(errorSpy).toHaveBeenCalled();
+  });
 });

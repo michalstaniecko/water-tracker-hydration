@@ -130,4 +130,15 @@ describe('firebaseAnalytics service', () => {
       expect(errorSpy).toHaveBeenCalled();
     });
   });
+
+  it('does not throw when getAnalytics() itself throws', async () => {
+    const { service, firebase } = load();
+    await service.initializeFirebaseAnalytics(true);
+    firebase.getAnalytics.mockImplementation(() => {
+      throw new Error('no app');
+    });
+    await expect(service.logFirebaseEvent({ category: 'c', action: 'a' })).resolves.toBeUndefined();
+    await expect(service.initializeFirebaseAnalytics(true)).resolves.toBeUndefined();
+    expect(errorSpy).toHaveBeenCalled();
+  });
 });
