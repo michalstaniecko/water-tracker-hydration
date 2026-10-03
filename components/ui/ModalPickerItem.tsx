@@ -1,7 +1,6 @@
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, View, LayoutChangeEvent } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import colors from "tailwindcss/colors";
-import { LayoutChangeEvent } from "react-native";
 
 type Option = {
   label: string;

@@ -10,7 +10,6 @@ jest.mock("nativewind", () => ({
   useColorScheme: jest.fn(),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const { useColorScheme } = jest.requireMock("nativewind") as any;
 
 function renderHookSync(hookFn: () => ReturnType<typeof useThemeColors>) {

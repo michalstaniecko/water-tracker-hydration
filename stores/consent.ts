@@ -1,6 +1,5 @@
 import { create } from "zustand";
-import mobileAds from "react-native-google-mobile-ads";
-import { AdsConsentStatus } from "react-native-google-mobile-ads";
+import mobileAds, { AdsConsentStatus } from "react-native-google-mobile-ads";
 import {
   requestConsentInfo,
   loadAndShowConsentFormIfRequired,

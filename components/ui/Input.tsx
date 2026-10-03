@@ -1,5 +1,4 @@
-import { TextInput, KeyboardTypeOptions, View } from "react-native";
-import { Keyboard } from "react-native";
+import { TextInput, KeyboardTypeOptions, View, Keyboard } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import { Label } from "@/components/ui/Label";
 
