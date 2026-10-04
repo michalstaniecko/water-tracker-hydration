@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator, Modal, Animated } from "react-native";
 
 // Constants
@@ -25,13 +25,14 @@ export default function LoadingOverlay({
   message,
   testID,
 }: LoadingOverlayProps) {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [fadeAnim] = useState(() => new Animated.Value(0));
   // Track whether the component should render (separate from visible prop)
   const [isRendered, setIsRendered] = useState(visible);
 
   useEffect(() => {
     if (visible) {
       // When becoming visible, ensure we render first, then animate in
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- mount first, then animate in
       setIsRendered(true);
       Animated.timing(fadeAnim, {
         toValue: 1,

@@ -73,6 +73,7 @@
             "buildToolsVersion": "36.0.0"
           },
           "ios": {
+            "deploymentTarget": "16.4",
             "useFrameworks": "static",
             "buildReactNativeFromSource": true
           }
@@ -95,6 +96,7 @@
           "ios": {
             "src": "./widgets/ios",
             "devTeamId": "YOUR_APPLE_TEAM_ID",
+            "deploymentTarget": "16.4",
             "mode": "production",
             "entitlements": {
               "com.apple.security.application-groups": [

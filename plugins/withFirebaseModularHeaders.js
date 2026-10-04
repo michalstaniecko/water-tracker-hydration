@@ -1,5 +1,6 @@
-const { withPodfile } = require("expo/config-plugins");
-const { mergeContents } = require("@expo/config-plugins/build/utils/generateCode");
+const { withPodfile, CodeGenerator } = require("expo/config-plugins");
+
+const { mergeContents } = CodeGenerator;
 
 /**
  * Fix non-modular header errors with @react-native-firebase + useFrameworks: "static"

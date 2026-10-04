@@ -1,5 +1,6 @@
 jest.mock("expo/config-plugins", () => ({
   withPodfile: jest.fn((config, callback) => callback(config)),
+  CodeGenerator: jest.requireActual("expo/config-plugins").CodeGenerator,
 }));
 
 const withPodsDeploymentTarget = require("../withPodsDeploymentTarget");
