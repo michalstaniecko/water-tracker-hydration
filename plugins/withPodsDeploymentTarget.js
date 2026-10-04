@@ -1,5 +1,6 @@
-const { withPodfile } = require("expo/config-plugins");
-const { mergeContents } = require("@expo/config-plugins/build/utils/generateCode");
+const { withPodfile, CodeGenerator } = require("expo/config-plugins");
+
+const { mergeContents } = CodeGenerator;
 
 /**
  * Raise IPHONEOS_DEPLOYMENT_TARGET of every Pods target (and the Pods project
