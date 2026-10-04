@@ -1,8 +1,9 @@
 import { ExpoConfig, ConfigContext } from "expo/config";
-import appJson from "./app.json";
 
+// `config` is the static app.json (`expo` key). It is the single source of
+// truth; this file only layers environment-specific overrides on top of it.
 export default ({ config }: ConfigContext): ExpoConfig => {
-  const appConfig = appJson.expo as unknown as ExpoConfig;
+  const appConfig = { ...config } as ExpoConfig;
 
   // Override devTeamId from environment variable if available
   const appleTeamId = process.env.APPLE_TEAM_ID;
@@ -21,7 +22,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
               devTeamId: appleTeamId,
             },
           },
-        ];
+        ] as [string, any];
       }
       return plugin;
     });
