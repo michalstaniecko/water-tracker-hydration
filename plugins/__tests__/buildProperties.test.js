@@ -16,19 +16,25 @@ describe("expo-build-properties config", () => {
     expect(plugin).toBeDefined();
   });
 
-  it("relies on React Native's Android SDK defaults, which must stay >= 36", () => {
-    expect(plugin[1].android).toBeUndefined();
+  it("relies on React Native's Android SDK defaults (36/36/36.0.0)", () => {
+    const android = plugin[1].android ?? {};
+    expect(android.compileSdkVersion).toBeUndefined();
+    expect(android.targetSdkVersion).toBeUndefined();
+    expect(android.buildToolsVersion).toBeUndefined();
     const catalog = fs.readFileSync(
       path.join(
-        __dirname,
-        "../../node_modules/react-native/gradle/libs.versions.toml",
+        path.dirname(require.resolve("react-native/package.json")),
+        "gradle/libs.versions.toml",
       ),
       "utf8",
     );
     const read = (key) =>
-      Number(new RegExp(`^${key}\\s*=\\s*"(\\d+)`, "m").exec(catalog)[1]);
-    expect(read("compileSdk")).toBeGreaterThanOrEqual(36);
-    expect(read("targetSdk")).toBeGreaterThanOrEqual(36);
+      new RegExp(`^${key}\\s*=\\s*"([^"]+)"`, "m").exec(catalog)[1];
+    // Exact values on purpose: an SDK bump that moves them should fail here
+    // and be reviewed (Play target API requirement, widget code).
+    expect(read("compileSdk")).toBe("36");
+    expect(read("targetSdk")).toBe("36");
+    expect(read("buildTools")).toBe("36.0.0");
   });
 
   it("opts in to the UIScene lifecycle (required on iOS 27, default from SDK 58)", () => {
