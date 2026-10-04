@@ -76,7 +76,6 @@ function renderHookSync(hookFn: () => ReturnType<typeof useWaterInterstitial>) {
   return { result };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const { InterstitialAd } = jest.requireMock(
   "react-native-google-mobile-ads",
 ) as any;
