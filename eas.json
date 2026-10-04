@@ -17,7 +17,7 @@
     "production": {
       "autoIncrement": true,
       "ios": {
-        "image": "macos-sequoia-xcode-26"
+        "image": "sdk-55"
       }
     }
   },

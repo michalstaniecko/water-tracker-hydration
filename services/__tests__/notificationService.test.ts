@@ -86,7 +86,7 @@ describe("NotificationService", () => {
       );
     });
 
-    it("should configure handler to show alert, play sound, and not set badge", async () => {
+    it("should configure handler to show banner and list, play sound, and not set badge", async () => {
       initializeNotificationHandler();
 
       const handlerArg = (
@@ -96,7 +96,8 @@ describe("NotificationService", () => {
       const result = await handlerArg.handleNotification();
 
       expect(result).toEqual({
-        shouldShowAlert: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
         shouldPlaySound: true,
         shouldSetBadge: false,
       });
