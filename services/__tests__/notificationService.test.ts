@@ -25,7 +25,9 @@ jest.mock("expo-notifications", () => ({
 // Keep the rest of react-native intact: jest-expo's setup loads react-native-css-interop, which needs Appearance.
 jest.mock("react-native", () => {
   const actual = jest.requireActual("react-native");
-  return Object.create(actual, { Platform: { value: { OS: "ios" } } });
+  return Object.create(actual, {
+    Platform: { value: { ...actual.Platform, OS: "ios" } },
+  });
 });
 
 // Mock error logging

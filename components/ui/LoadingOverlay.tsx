@@ -32,6 +32,7 @@ export default function LoadingOverlay({
   useEffect(() => {
     if (visible) {
       // When becoming visible, ensure we render first, then animate in
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- mount first, then animate in
       setIsRendered(true);
       Animated.timing(fadeAnim, {
         toValue: 1,

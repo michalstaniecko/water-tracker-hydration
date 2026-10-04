@@ -61,6 +61,7 @@ export default function Input({
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional sync of the initValue prop into local state
     setValue(`${initValue}`);
   }, [initValue]);
   return (

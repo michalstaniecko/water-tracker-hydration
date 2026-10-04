@@ -17,6 +17,7 @@ export default function Picker({ options, onChange, value: initValue }: Props) {
   const [value, setValue] = useState(initValue);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional sync of the value prop into local state
     setValue(initValue);
   }, [initValue]);
 
