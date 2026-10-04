@@ -5,7 +5,15 @@
  * All data collection respects user consent preferences.
  */
 
-import crashlytics from "@react-native-firebase/crashlytics";
+import {
+  getCrashlytics,
+  log,
+  recordError as recordCrashlyticsError,
+  setAttribute as setCrashlyticsAttribute,
+  setAttributes as setCrashlyticsAttributes,
+  setCrashlyticsCollectionEnabled,
+  setUserId as setCrashlyticsUserId,
+} from "@react-native-firebase/crashlytics";
 
 let isCrashlyticsEnabled = false;
 
@@ -16,7 +24,7 @@ let isCrashlyticsEnabled = false;
 export async function initializeCrashlytics(enabled: boolean): Promise<void> {
   try {
     isCrashlyticsEnabled = enabled;
-    await crashlytics().setCrashlyticsCollectionEnabled(enabled);
+    await setCrashlyticsCollectionEnabled(getCrashlytics(), enabled);
 
     if (__DEV__) {
       console.log(
@@ -48,11 +56,11 @@ export function recordError(
     // Set custom attributes for the error
     if (context) {
       Object.entries(context).forEach(([key, value]) => {
-        crashlytics().setAttribute(key, value);
+        setCrashlyticsAttribute(getCrashlytics(), key, value);
       });
     }
 
-    crashlytics().recordError(error);
+    recordCrashlyticsError(getCrashlytics(), error);
 
     if (__DEV__) {
       console.log("[Crashlytics] Error recorded:", error.message, context);
@@ -72,7 +80,7 @@ export function logMessage(message: string): void {
   }
 
   try {
-    crashlytics().log(message);
+    log(getCrashlytics(), message);
 
     if (__DEV__) {
       console.log("[Crashlytics] Message logged:", message);
@@ -93,7 +101,7 @@ export function setAttribute(key: string, value: string): void {
   }
 
   try {
-    crashlytics().setAttribute(key, value);
+    setCrashlyticsAttribute(getCrashlytics(), key, value);
   } catch (error) {
     console.error("[Crashlytics] Failed to set attribute:", error);
   }
@@ -109,7 +117,7 @@ export function setAttributes(attributes: Record<string, string>): void {
   }
 
   try {
-    crashlytics().setAttributes(attributes);
+    setCrashlyticsAttributes(getCrashlytics(), attributes);
   } catch (error) {
     console.error("[Crashlytics] Failed to set attributes:", error);
   }
@@ -125,7 +133,7 @@ export function setUserId(userId: string): void {
   }
 
   try {
-    crashlytics().setUserId(userId);
+    setCrashlyticsUserId(getCrashlytics(), userId);
   } catch (error) {
     console.error("[Crashlytics] Failed to set user ID:", error);
   }

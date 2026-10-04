@@ -5,7 +5,13 @@
  * All analytics collection respects user consent preferences.
  */
 
-import analytics from "@react-native-firebase/analytics";
+import {
+  getAnalytics,
+  logEvent,
+  logScreenView as logAnalyticsScreenView,
+  setAnalyticsCollectionEnabled,
+  setUserProperty,
+} from "@react-native-firebase/analytics";
 import { AnalyticsEvent } from "@/utils/analytics";
 
 let isAnalyticsEnabled = false;
@@ -19,7 +25,7 @@ export async function initializeFirebaseAnalytics(
 ): Promise<void> {
   try {
     isAnalyticsEnabled = canRequestAds;
-    await analytics().setAnalyticsCollectionEnabled(canRequestAds);
+    await setAnalyticsCollectionEnabled(getAnalytics(), canRequestAds);
 
     if (__DEV__) {
       console.log(
@@ -59,10 +65,12 @@ export async function logFirebaseEvent(event: AnalyticsEvent): Promise<void> {
       });
     }
 
-    await analytics().logEvent(event.action, params);
+    // logEvent is fire-and-forget (void) since @react-native-firebase v26: native
+    // failures are no longer observable here, only synchronous validation throws are.
+    logEvent(getAnalytics(), event.action, params);
 
     if (__DEV__) {
-      console.log("[Firebase Analytics] Event logged:", event.action, params);
+      console.log("[Firebase Analytics] Event dispatched:", event.action, params);
     }
   } catch (error) {
     console.error("[Firebase Analytics] Error logging event:", error);
@@ -83,7 +91,7 @@ export async function logScreenView(
   }
 
   try {
-    await analytics().logScreenView({
+    await logAnalyticsScreenView(getAnalytics(), {
       screen_name: screenName,
       screen_class: screenClass || screenName,
     });
@@ -109,7 +117,7 @@ export async function setUserProperties(
 
   try {
     for (const [key, value] of Object.entries(properties)) {
-      await analytics().setUserProperty(key, value);
+      await setUserProperty(getAnalytics(), key, value);
     }
 
     if (__DEV__) {

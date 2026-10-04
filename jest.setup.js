@@ -8,16 +8,18 @@ jest.mock('expo-localization', () => ({
   getLocales: jest.fn(() => [{ languageCode: 'en' }]),
 }));
 
-// Mock Firebase Analytics
-jest.mock('@react-native-firebase/analytics', () => () => ({
+// Mock Firebase Analytics (modular API)
+jest.mock('@react-native-firebase/analytics', () => ({
+  getAnalytics: jest.fn(() => ({})),
   logEvent: jest.fn(),
   logScreenView: jest.fn(),
   setUserProperty: jest.fn(),
   setAnalyticsCollectionEnabled: jest.fn(),
 }));
 
-// Mock Firebase Crashlytics
-jest.mock('@react-native-firebase/crashlytics', () => () => ({
+// Mock Firebase Crashlytics (modular API)
+jest.mock('@react-native-firebase/crashlytics', () => ({
+  getCrashlytics: jest.fn(() => ({})),
   recordError: jest.fn(),
   log: jest.fn(),
   setAttribute: jest.fn(),

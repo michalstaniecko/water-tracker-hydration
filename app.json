@@ -48,7 +48,14 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "@react-native-firebase/app",
+      [
+        "@react-native-firebase/app",
+        {
+          "ios": {
+            "disableSPM": true
+          }
+        }
+      ],
       "@react-native-firebase/crashlytics",
       [
         "react-native-google-mobile-ads",
@@ -73,6 +80,7 @@
         }
       ],
       "./plugins/withFirebaseModularHeaders",
+      "./plugins/withPodsDeploymentTarget",
       "expo-localization",
       "expo-web-browser",
       [
