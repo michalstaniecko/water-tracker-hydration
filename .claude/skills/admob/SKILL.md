@@ -68,6 +68,7 @@ Edits go in `app.json` under `plugins → ["react-native-google-mobile-ads", { .
 
 - `androidAppId`, `iosAppId` — app-level IDs from AdMob (NOT ad unit IDs).
 - `delayAppMeasurementInit: true` — already set; required for our consent flow so ads SDK doesn't auto-init before UMP resolves.
+- `androidSdk: "classic"` — keep it set. In 17.2.0 `android/build.gradle` reads `rootProject.ext.googleMobileAdsJson` unguarded, which `app-json.gradle` fails to define for an `app.json` without a root-level `react-native-google-mobile-ads` key (typo `googleAdsJson`), so Gradle configuration fails. The option writes `RNGMA_ANDROID_BACKEND=classic` to `gradle.properties` and short-circuits that read. Safe to revisit when the package fixes it.
 - `userTrackingUsageDescription` (iOS) — add this if/when ATT prompt copy needs to change.
 - `skAdNetworkItems` (iOS) — only edit when adding new ad networks via mediation; otherwise leave to plugin defaults.
 
