@@ -6,7 +6,7 @@ allowed-tools: Read Edit Write Grep Glob Bash(npm test*) Bash(npm run lint*)
 
 # AdMob skill
 
-Project uses `react-native-google-mobile-ads` (^16.x) with Google UMP for GDPR consent. Every ad surface in this app **must** be gated by the consent store before rendering or loading.
+Project uses `react-native-google-mobile-ads` (17.x, pinned exactly) with Google UMP for GDPR consent. Every ad surface in this app **must** be gated by the consent store before rendering or loading.
 
 ## Architecture map
 
