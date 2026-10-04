@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { Animated } from "react-native";
 
 // Constants
@@ -29,9 +29,9 @@ type SkeletonProviderProps = {
  * This optimizes performance by using one animation loop instead of many.
  */
 export function SkeletonProvider({ children }: SkeletonProviderProps) {
-  const pulseAnim = useRef(
-    new Animated.Value(SKELETON_ANIMATION.MIN_OPACITY),
-  ).current;
+  const [pulseAnim] = useState(
+    () => new Animated.Value(SKELETON_ANIMATION.MIN_OPACITY),
+  );
 
   useEffect(() => {
     const pulse = Animated.loop(
@@ -83,9 +83,9 @@ export function Skeleton({
   const context = useContext(SkeletonContext);
 
   // Fallback animation for when used outside of SkeletonProvider
-  const fallbackAnim = useRef(
-    new Animated.Value(SKELETON_ANIMATION.MIN_OPACITY),
-  ).current;
+  const [fallbackAnim] = useState(
+    () => new Animated.Value(SKELETON_ANIMATION.MIN_OPACITY),
+  );
 
   useEffect(() => {
     // Only create fallback animation if not using provider

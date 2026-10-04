@@ -51,7 +51,13 @@ export default function RemindersSettings() {
   const setupStore = useSetupStore();
 
   const [isInitialized, setIsInitialized] = useState(false);
+  // The ref guards re-entrant handlers; the state mirrors it for rendering (a11y disabled state).
   const isLoading = useRef(false);
+  const [isBusy, setIsBusy] = useState(false);
+  const setLoading = useCallback((value: boolean) => {
+    isLoading.current = value;
+    setIsBusy(value);
+  }, []);
 
   useEffect(() => {
     const initialize = async () => {
@@ -68,7 +74,7 @@ export default function RemindersSettings() {
       const shouldEnable = value === "on";
 
       if (shouldEnable) {
-        isLoading.current = true;
+        setLoading(true);
         try {
           // Request permissions if not granted
           const status = await requestPermissions();
@@ -102,18 +108,19 @@ export default function RemindersSettings() {
             body,
           );
         } finally {
-          isLoading.current = false;
+          setLoading(false);
         }
       } else {
-        isLoading.current = true;
+        setLoading(true);
         try {
           await setEnabled(false);
         } finally {
-          isLoading.current = false;
+          setLoading(false);
         }
       }
     },
     [
+      setLoading,
       requestPermissions,
       setEnabled,
       scheduleReminders,
@@ -134,7 +141,7 @@ export default function RemindersSettings() {
         return;
       }
 
-      isLoading.current = true;
+      setLoading(true);
       try {
         await setInterval(parsedValue);
 
@@ -147,10 +154,11 @@ export default function RemindersSettings() {
           body,
         );
       } finally {
-        isLoading.current = false;
+        setLoading(false);
       }
     },
     [
+      setLoading,
       setInterval,
       scheduleReminders,
       setupStore.day.startHour,
@@ -168,7 +176,7 @@ export default function RemindersSettings() {
         return;
       }
 
-      isLoading.current = true;
+      setLoading(true);
       try {
         await setMaxNotifications(parsedValue);
 
@@ -181,10 +189,11 @@ export default function RemindersSettings() {
           body,
         );
       } finally {
-        isLoading.current = false;
+        setLoading(false);
       }
     },
     [
+      setLoading,
       setMaxNotifications,
       scheduleReminders,
       setupStore.day.startHour,
@@ -233,7 +242,7 @@ export default function RemindersSettings() {
           accessibilityRole="button"
           accessibilityLabel={`${t("enableReminders")}: ${enabled ? t("on") : t("off")}`}
           accessibilityHint={t("enableRemindersHint")}
-          accessibilityState={{ disabled: isLoading.current }}
+          accessibilityState={{ disabled: isBusy }}
         >
           <ModalPicker
             label={t("enableReminders")}
@@ -250,7 +259,7 @@ export default function RemindersSettings() {
             accessibilityRole="button"
             accessibilityLabel={`${t("reminderInterval")}: ${intervalOptions.find((opt) => opt.value === String(intervalMinutes))?.label}`}
             accessibilityHint={t("reminderIntervalHint")}
-            accessibilityState={{ disabled: isLoading.current }}
+            accessibilityState={{ disabled: isBusy }}
           >
             <ModalPicker
               label={t("reminderInterval")}
@@ -268,7 +277,7 @@ export default function RemindersSettings() {
             accessibilityRole="button"
             accessibilityLabel={`${t("maxNotifications")}: ${maxNotifications === 0 ? t("unlimited") : maxNotifications}`}
             accessibilityHint={t("maxNotificationsHint")}
-            accessibilityState={{ disabled: isLoading.current }}
+            accessibilityState={{ disabled: isBusy }}
           >
             <ModalPicker
               label={t("maxNotifications")}

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator, Modal, Animated } from "react-native";
 
 // Constants
@@ -25,7 +25,7 @@ export default function LoadingOverlay({
   message,
   testID,
 }: LoadingOverlayProps) {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [fadeAnim] = useState(() => new Animated.Value(0));
   // Track whether the component should render (separate from visible prop)
   const [isRendered, setIsRendered] = useState(visible);
 

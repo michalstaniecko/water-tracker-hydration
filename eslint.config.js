@@ -20,6 +20,8 @@ module.exports = defineConfig([
       "import/no-named-as-default": "off",
       // Newly enabled by the flat preset; flags the canonical `i18n.use(...)` i18next setup.
       "import/no-named-as-default-member": "off",
+      // New in react-hooks 7: flags the prop-to-state sync effects in Input/Picker/LoadingOverlay, which are intentional.
+      "react-hooks/set-state-in-effect": "off",
     },
   },
   {

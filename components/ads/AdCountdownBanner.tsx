@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, View, Text } from "react-native";
 import { useTranslation } from "react-i18next";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -10,7 +10,7 @@ interface Props {
 
 export function AdCountdownBanner({ countdown }: Props) {
   const { t } = useTranslation();
-  const translateY = useRef(new Animated.Value(-80)).current;
+  const [translateY] = useState(() => new Animated.Value(-80));
   const visible = countdown !== null;
   const themeColors = useThemeColors();
 
