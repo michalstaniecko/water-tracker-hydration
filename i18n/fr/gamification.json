@@ -3,14 +3,10 @@
   "notifications": "Notifications",
   "unlockedAchievements": "Débloqués",
   "lockedAchievements": "Verrouillés",
-  "achievementUnlocked": "Succès débloqué !",
   "unlockedOn": "Débloqué :",
   "progressSummary": "Résumé des progrès",
   "achievementsUnlocked": "succès débloqués",
   "noAchievements": "Aucun succès pour le moment. Continuez à suivre votre consommation d'eau !",
-  "noNotifications": "Aucune notification",
-  "markAllAsRead": "Tout marquer comme lu",
-  "clearAll": "Tout effacer",
   "firstStep": "Premier pas",
   "firstStepDesc": "Enregistrez votre premier verre d'eau",
   "threeDaysStrong": "Trois jours d'affilée",
@@ -39,6 +35,5 @@
   "goalReminderMessage": "Vous y êtes presque ! {{remaining}}ml pour atteindre votre objectif.",
   "congratulations": "Félicitations !",
   "keepItUp": "Continuez comme ça !",
-  "wellDone": "Bien joué !",
-  "youUnlocked": "Vous avez débloqué : {{title}}"
+  "wellDone": "Bien joué !"
 }

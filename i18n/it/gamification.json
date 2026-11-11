@@ -3,14 +3,10 @@
   "notifications": "Notifiche",
   "unlockedAchievements": "Sbloccati",
   "lockedAchievements": "Bloccati",
-  "achievementUnlocked": "Risultato sbloccato!",
   "unlockedOn": "Sbloccato:",
   "progressSummary": "Riepilogo progressi",
   "achievementsUnlocked": "risultati sbloccati",
   "noAchievements": "Ancora nessun risultato. Continua a tracciare l'assunzione d'acqua!",
-  "noNotifications": "Nessuna notifica",
-  "markAllAsRead": "Segna tutto come letto",
-  "clearAll": "Cancella tutto",
   "firstStep": "Primo passo",
   "firstStepDesc": "Registra il tuo primo bicchiere d'acqua",
   "threeDaysStrong": "Tre giorni di fila",
@@ -39,6 +35,5 @@
   "goalReminderMessage": "Ci sei quasi! {{remaining}}ml per raggiungere il tuo obiettivo.",
   "congratulations": "Congratulazioni!",
   "keepItUp": "Continua così!",
-  "wellDone": "Ben fatto!",
-  "youUnlocked": "Hai sbloccato: {{title}}"
+  "wellDone": "Ben fatto!"
 }

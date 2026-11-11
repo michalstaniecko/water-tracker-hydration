@@ -58,10 +58,6 @@ _Avoid_: badge, trophy, reward
 An Achievement withdrawn from the catalog: it can no longer be unlocked, but stays visible to users who already unlocked it.
 _Avoid_: removed achievement, deprecated achievement
 
-**Activity Feed**:
-The in-app history of notable events in the user's hydration journey, such as Achievement unlocks. Lives only inside the app and is never sent to the device.
-_Avoid_: notifications, inbox, notification list
-
 **Reminder**:
 A system push notification sent during Activity Hours to prompt the user to drink.
 _Avoid_: notification (unqualified), alert

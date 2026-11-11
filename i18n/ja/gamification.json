@@ -3,14 +3,10 @@
   "notifications": "通知",
   "unlockedAchievements": "解除済み",
   "lockedAchievements": "未解除",
-  "achievementUnlocked": "実績を解除しました！",
   "unlockedOn": "解除日：",
   "progressSummary": "進捗サマリー",
   "achievementsUnlocked": "個の実績を解除",
   "noAchievements": "まだ実績がありません。水分摂取の記録を続けましょう！",
-  "noNotifications": "通知はありません",
-  "markAllAsRead": "すべて既読にする",
-  "clearAll": "すべて削除",
   "firstStep": "最初の一歩",
   "firstStepDesc": "最初のコップ1杯の水を記録する",
   "threeDaysStrong": "3日間継続",
@@ -39,6 +35,5 @@
   "goalReminderMessage": "もう少しです！目標まであと{{remaining}}mlです。",
   "congratulations": "おめでとうございます！",
   "keepItUp": "その調子です！",
-  "wellDone": "よくできました！",
-  "youUnlocked": "「{{title}}」を解除しました"
+  "wellDone": "よくできました！"
 }

@@ -3,14 +3,10 @@
   "notifications": "Notifikasi",
   "unlockedAchievements": "Terbuka",
   "lockedAchievements": "Terkunci",
-  "achievementUnlocked": "Pencapaian Terbuka!",
   "unlockedOn": "Dibuka:",
   "progressSummary": "Ringkasan Progres",
   "achievementsUnlocked": "pencapaian terbuka",
   "noAchievements": "Belum ada pencapaian. Terus lacak asupan air Anda!",
-  "noNotifications": "Tidak ada notifikasi",
-  "markAllAsRead": "Tandai semua telah dibaca",
-  "clearAll": "Hapus semua",
   "firstStep": "Langkah Pertama",
   "firstStepDesc": "Catat gelas air pertama Anda",
   "threeDaysStrong": "Tiga Hari Berturut-turut",
@@ -39,6 +35,5 @@
   "goalReminderMessage": "Sedikit lagi! {{remaining}}ml lagi untuk mencapai target Anda.",
   "congratulations": "Selamat!",
   "keepItUp": "Pertahankan!",
-  "wellDone": "Kerja bagus!",
-  "youUnlocked": "Anda telah membuka: {{title}}"
+  "wellDone": "Kerja bagus!"
 }

@@ -3,14 +3,10 @@
   "notifications": "Obavijesti",
   "unlockedAchievements": "Otključano",
   "lockedAchievements": "Zaključano",
-  "achievementUnlocked": "Dostignuće otključano!",
   "unlockedOn": "Otključano:",
   "progressSummary": "Pregled napretka",
   "achievementsUnlocked": "dostignuća otključana",
   "noAchievements": "Još nema dostignuća. Nastavite pratiti unos vode!",
-  "noNotifications": "Nema obavijesti",
-  "markAllAsRead": "Označi sve kao pročitano",
-  "clearAll": "Obriši sve",
   "firstStep": "Prvi korak",
   "firstStepDesc": "Zabilježite svoju prvu čašu vode",
   "threeDaysStrong": "Tri dana zaredom",
@@ -39,6 +35,5 @@
   "goalReminderMessage": "Gotovo ste tamo! Još {{remaining}}ml do cilja.",
   "congratulations": "Čestitamo!",
   "keepItUp": "Samo naprijed!",
-  "wellDone": "Bravo!",
-  "youUnlocked": "Otključali ste: {{title}}"
+  "wellDone": "Bravo!"
 }

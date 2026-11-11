@@ -28,34 +28,14 @@ export type Achievement = {
   isUnlocked: boolean;
 };
 
-export type NotificationType = "achievement" | "reminder" | "milestone";
-
-export type Notification = {
-  id: string;
-  type: NotificationType;
-  titleKey: string;
-  messageKey: string;
-  messageParams?: Record<string, string | number>;
-  timestamp: string;
-  read: boolean;
-  achievementId?: AchievementType;
-};
-
 type GamificationStore = {
   achievements: Achievement[];
-  notifications: Notification[];
   lastChecked: string | null;
   unseenAchievementsCount: number;
   fetchOrInitData: () => Promise<void>;
   checkAndUnlockAchievements: () => Promise<void>;
   getUnlockedAchievements: () => Achievement[];
   getLockedAchievements: () => Achievement[];
-  addNotification: (
-    notification: Omit<Notification, "id" | "timestamp" | "read">,
-  ) => Promise<void>;
-  markNotificationAsRead: (id: string) => Promise<void>;
-  getUnreadNotifications: () => Notification[];
-  clearNotifications: () => Promise<void>;
   markAchievementsSeen: () => Promise<void>;
   updateStorage: () => Promise<void>;
 };
@@ -144,7 +124,6 @@ const defaultAchievements: Achievement[] = [
 
 export const useGamificationStore = create<GamificationStore>((set, get) => ({
   achievements: defaultAchievements,
-  notifications: [],
   lastChecked: null,
   unseenAchievementsCount: 0,
 
@@ -164,7 +143,6 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
 
           set({
             achievements: mergedAchievements,
-            notifications: parsedData.notifications || [],
             lastChecked: parsedData.lastChecked || null,
             unseenAchievementsCount: parsedData.unseenAchievementsCount || 0,
           });
@@ -178,7 +156,6 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
       } else {
         set({
           achievements: defaultAchievements,
-          notifications: [],
           lastChecked: null,
           unseenAchievementsCount: 0,
         });
@@ -191,7 +168,6 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
       });
       set({
         achievements: defaultAchievements,
-        notifications: [],
         lastChecked: null,
         unseenAchievementsCount: 0,
       });
@@ -238,7 +214,7 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
             .every((day) => day.amount >= minimumWater),
       };
 
-      // Unlock achievements and create notifications
+      // Unlock achievements
       let hasChanges = false;
       let newlyUnlockedCount = 0;
       const hapticsEnabled = useSetupStore.getState().hapticsEnabled;
@@ -254,15 +230,6 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
           };
           hasChanges = true;
           newlyUnlockedCount++;
-
-          // Add notification for unlocked achievement
-          get().addNotification({
-            type: "achievement",
-            titleKey: "gamification:achievementUnlocked",
-            messageKey: "gamification:youUnlocked",
-            messageParams: { title: achievement.title },
-            achievementId: achievement.id as AchievementType,
-          });
         }
       });
 
@@ -294,59 +261,6 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
     return get().achievements.filter((a) => !a.isUnlocked);
   },
 
-  addNotification: async (
-    notification: Omit<Notification, "id" | "timestamp" | "read">,
-  ) => {
-    try {
-      const newNotification: Notification = {
-        ...notification,
-        id: `notif-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
-        timestamp: new Date().toISOString(),
-        read: false,
-      };
-
-      const notifications = [...get().notifications, newNotification];
-      set({ notifications });
-      await get().updateStorage();
-    } catch (error) {
-      logError(error, {
-        operation: "addNotification",
-        component: "GamificationStore",
-      });
-    }
-  },
-
-  markNotificationAsRead: async (id: string) => {
-    try {
-      const notifications = get().notifications.map((notif) =>
-        notif.id === id ? { ...notif, read: true } : notif,
-      );
-      set({ notifications });
-      await get().updateStorage();
-    } catch (error) {
-      logError(error, {
-        operation: "markNotificationAsRead",
-        component: "GamificationStore",
-      });
-    }
-  },
-
-  getUnreadNotifications: () => {
-    return get().notifications.filter((n) => !n.read);
-  },
-
-  clearNotifications: async () => {
-    try {
-      set({ notifications: [] });
-      await get().updateStorage();
-    } catch (error) {
-      logError(error, {
-        operation: "clearNotifications",
-        component: "GamificationStore",
-      });
-    }
-  },
-
   markAchievementsSeen: async () => {
     try {
       set({ unseenAchievementsCount: 0 });
@@ -364,7 +278,6 @@ export const useGamificationStore = create<GamificationStore>((set, get) => ({
       const state = get();
       const data = {
         achievements: state.achievements,
-        notifications: state.notifications,
         lastChecked: state.lastChecked,
         unseenAchievementsCount: state.unseenAchievementsCount,
       };

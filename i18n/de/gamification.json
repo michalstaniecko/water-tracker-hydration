@@ -3,14 +3,10 @@
   "notifications": "Benachrichtigungen",
   "unlockedAchievements": "Freigeschaltet",
   "lockedAchievements": "Gesperrt",
-  "achievementUnlocked": "Erfolg freigeschaltet!",
   "unlockedOn": "Freigeschaltet:",
   "progressSummary": "Fortschrittsübersicht",
   "achievementsUnlocked": "Erfolge freigeschaltet",
   "noAchievements": "Noch keine Erfolge. Verfolge weiterhin deine Wasseraufnahme!",
-  "noNotifications": "Keine Benachrichtigungen",
-  "markAllAsRead": "Alle als gelesen markieren",
-  "clearAll": "Alle löschen",
   "firstStep": "Erster Schritt",
   "firstStepDesc": "Erfasse dein erstes Glas Wasser",
   "threeDaysStrong": "Drei Tage stark",
@@ -39,6 +35,5 @@
   "goalReminderMessage": "Du bist fast da! Noch {{remaining}}ml bis zu deinem Ziel.",
   "congratulations": "Herzlichen Glückwunsch!",
   "keepItUp": "Weiter so!",
-  "wellDone": "Gut gemacht!",
-  "youUnlocked": "Du hast freigeschaltet: {{title}}"
+  "wellDone": "Gut gemacht!"
 }

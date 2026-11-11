@@ -3,14 +3,10 @@
   "notifications": "Сповіщення",
   "unlockedAchievements": "Розблоковані",
   "lockedAchievements": "Заблоковані",
-  "achievementUnlocked": "Досягнення розблоковано!",
   "unlockedOn": "Розблоковано:",
   "progressSummary": "Підсумок прогресу",
   "achievementsUnlocked": "досягнень розблоковано",
   "noAchievements": "Ще немає досягнень. Продовжуйте відстежувати споживання води!",
-  "noNotifications": "Немає сповіщень",
-  "markAllAsRead": "Позначити всі як прочитані",
-  "clearAll": "Очистити все",
   "firstStep": "Перший крок",
   "firstStepDesc": "Запишіть свою першу склянку води",
   "threeDaysStrong": "Три дні поспіль",
@@ -39,6 +35,5 @@
   "goalReminderMessage": "Ви майже там! {{remaining}}мл до досягнення вашої цілі.",
   "congratulations": "Вітаємо!",
   "keepItUp": "Так тримати!",
-  "wellDone": "Молодець!",
-  "youUnlocked": "Ви розблокували: {{title}}"
+  "wellDone": "Молодець!"
 }
