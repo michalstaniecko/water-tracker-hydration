@@ -6,6 +6,8 @@ const appJson = require("../../app.json");
  * Guards the expo-build-properties config. The Android SDK pin from #102 was
  * dropped in #107 because React Native's own version catalog is now the source
  * of truth (36/36/36.0.0); the catalog test keeps that assumption honest.
+ * It also guards the R8 minification and resource shrinking flags enabled in
+ * #128 for Android release builds.
  */
 describe("expo-build-properties config", () => {
   const plugin = appJson.expo.plugins.find(
@@ -46,8 +48,11 @@ describe("expo-build-properties config", () => {
     expect(plugin[1].ios.buildReactNativeFromSource).toBe(true);
   });
 
-  it("enables R8 minification and resource shrinking for Android release builds", () => {
-    expect(plugin[1].android.enableMinifyInReleaseBuilds).toBe(true);
-    expect(plugin[1].android.enableShrinkResourcesInReleaseBuilds).toBe(true);
+  it("enables R8 minification and resource shrinking for Android release builds (#128)", () => {
+    // Without R8 the release DEX is not obfuscated and Play Console warns
+    // "DEX obfuscation below threshold"; see #128.
+    const android = plugin[1].android ?? {};
+    expect(android.enableMinifyInReleaseBuilds).toBe(true);
+    expect(android.enableShrinkResourcesInReleaseBuilds).toBe(true);
   });
 });
