@@ -73,6 +73,10 @@
             "enableSceneSupport": true,
             "useFrameworks": "static",
             "buildReactNativeFromSource": true
+          },
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
           }
         }
       ],

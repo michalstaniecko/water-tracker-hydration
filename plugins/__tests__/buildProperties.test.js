@@ -45,4 +45,9 @@ describe("expo-build-properties config", () => {
     expect(plugin[1].ios.useFrameworks).toBe("static");
     expect(plugin[1].ios.buildReactNativeFromSource).toBe(true);
   });
+
+  it("enables R8 minification and resource shrinking for Android release builds", () => {
+    expect(plugin[1].android.enableMinifyInReleaseBuilds).toBe(true);
+    expect(plugin[1].android.enableShrinkResourcesInReleaseBuilds).toBe(true);
+  });
 });
